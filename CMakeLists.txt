@@ -6,7 +6,8 @@ enable_testing()
 
 message(STATUS "PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
 include_directories(${PROJECT_SOURCE_DIR}/include)
-
+add_subdirectory(thirdparty)
+add_subdirectory(unittest)
 add_executable(PascalToC main.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
