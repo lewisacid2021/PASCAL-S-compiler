@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <bits/stdc++.h>
 #include <vector>
 
 namespace ast {
@@ -363,13 +363,11 @@ class AssignopStatement: public astnode
     LEFTTYPE left_type;
 };
 
-class ProcedureCall: public astnode
-{
-  public:
-    enum class ProcedureType
-    {
-        LIST,          // procedure_call → id
-        WITHOUT_LIST,  // procedure_call → id ( expression_list )
+class ProcedureCall : public astnode {
+public:
+    enum class ProcedureType {
+        LIST,           // procedure_call -> id
+        WITHOUT_LIST,   // procedure_call -> id ( expression_list )
     };
 
     ProcedureCall(ProcedureType pt)
@@ -403,13 +401,11 @@ class LoopStatement: public astnode
     LoopType loop_type;
 };
 
-class ElsePart: public astnode
-{
-  public:
-    enum class ELSEType
-    {
-        EPSILON,         // else_part → EPSILON
-        ELSE_STATEMENT,  // else_part → else statement
+class ElsePart : public astnode {
+public:
+    enum class ELSEType {
+        EPSILON,         // else_part -> EPSILON
+        ELSE_STATEMENT,  // else_part -> else statement
     };
 
     ElsePart(ELSEType gt)
@@ -427,11 +423,10 @@ class ElsePart: public astnode
 class VariableList: public astnode
 {
     // 子节点为多个Variable节点
-  public:
-    enum class GrammarType
-    {
-        VARIABLE,                // variable_list → variable
-        VARIABLE_LIST_VARIABLE,  // variable_list → variable_list , variable
+public:
+    enum class GrammarType {
+        VARIABLE,                // variable_list -> variable
+        VARIABLE_LIST_VARIABLE,  // variable_list -> variable_list , variable
     };
 
     VariableList(GrammarType gt)
@@ -445,24 +440,16 @@ class VariableList: public astnode
     GrammarType grammar_type_;
 };
 
-<<<<<<< HEAD
-class Variable: public astnode
-{
-    // 子节点为
-    // variable → id id_varparts
+class Variable : public astnode {
+    // 子节点为IDVarParts
+    // variable -> id id_varparts
 };
 
-class IDVarPartsNode: public Node
-{
-  public:
-    //  enum class GrammarType {
-    //    EPSILON,      //id_varparts → EPSILON
-    //    MULTIPLE_IDv, //id_varparts → id_varparts id_varpart
-    //  };
-    void set_lb(std::vector<ArrayType::ArrayBound> &bound)
-    {
-        if (child_list_.size() == 0)
-            return;
+class IDVarParts : public astnode {
+public:
+    //id_varparts -> ε | id_varparts id_varpart
+    void set_lb(std::vector<ArrayType::ArrayBound> &bound) {
+        if (child_list_.size() == 0) return;
         child_list_[0]->DynamicCast<IDVarPartsNode>()->set_lb(bound);
         if (child_list_[1]->DynamicCast<IDVarPartNode>()->grammar_type() ==
             IDVarPartNode::GrammarType::EXP_LIST) {
@@ -472,13 +459,11 @@ class IDVarPartsNode: public Node
     }
 };
 
-class IDVarPart: public astnode
-{
-  public:
-    enum class GrammarType
-    {
-        _ID,       // id_varpart → .id
-        EXP_LIST,  // id_varpart → [ expression_list ]
+class IDVarPart : public astnode {
+public:
+    enum class GrammarType {
+        _ID,       // id_varpart -> .id
+        EXP_LIST,  // id_varpart -> [ expression_list ]
     };
 
     IDVarPartNode(GrammarType gt)
@@ -493,6 +478,102 @@ class IDVarPart: public astnode
     GrammarType grammar_type_;
 };
 
+/*表达式节点*/
+class ExpressionList : public astnode {
+    //子节点为多个Expression节点
+public:
+    enum class ExpressionType {
+        SINGLE,           // expression_list -> expression
+        MULTIPLE,         // expression_list -> expression_list , expression
+    };
 
+    ExpressionList(ExpressionType et) : grammar_type_(et) {}
+    bool set_types(std::vector<TypeTemplate *> *type_list);
+
+private:
+    std::vector<BasicType *> basic_types;
+    ExpressionType expression_type;
+};
+
+class Expression : public astnode {
+    //子节点为至多两个SimpleExpression节点
+    // expression -> simple_expression
+    //            | simple_expression relop simple_expression
+public:
+    enum class ExpressionType {
+        EXPRESSION,
+        VAR_ARRAY,
+    };
+    Expression(SymbolType st) : symbol_type(st) {}
+    SymbolType GetType() { return symbol_type; }
+
+private:
+    ExpressionType expression_type;
+    SymbolType symbol_type;   
+
+};
+
+class SimpleExpression: public astnode {
+    // 子节点为可能存在的 SimpleExpression 节点 与 一个 Term 节点
+    // simple_expression -> term | simple_expression addop term
+public:
+    enum class SymbolType{
+        AND,
+        MINUS,
+        OR,
+    };
+    enum class ExpressionType{
+
+    };
+    SimpleExpression(SymbolType st) : symbol_type(st) {}
+    SymbolType GetType() { return symbol_type; }
+
+private:
+    SymbolType symbol_type;
+    ExpressionType expression_type;
+};
+
+class Term : public astnode {
+    // 子节点为可能存在的 Term 节点 与 一个 Factor 节点
+    // term -> factor | term mulop factor
+public:
+    enum class SymbolType{
+        MULTIPLY,
+        DEVIDE,
+        MOD,
+        AND,
+    };
+    enum class TermType{
+
+    };
+    Term(SymbolType st) : symbol_type(st) {}
+    SymbolType GetType() { return symbol_type; }
+
+private:
+    SymbolType symbol_type; 
+    TermType term_type;
+};
+
+class Factor : public astnode {
+public:
+    enum class FactorType {
+        NUM,          // factor -> num
+        VARIABLE,     // factor -> variable
+        EXP,          // factor -> ( expression )
+        ID_EXP_LIST,  // factor -> id ( expression_list )
+        NOT,          // factor -> not factor
+        UMINUS,       // factor -> - factor
+        RECORD,       // factor -> record-id . record-member
+        STRING,       // factor -> ′ letter ′
+    };
+
+    Factor(FactorType ft) : factor_type(ft) {}
+
+private:
+    FactorType factor_type;
+};
 
 }  // namespace ast
+
+#endif
+
