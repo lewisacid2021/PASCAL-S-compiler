@@ -445,6 +445,7 @@ class VariableList: public astnode
     GrammarType grammar_type_;
 };
 
+<<<<<<< HEAD
 class Variable: public astnode
 {
     // 子节点为
