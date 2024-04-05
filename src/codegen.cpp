@@ -1,4 +1,4 @@
-#include<bits/stdc++.h>
+#include<iostream>
 #include"ast.h"
 
 using std::stack;
@@ -7,8 +7,7 @@ using std::vector;
 
 namespace pascal{
 
-namespace ast{
-    
+namespace ast{   
 
 }
 
