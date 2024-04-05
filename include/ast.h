@@ -344,7 +344,9 @@ private:
     ELSEType grammar_type_;
 };
 
+/*函数的参数节点*/
 class VariableList : public astnode {
+    // 子节点为多个Variable节点
 public:
     enum class GrammarType {
         VARIABLE,                // variable_list → variable
@@ -359,6 +361,46 @@ private:
     std::vector<BasicType *> basic_types;
     GrammarType grammar_type_;
 };
+
+class Variable : public astnode {
+    // 子节点为
+    // variable → id id_varparts
+};
+
+class IDVarPartsNode : public Node {
+public:
+    //  enum class GrammarType {
+    //    EPSILON,      //id_varparts → EPSILON
+    //    MULTIPLE_IDv, //id_varparts → id_varparts id_varpart
+    //  };
+    void set_lb(std::vector<ArrayType::ArrayBound> &bound) {
+        if (child_list_.size() == 0) return;
+        child_list_[0]->DynamicCast<IDVarPartsNode>()->set_lb(bound);
+        if (child_list_[1]->DynamicCast<IDVarPartNode>()->grammar_type() ==
+            IDVarPartNode::GrammarType::EXP_LIST) {
+        child_list_[1]->DynamicCast<IDVarPartNode>()->set_array_lb(bound[0].lb_);
+        bound.erase(bound.begin());
+        }
+    }
+};
+
+class IDVarPart : public astnode {
+public:
+    enum class GrammarType {
+        _ID,       // id_varpart → .id
+        EXP_LIST,  // id_varpart → [ expression_list ]
+    };
+
+    IDVarPartNode(GrammarType gt) : grammar_type_(gt) {}
+    GrammarType grammar_type() { return grammar_type_; }
+    void Format(FILE *dst) override;
+    void set_array_lb(int lb) { array_lb_ = lb; }
+
+private:
+    int array_lb_ = 0;
+    GrammarType grammar_type_;
+};
+
 
 
 
