@@ -15,21 +15,18 @@ git config --global user.email "Your email"
 ``` shell
 ssh-keygen -t rsa
 ```
-一路回车确定
+#### 一路回车确定
 ![alt text](/turtorial/image-1.png)
 ``` shell
 cat ~/.ssh/id_rsa.pub
 ```
-复制显示内容
+#### 复制显示内容
 ![alt text](/turtorial/image-2.png)
-
-进入Settings
+#### 进入Settings
 ![alt text](/turtorial/image-3.png)
-
-进入SSH and GPG keys
+#### 进入SSH and GPG keys
 ![alt text](/turtorial/image-4.png)
-
-Add new SSH key
+#### Add new SSH key
 ![alt text](/turtorial/image-5.png)
 ### clone仓库
 ``` shell
