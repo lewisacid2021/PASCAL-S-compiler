@@ -319,7 +319,7 @@ public:
     StringType *type() { return string_type; }
 
 private:
-    String grammar_type;
+    StringType* string_type;
 };
 
 /**************************************************
