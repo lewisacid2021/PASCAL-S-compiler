@@ -310,14 +310,15 @@ class PeriodNode: public AstNode
     int len_;
 };
 
-class StringNode: public AstNode
-{
-  public:
-    StringNode(GrammarType gt)
-        : grammar_type(gt){};
+class StringTypeNode : public AstNode {
+public:
+    StringTypeNode() {}
+    StringTypeNode(StringType *type) : string_type(type) {}
 
+    void set_type(StringType *type) { string_type = type; }
+    StringType *type() { return string_type; }
 
-  private:
+private:
     String grammar_type;
 };
 
