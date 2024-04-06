@@ -3,6 +3,7 @@
 
 #include <bits/stdc++.h>
 #include <vector>
+#include "type.h"
 
 namespace ast{
 
@@ -50,16 +51,12 @@ private:
 
 class LeafNode : public astnode {
 public:
-    LeafNode(){}
+    LeafNode() {}
     LeafNode(ConstValue val) : value_(val) {}
 
     // getter and setter
-    const std::string id_ref() {
-        return is_ref_ ? "(*" + value_.get<std::string>() + ")"
-                    : value_.get<std::string>();
-    }
     void set_value(ConstValue value) { value_ = value; }
-    void set_ref(bool ref) { is_ref_ = ref; }
+    void set_ref(bool ref) { is_ref = ref; }
     // template value getter
     template <typename T>
     T value() {
@@ -69,21 +66,18 @@ public:
 
     // Analyze reference
     bool AnalyzeReference(TableSet *ts, FunctionSymbol *fn);
-    // override formater
-    void Format(FILE *dst) override;
 
 private:
     ConstValue value_;     // const values
-    bool is_ref_ = false;  // is referenced
+    bool is_ref = false;  // 是否为引用
 };
 
 class ProgramStruct : public astnode{
     //program_head -> program id ( idlist ) | program id
-    //
 };
 
 class ProgramHead : public astnode{
-    //program_head -> program id ( idlist ) | program id
+    // program_head -> program id ( idlist ) | program id
 };
 
 class ProgramBody : public astnode{
@@ -91,87 +85,142 @@ class ProgramBody : public astnode{
     //                 var_declarations 
     //                 subprogram_declarations 
     //                 compound_statement 
-    //共四个子节点
+    // 共四个子节点
 };
 
 class IdList : public astnode{
-    //idlist -> id | idlist , id
+    // idlist -> id | idlist , id
+    // 子节点为单个id叶子节点或者一个IdList节点后跟着id叶子节点。
 public:
     enum class GrammarType {
-        SINGLE_ID,   // idlists -> id
-        MULTIPLE_ID  // idlists -> idlist,id
+        SINGLE_ID,   // idlist -> id
+        MULTIPLE_ID  // idlist -> idlist , id
     };
     IdList(GrammarType gt) : grammar_type_(gt) {}
-    std::vector<LeafNode *> Lists();
 
 private:
     GrammarType grammar_type_;
 };
 
 class ConstDeclarations : public astnode {
-public:
-    enum class GrammarType {
-        SINGLE_ID,       // const_declaration -> id = const_value  
-        MULTIPLE_ID  // const_declaration -> const_declaration ; id = const_value 
+    // 子节点为单个ConstDeclaration节点或者没有
+    // const_declarations -> ε | const const_declaration ;
+    enum class GrammarType{
+        EPSILON,
+        DECLARATION,
     };
-    ConstDeclarations(GrammarType gt, BasicType *bt)
-        : grammar_type_(gt), type_(bt) {}
+    ConstDeclarations(GrammarType gt): grammar_type(gt) {};
+    GrammarType GetType() {
+        return grammar_type;
+    };
 
 private:
-    GrammarType grammar_type_;
-    BasicType *type_;
+    GrammarType grammar_type;
 };
 
 class ConstDeclaration : public astnode {
-    // const_variable ->  +num | -num | num | 'letter'
+    // 若GrammarType为SINGLE_ID，则子节点为两个叶子节点（id、 const_value）
+    // 若GrammarType为MULTIPLE_ID，则子节点为ConstDeclaration节点与两个叶子节点（id、 const_value）
+public:
+    enum class GrammarType {
+        SINGLE_ID,       // const_declaration -> id = const_value  
+        MULTIPLE_ID      // const_declaration -> const_declaration ; id = const_value 
+    };
+    ConstDeclaration(GrammarType gt, BasicType *bt)
+        : grammar_type(gt), type(bt) {};
 
+private:
+    GrammarType grammar_type;
+    BasicType *type;     // 记录该常变量的类型。
 };
 
 class VarDeclarations : public astnode {
-    //拥有n个子节点VarDeclaration
-    //var_declarations -> ε | var var_declaration ; 
-    
+    // 拥有单个子节点VarDeclaration或没有
+    // var_declarations -> ε | var var_declaration ; 
+public:
+    enum class GrammarType{
+        EPSILON,
+        DECLARATION,
+    };
+    VarDeclarations (GrammarType gt): grammar_type(gt) {};
+    GrammarType GetType() {
+        return grammar_type;
+    };
+
+private:
+    GrammarType grammar_type;
 };
 
 class VarDeclaration : public astnode {
-    //子节点为一个TypeNode节点以及IdList节点
+    // 子节点为一个TypeNode节点以及IdList节点
+    // 若GrammarType为SINGLE_ID，则子节点为两个节点TypeNode与IdList
+    // 若GrammarType为MULTIPLE_ID，则子节点为VarDeclaration节点与两个节点TypeNode与IdList
+    // 顺序为先IdList后TypeNode
 public:
     enum class GrammarType {
-        SINGLE_DECL,   // variable_declaration -> idlist : xx
-        MULTIPLE_DECL  // variable_declaration -> variable_declaration ; idlist : xx
+        SINGLE_DECL,   // var_declaration -> idlist : type
+        MULTIPLE_DECL  // var_declaration -> var_declaration ; idlist : type
     };
-    enum class ListType { TYPE, ID };
     VarDeclaration(GrammarType gt)
-        : grammar_type_(gt) {}
+        : grammar_type(gt) {}
 
 private:
-    GrammarType grammar_type_;
+    GrammarType grammar_type;
 };
 
+
+/************************************************
+                    类型节点
+*************************************************/
 class TypeNode : public astnode {
     //子节点为各个类型节点
 public:
-    enum class VarType { BASIC_TYPE, ARRAY, RECORD_TYPE, STRING_TYPE };
+    enum class VarType { 
+        BASIC_TYPE, 
+        ARRAY_TYPE, 
+        RECORD_TYPE, 
+        STRING_TYPE 
+    };
 
     TypeNode(VarType vt) : var_type(vt) {}
-
-    VarType GeVartype() { return var_type; }
+    VarType GetVarType() { return var_type; }
 
 private:
     VarType var_type;
 };
 
-class BasicType : public astnode {
-    // BasicType -> integer|real|boolean|char
+class BasicTypeNode : public astnode {
+    // BasicType -> integer | real | boolean | char
 public:
-    BasicType() {}
-    BasicType(BasicType *type) : btype(type) {}
+    BasicTypeNode() {}
+    BasicTypeNode(BasicType *type) : btype(type) {}
 
     void set_type(BasicType *type) { btype = type; }
     BasicType *type() { return btype; }
 
 private:
     BasicType *btype;
+};
+
+class RecordNode : public astnode {
+    // recordtype -> record var_declaration end;
+    // 子节点为VarDeclaration节点
+};
+
+class PeriodsNode : public astnode {
+    // period -> digits .. digits
+    // period -> period ， digits .. digits
+};
+
+// 还需要调整
+class PeriodNode : public astnode {
+    // Period → const_var ... const var
+public:
+    int len() { return len_; }
+    void set_len(int len) { len_ = len; }
+
+private:
+    int len_;
 };
 
 /**************************************************
@@ -373,6 +422,7 @@ public:
     void set_lb(std::vector<ArrayType::ArrayBound> &bound) {
         if (child_list_.size() == 0) return;
         child_list_[0]->DynamicCast<IDVarPartsNode>()->set_lb(bound);
+
         if (child_list_[1]->DynamicCast<IDVarPartNode>()->grammar_type() ==
             IDVarPartNode::GrammarType::EXP_LIST) {
         child_list_[1]->DynamicCast<IDVarPartNode>()->set_array_lb(bound[0].lb_);
@@ -388,9 +438,8 @@ public:
         EXP_LIST,  // id_varpart -> [ expression_list ]
     };
 
-    IDVarPartNode(GrammarType gt) : grammar_type_(gt) {}
+    IDVarPart(GrammarType gt) : grammar_type_(gt) {}
     GrammarType grammar_type() { return grammar_type_; }
-    void Format(FILE *dst) override;
     void set_array_lb(int lb) { array_lb_ = lb; }
 
 private:
@@ -407,7 +456,7 @@ public:
         MULTIPLE,         // expression_list -> expression_list , expression
     };
 
-    ExpressionList(ExpressionType et) : grammar_type_(et) {}
+    ExpressionList(ExpressionType et) : expression_type(et) {}
     bool set_types(std::vector<TypeTemplate *> *type_list);
 
 private:
@@ -423,6 +472,10 @@ public:
     enum class ExpressionType {
         EXPRESSION,
         VAR_ARRAY,
+    };
+    enum class SymbolType {
+        //> < >= <=
+
     };
     Expression(SymbolType st) : symbol_type(st) {}
     SymbolType GetType() { return symbol_type; }
@@ -443,10 +496,14 @@ public:
         OR,
     };
     enum class ExpressionType{
-
+        INT,
+        REAL,
+        CHAR,
+        STRING,
     };
-    SimpleExpression(SymbolType st) : symbol_type(st) {}
-    SymbolType GetType() { return symbol_type; }
+    SimpleExpression(SymbolType st, ExpressionType et) : symbol_type(st), expression_type(et) {}
+    SymbolType GetSymType() { return symbol_type; }
+    ExpressionType GetExpType() { return expression_type; }
 
 private:
     SymbolType symbol_type;
@@ -464,10 +521,14 @@ public:
         AND,
     };
     enum class TermType{
-
+        INT,
+        REAL,
+        CHAR,
+        STRING,
     };
-    Term(SymbolType st) : symbol_type(st) {}
-    SymbolType GetType() { return symbol_type; }
+    Term(SymbolType st, TermType et) : symbol_type(st), term_type(et) {};
+    SymbolType GetSymType() { return symbol_type; }
+    TermType GetExpType() { return term_type; }
 
 private:
     SymbolType symbol_type; 
