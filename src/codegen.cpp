@@ -1,7 +1,6 @@
 #include<iostream>
 #include"ast.h"
 
-using std::stack;
 using std::string;
 using std::vector;
 
