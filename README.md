@@ -4,7 +4,7 @@
 
 ### 安装依赖
 ``` shell
-sudo apt-get update && sudo apt-get -y install gcc g++ gdb flex bison cmake git ssh
+sudo apt-get update && sudo apt-get -y install gcc g++ gdb flex bison cmake git openssh-server
 ```
 ### 配置git
 ``` shell

@@ -1,51 +1,60 @@
-#ifndef PASCC_AST_H
-#define PASCC_AST_H
+#pragma once
 
-#include <bits/stdc++.h>
+#include <iostream>
 #include <vector>
 #include "type.h"
 
-namespace ast{
+namespace ast {
 
-class astnode{
-public:
+class astnode
+{
+  public:
     //构造及析构函数
-    astnode() : pnode(nullptr){};
-    virtual ~astnode(){
+    astnode()
+        : pnode(nullptr){};
+    virtual ~astnode()
+    {
         for (auto child : cnode_list) {
             delete child;
-            }
+        }
     }
 
     //添加父节点及查看父节点的方法
-    void set_parent(astnode *parent){ 
-        pnode = parent; 
+    void set_parent(astnode *parent)
+    {
+        pnode = parent;
     }
-    astnode *parent(){ 
-        return pnode; 
+    astnode *parent()
+    {
+        return pnode;
     }
 
     //添加子节点及查看子节点的方法
-    void append_child(astnode *child){ 
-        cnode_list.emplace_back(child); 
+    void append_child(astnode *child)
+    {
+        cnode_list.emplace_back(child);
     }
-    astnode *get(int pos) {
+    astnode *get(int pos)
+    {
         return cnode_list[pos];
     }
 
-protected:
-    astnode* pnode;
+  protected:
+    astnode *pnode;
     std::vector<astnode *> cnode_list;
 };
 
-class AST {
-public:
-    ~AST() {
-        if (astroot != nullptr) delete astroot;
+class AST
+{
+  public:
+    ~AST()
+    {
+        if (astroot != nullptr)
+            delete astroot;
     }
     void set_root(astnode *root) { astroot = root; }
 
-private:
+  private:
     astnode *astroot = nullptr;
 };
 
@@ -58,8 +67,9 @@ public:
     void set_value(ConstValue value) { value_ = value; }
     void set_ref(bool ref) { is_ref = ref; }
     // template value getter
-    template <typename T>
-    T value() {
+    template<typename T>
+    T value()
+    {
         return value_.get<T>();
     }
     BasicType *type() { return value_.type(); }
@@ -67,12 +77,13 @@ public:
     // Analyze reference
     bool AnalyzeReference(TableSet *ts, FunctionSymbol *fn);
 
-private:
+  private:
     ConstValue value_;     // const values
     bool is_ref = false;  // 是否为引用
 };
 
-class ProgramStruct : public astnode{
+class ProgramStruct: public astnode
+{
     //program_head -> program id ( idlist ) | program id
 };
 
@@ -98,7 +109,7 @@ public:
     };
     IdList(GrammarType gt) : grammar_type_(gt) {}
 
-private:
+  private:
     GrammarType grammar_type_;
 };
 
@@ -185,7 +196,7 @@ public:
     TypeNode(VarType vt) : var_type(vt) {}
     VarType GetVarType() { return var_type; }
 
-private:
+  private:
     VarType var_type;
 };
 
@@ -198,7 +209,7 @@ public:
     void set_type(BasicType *type) { btype = type; }
     BasicType *type() { return btype; }
 
-private:
+  private:
     BasicType *btype;
 };
 
@@ -226,74 +237,90 @@ private:
 /**************************************************
                     子程序部分节点
 ***************************************************/
-class SubprogramDeclarations : public astnode {
-    //subprogram_declarations -> ε | subprogram_declarations subprogram ; 
+class SubprogramDeclarations: public astnode
+{
+    //subprogram_declarations -> ε | subprogram_declarations subprogram ;
 };
 
-class SubprogramDeclaration : public astnode {
+class SubprogramDeclaration: public astnode
+{
     //subprogram -> subprogram_head ; subprogram_body
 };
 
-class SubprogramBody : public astnode {
+class SubprogramBody: public astnode
+{
     // subprogram_body -> const_declarations
     //                   var_declarations
     //                   compound_statement
 };
 
-class SubprogramHead : public astnode {
-public:
-    enum class SubprogramType {
+class SubprogramHead: public astnode
+{
+  public:
+    enum class SubprogramType
+    {
         PROCEDURE,  // subprogram_head -> procedure id formal_parameter
         FUNCTION    // subprogram_head -> function id formal_parameter : basic_type
     };
 
-    SubprogramHead(SubprogramType st) : subprogram_type(st) {}
+    SubprogramHead(SubprogramType st)
+        : subprogram_type(st)
+    {}
     SubprogramType get_type() { return subprogram_type; }
     void set_id(std::string id) { subprogram_id = id; }
     std::string get_id() { return subprogram_id; }
 
-private:
+  private:
     std::string subprogram_id;
     SubprogramType subprogram_type;
 };
 
-class FormalParam : public astnode {
+class FormalParam: public astnode
+{
     // 子节点为ParamLists
     // formal_parameter -> EPSILON
     //                  | ( parameter_lists )
 };
 
-class ParamLists : public astnode {
-public:
-    enum class GrammarType {
+class ParamLists: public astnode
+{
+  public:
+    enum class GrammarType
+    {
         SINGLE_PARAM_LIST,    // param_lists -> param_list
         MULTIPLE_PARAM_LIST,  // param_lists -> param_lists ; param_list
     };
 
-    ParamLists(GrammarType gt) : grammar_type(gt) {}
+    ParamLists(GrammarType gt)
+        : grammar_type(gt)
+    {}
 
-private:
+  private:
     GrammarType grammar_type;
 };
 
-class ParamList : public astnode {
+class ParamList: public astnode
+{
     //  parameter_list -> var_parameter | value_parameter
-public:
-    enum class ParamType {
+  public:
+    enum class ParamType
+    {
         VarParam,
         ValueParam
     };
 
-private:
+  private:
     ParamType param_type;
 };
 
-class VarParam : public astnode {
+class VarParam: public astnode
+{
     // 子节点为ValueParam
     // var_param -> var value_param
 };
 
-class ValueParam : public astnode {
+class ValueParam: public astnode
+{
     // 子节点为IdList和BasicType
     // ValueParam -> idlist : basic_type
 };
@@ -301,46 +328,54 @@ class ValueParam : public astnode {
 /**************************************************
                     语句部分节点
 ***************************************************/
-class CompoundStatement : public astnode {
+class CompoundStatement: public astnode
+{
     // CompoundStatement -> begin StatementList end
 };
 
-class StatementList : public astnode {
+class StatementList: public astnode
+{
     // statement_list -> statement | statement_list ;
 };
 
-class Statement : public astnode {
-public:
-    enum class StatementType {
+class Statement: public astnode
+{
+  public:
+    enum class StatementType
+    {
         EPSILON,             // statement -> EPSILON
-        ASSIGN_OP_STATEMENT, 
-                            
+        ASSIGN_OP_STATEMENT,
+
         PROCEDURE_CALL,      // statement -> procedure_call
         COMPOUND_STATEMENT,  // statement -> compound_statement
         IF_STATEMENT,        // statement -> if-statement
         LOOP_STATEMENT,      // statement -> loop-statement
 
-        READ_STATEMENT,     // statement -> read ( variable_list )
-        READLN_STATEMENT,   // statement -> readln ( variable_list )
-        WRITE_STATEMENT,    // statement -> write ( expression_list )
-        WRITELN_STATEMENT,  // statement -> writeln ( expression_list )
+        READ_STATEMENT,      // statement -> read ( variable_list )
+        READLN_STATEMENT,    // statement -> readln ( variable_list )
+        WRITE_STATEMENT,     // statement -> write ( expression_list )
+        WRITELN_STATEMENT,   // statement -> writeln ( expression_list )
     };
 
-    Statement(StatementType st) : statement_type(st) {}
+    Statement(StatementType st)
+        : statement_type(st)
+    {}
 
-private:
+  private:
     StatementType statement_type;
 };
 
-class AssignopStatement : public astnode {
+class AssignopStatement: public astnode
+{
     //
-public:
-    enum class LEFTTYPE {
-        VARIABLE,       // statement -> variable assignop expression
-        FUNC,           // statement -> func_id assignop expression
+  public:
+    enum class LEFTTYPE
+    {
+        VARIABLE,  // statement -> variable assignop expression
+        FUNC,      // statement -> func_id assignop expression
     };
 
-private:
+  private:
     LEFTTYPE left_type;
 };
 
@@ -351,19 +386,24 @@ public:
         WITHOUT_LIST,   // procedure_call -> id ( expression_list )
     };
 
-    ProcedureCall(ProcedureType pt) : procedure_type(pt) {}
+    ProcedureCall(ProcedureType pt)
+        : procedure_type(pt)
+    {}
 
-private:
+  private:
     ProcedureType procedure_type;
 };
 
-class IfStatement : public astnode {
+class IfStatement: public astnode
+{
     // if_statement -> if expression then statement else_part
 };
 
-class LoopStatement : public astnode {
-public:
-    enum class LoopType {
+class LoopStatement: public astnode
+{
+  public:
+    enum class LoopType
+    {
         FORUP,
         FORDOWN,
         WHILE,
@@ -373,7 +413,7 @@ public:
     //                 | for id assignop expression downto expression do statement
     //                 | while expression do statement
     //                 | repeat statement until expression
-private:
+  private:
     LoopType loop_type;
 };
 
@@ -384,17 +424,20 @@ public:
         ELSE_STATEMENT,  // else_part -> else statement
     };
 
-    ElsePart(ELSEType gt) : grammar_type_(gt) {}
+    ElsePart(ELSEType gt)
+        : grammar_type_(gt)
+    {}
     // Statement *GetStatement() {
     //     return cnode_list[0]->DynamicCast<StatementNode>();
     // }
 
-private:
+  private:
     ELSEType grammar_type_;
 };
 
 /*函数的参数节点*/
-class VariableList : public astnode {
+class VariableList: public astnode
+{
     // 子节点为多个Variable节点
 public:
     enum class GrammarType {
@@ -402,11 +445,13 @@ public:
         VARIABLE_LIST_VARIABLE,  // variable_list -> variable_list , variable
     };
 
-    VariableList(GrammarType gt) : grammar_type_(gt) {}
+    VariableList(GrammarType gt)
+        : grammar_type_(gt)
+    {}
     std::string FormatString();
     bool set_types(std::vector<TypeTemplate *> *type_list);
 
-private:
+  private:
     std::vector<BasicType *> basic_types;
     GrammarType grammar_type_;
 };
@@ -425,8 +470,8 @@ public:
 
         if (child_list_[1]->DynamicCast<IDVarPartNode>()->grammar_type() ==
             IDVarPartNode::GrammarType::EXP_LIST) {
-        child_list_[1]->DynamicCast<IDVarPartNode>()->set_array_lb(bound[0].lb_);
-        bound.erase(bound.begin());
+            child_list_[1]->DynamicCast<IDVarPartNode>()->set_array_lb(bound[0].lb_);
+            bound.erase(bound.begin());
         }
     }
 };
@@ -442,7 +487,7 @@ public:
     GrammarType grammar_type() { return grammar_type_; }
     void set_array_lb(int lb) { array_lb_ = lb; }
 
-private:
+  private:
     int array_lb_ = 0;
     GrammarType grammar_type_;
 };
@@ -555,6 +600,3 @@ private:
 };
 
 }  // namespace ast
-
-#endif
-
