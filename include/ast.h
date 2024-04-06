@@ -22,7 +22,7 @@ class AstNode
         }
     }
 
-    virtual void accept(Visitor &visitor, FILE *fs);  //访问者接口
+    virtual void accept(Visitor *visitor, FILE *fs) = 0;  //访问者接口
 
     //添加父节点及查看父节点的方法
     void set_parent(AstNode *parent)
@@ -65,7 +65,8 @@ class AST
 
     void set_root(AstNode *root) { astroot = root; }
     AstNode *getRoot() { return astroot; }
-    virtual void accept(Visitor &visitor, FILE *fs);  //访问者接口
+
+    void accept(Visitor *visitor, FILE *fs);  //访问者接口
 
   private:
     AstNode *astroot = nullptr;
@@ -89,6 +90,7 @@ class LeafNode: public AstNode
         return value_.get<T>();
     }
     ConstValue::ConstvalueType get_type() { return value_.type(); }
+    void accept(Visitor *visitor, FILE *fs);  //访问者接口
 
     // Analyze reference
     //bool AnalyzeReference(TableSet *ts, FunctionSymbol *fn);
@@ -131,6 +133,8 @@ class IdList: public AstNode
         : grammar_type_(gt)
     {}
 
+    void accept(Visitor *visitor, FILE *fs);  //访问者接口
+
     GrammarType GetGrammarType()
     {
         return grammar_type_;
@@ -149,6 +153,9 @@ class ConstDeclarations: public AstNode
         EPSILON,
         DECLARATION,
     };
+
+    void accept(Visitor *visitor, FILE *fs);  //访问者接口
+
     ConstDeclarations(GrammarType gt)
         : grammar_type(gt){};
     GrammarType GetGrammarType()
@@ -174,6 +181,9 @@ class ConstDeclaration: public AstNode
         : grammar_type(gt)
         , type(bt){};
     void print_type(FILE *fs);
+
+    void accept(Visitor *visitor, FILE *fs);  //访问者接口
+
     GrammarType GetGrammarType()
     {
         return grammar_type;
@@ -724,21 +734,21 @@ class Factor: public AstNode
 class Visitor
 {
   public:
-    virtual void visit(AST &AST, FILE *fs)                           = 0;
-    virtual void visit(AstNode &astnode, FILE *fs)                   = 0;
-    virtual void visit(LeafNode &leafnode, FILE *fs)                 = 0;
-    virtual void visit(IdList &idlist, FILE *fs)                     = 0;
-    virtual void visit(ConstDeclaration &constdeclaration, FILE *fs) = 0;
+    virtual void visit(AST *AST, FILE *fs)                           = 0;
+    virtual void visit(AstNode *astnode, FILE *fs)                   = 0;
+    virtual void visit(LeafNode *leafnode, FILE *fs)                 = 0;
+    virtual void visit(IdList *idlist, FILE *fs)                     = 0;
+    virtual void visit(ConstDeclaration *constdeclaration, FILE *fs) = 0;
 };
 
 class GenerationVisitor: public Visitor
 {
   public:
-    void visit(AST &AST, FILE *fs) override;
-    void visit(AstNode &astnode, FILE *fs) override;
-    void visit(LeafNode &leafnode, FILE *fs) override;
-    void visit(IdList &idlist, FILE *fs) override;
-    void visit(ConstDeclaration &constdeclaration, FILE *fs) override;
-}
+    void visit(AST *AST, FILE *fs) override;
+    void visit(AstNode *astnode, FILE *fs) override;
+    void visit(LeafNode *leafnode, FILE *fs) override;
+    void visit(IdList *idlist, FILE *fs) override;
+    void visit(ConstDeclaration *constdeclaration, FILE *fs) override;
+};
 
 }  // namespace ast
