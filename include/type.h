@@ -1,8 +1,6 @@
-#ifndef PASCC_TYPE_H_
-#define PASCC_TYPE_H_
+#pragma once
 
 #include <string.h>
-
 #include <iostream>
 #include <memory>
 #include <string>
@@ -10,141 +8,159 @@
 #include <unordered_map>
 #include <vector>
 
-class TypeTemplate {
+class BaseType {
 public:
-    enum class TYPE { BASIC, RECORD, ARRAY };
-    TypeTemplate() {}
-    TypeTemplate(TYPE template_type) : template_type_(template_type) {}
-    virtual ~TypeTemplate() {}
+    enum class TYPE { BASIC, RECORD, ARRAY, STRING};
+    BaseType() {}
+    BaseType(TYPE tt) : template_type(tt) {}
+    virtual ~BaseType() {}
     template <typename T>
     T *DynamicCast() {
         return dynamic_cast<T *>(this);
     }
 
-    TYPE template_type() { return template_type_; }
-    virtual std::string name() = 0;
-    bool StringLike();  // check if stringlike (array of char)
+    TYPE GetType() { return template_type; }
 
 protected:
-    TYPE template_type_;
+    TYPE template_type;
 };
 
-/**
- * @brief basic type, including INT, REAL, CHAR, BOOL
- */
-class BasicType : public TypeTemplate {
+class BasicType : public BaseType {
 public:
-    enum class BASIC_TYPE { INTEGER, REAL, BOOLEAN, CHAR};
+    enum class BASIC_TYPE { INTEGER, REAL, BOOLEAN, CHAR, NONE};
 
-    BasicType() : TypeTemplate(TYPE::BASIC), basic_type_(BASIC_TYPE::NONE) {}
+    BasicType() : BaseType(TYPE::BASIC), basic_type(BASIC_TYPE::NONE) {}
     BasicType(BASIC_TYPE basic_type)
-        : TypeTemplate(TYPE::BASIC), basic_type_(basic_type) {}
+        : BaseType(TYPE::BASIC), basic_type(basic_type) {}
 
     ~BasicType() {}
 
     // getter and setter
-    BASIC_TYPE type() { return basic_type_; }
-    std::string c_name() {
-        switch (basic_type_) {
-        case BASIC_TYPE::INT:
-            return "int";
-        case BASIC_TYPE::REAL:
-            return "float";
-        case BASIC_TYPE::BOOL:
-            return "int";
-        case BASIC_TYPE::CHAR:
-            return "char";
-        default:
-            return "void";
-        }
-    }
-    std::string name() override;
+    BASIC_TYPE type() { return basic_type; }
 
 private:
-    BASIC_TYPE basic_type_;
+    BASIC_TYPE basic_type;
+};
+
+class ArrayType : public BaseType {
+public:
+    struct Dimension {
+        int lowbound;
+        int upbound;
+
+        Dimension() : lowbound(0), upbound(0){};
+    };
+
+    ArrayType() : BaseType(TYPE::ARRAY), base_type(nullptr) {}
+    ArrayType(BaseType *type) : BaseType(TYPE::ARRAY), base_type(type) {}
+    ArrayType(const ArrayType &a2);
+    ~ArrayType() {}
+
+    // getter and setter
+    BaseType *GetBasetype() { return base_type; }
+    size_t GetDimsum() { return dimensions.size(); }               // get dimensions
+    std::vector<Dimension> GetDimensions() { return dimensions; }  // get bounds
+    Dimension GetDimension(size_t i) { return dimensions[i]; }  // get bound of dimension i
+
+private:
+    BaseType *base_type;         // basic types or record type
+    std::vector<Dimension> dimensions;  // multi-dims bounds
+};
+
+class StringType : public BaseType {
+public:
+    enum class GrammarType{
+        LIMIT,    
+        NOLIMIT,
+    };
+    StringType(GrammarType gt): grammar_type(gt){};
+
+private:
+    GrammarType grammar_type;
+    int length = 0;
+};
+
+
+class RecordType : public BaseType {
+public:
+    RecordType() : BaseType(TYPE::RECORD) {}
+    RecordType(std::unordered_map<std::string, BaseType *> types_map)
+        : BaseType(TYPE::RECORD), types_map_(std::move(types_map)) {}
+    ~RecordType() {}
+
+
+    // add elements
+    bool add(std::string name, BaseType *type);
+    // find by names
+    BaseType *Find(std::string name);
+    // visit by names
+    BaseType *Visit(std::vector<std::string> names);
+
+private:
+    std::unordered_map<std::string, BaseType *> types_map_;
 };
 
 class ConstValue {
-    public:
+public:
+    enum class ConstvalueType{
+        INTEGER, 
+        REAL, 
+        BOOLEAN, 
+        CHAR,
+        STRING,
+    };
     ConstValue() {}
     ~ConstValue() {}
-    ConstValue(const ConstValue &other);
-    ConstValue(int v, bool to_float = false) {
-        if (to_float)
-        set((float)v);
-        else
-        set(v);
+    ConstValue(const ConstValue &cv){}
+    ConstValue(float v) { 
+        value_type =  ConstvalueType::REAL;
+        C_REAL = v;
     }
-    ConstValue(float v) { set(v); }
-    ConstValue(bool v) { set(v); }
-    ConstValue(char v) { set(v); }
-    ConstValue(const char *v) { set(std::string(v)); }
-    ConstValue(std::string v) { set(v); }
-
-    void set(int v) {
-        m_Type = TYPE_INT;
-        m_INT = v;
+    ConstValue(bool v) { 
+        value_type =  ConstvalueType::BOOLEAN;
+        C_BOOLEAN = v;
+     }
+    ConstValue(char v) { 
+        value_type =  ConstvalueType::CHAR;
+        C_CHAR = v;
+     }
+    ConstValue(int v) { 
+        value_type =  ConstvalueType::INTEGER;
+        C_INT = v;
     }
-    void set(float v) {
-        m_Type = TYPE_REAL;
-        m_REAL = v;
+    ConstValue(std::string &v) { 
+        value_type =  ConstvalueType::STRING;
+        C_STRING = v; 
     }
-    void set(bool v) {
-        m_Type = TYPE_BOOL;
-        m_BOOLEAN = v;
-    }
-    void set(char v) {
-        m_Type = TYPE_CHAR;
-        m_CHAR = v;
-    }
-    void set(std::string v) {
-        m_Type = TYPE_STRINGLIKE;
-        m_STRING = v;
-    }
-    void set_unimus();
-
-    BasicType *type() { return m_Type; }
 
     // get by type
     template <typename T>
     T get() {
         if (std::is_same<T, int>::value)
-        return *(T *)(&m_INT);
+        return *(T *)(&C_INT);
         else if (std::is_same<T, char>::value)
-        return *(T *)(&m_CHAR);
+        return *(T *)(&C_CHAR);
         else if (std::is_same<T, float>::value)
-        return *(T *)(&m_REAL);
+        return *(T *)(&C_REAL);
         else if (std::is_same<T, bool>::value)
-        return *(T *)(&m_BOOLEAN);
+        return *(T *)(&C_BOOLEAN);
         else if (std::is_same<T, std::string>::value)
-        return *((T *)(&m_STRING));
+        return *((T *)(&C_STRING));
         else {
         throw std::runtime_error("ConstValue : get() : type " +
                                 std::string(typeid(T).name()) +
                                 " not supported");
         }
     }
-    // copy by =
-    ConstValue &operator=(const ConstValue &other);
-    // operation +
-    ConstValue operator+(const ConstValue &other);
-    // operation -
-    ConstValue operator-(const ConstValue &other);
-    // operation *
-    ConstValue operator*(const ConstValue &other);
-    // operation /
-    ConstValue operator/(const ConstValue &other);
+    ConstvalueType type() { return value_type; }
 
-    private:
-    BasicType *m_Type = nullptr;
+private:
+    ConstvalueType value_type;
     union {
-        int m_INT;
-        float m_REAL;
-        char m_CHAR;
-        bool m_BOOLEAN;
+        int C_INT;
+        float C_REAL;
+        char C_CHAR;
+        bool C_BOOLEAN;
+        std::string C_STRING;
     };
-    std::string m_STRING;
 };
-
-
-#endif
