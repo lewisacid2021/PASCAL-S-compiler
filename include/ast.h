@@ -5,7 +5,10 @@
 #include <vector>
 #include "type.h"
 
+#define PRINT(format, ...) fprintf(fs, format, ##__VA_ARGS__);
 namespace ast {
+
+class Visitor;
 
 class AstNode
 {
@@ -19,6 +22,8 @@ class AstNode
             delete child;
         }
     }
+
+    virtual void accept(Visitor &visitor, FILE *fs);  //访问者接口
 
     //添加父节点及查看父节点的方法
     void set_parent(AstNode *parent)
@@ -40,6 +45,11 @@ class AstNode
         return cnode_list[pos];
     }
 
+    std::vector<AstNode *> &getCnodeList()
+    {
+        return cnode_list;
+    }
+
   protected:
     AstNode *pnode;
     std::vector<AstNode *> cnode_list;
@@ -53,7 +63,10 @@ class AST
         if (astroot != nullptr)
             delete astroot;
     }
+
     void set_root(AstNode *root) { astroot = root; }
+    AstNode* getRoot() { return astroot; }
+    virtual void accept(Visitor &visitor, FILE *fs);  //访问者接口
 
   private:
     AstNode *astroot = nullptr;
@@ -62,7 +75,9 @@ class AST
 class LeafNode : public AstNode {
 public:
     LeafNode() {}
-    LeafNode(ConstValue val) : value_(val) {}
+    LeafNode(ConstValue val)
+        : value_(val)
+    {}
 
     // getter and setter
     void set_value(ConstValue value) { value_ = value; }
@@ -79,7 +94,7 @@ public:
     //bool AnalyzeReference(TableSet *ts, FunctionSymbol *fn);
 
   private:
-    ConstValue value_;     // const values
+    ConstValue value_;    // const values
     bool is_ref = false;  // 是否为引用
 };
 
@@ -103,12 +118,15 @@ class ProgramBody : public AstNode{
 class IdList : public AstNode{
     // idlist -> id | idlist , id
     // 子节点为单个id叶子节点或者一个IdList节点后跟着id叶子节点。
-public:
-    enum class GrammarType {
+  public:
+    enum class GrammarType
+    {
         SINGLE_ID,   // idlist -> id
         MULTIPLE_ID  // idlist -> idlist , id
     };
-    IdList(GrammarType gt) : grammar_type_(gt) {}
+    IdList(GrammarType gt)
+        : grammar_type_(gt)
+    {}
 
   private:
     GrammarType grammar_type_;
@@ -117,49 +135,57 @@ public:
 class ConstDeclarations : public AstNode {
     // 子节点为单个ConstDeclaration节点或者没有
     // const_declarations -> ε | const const_declaration ;
-    enum class GrammarType{
+    enum class GrammarType
+    {
         EPSILON,
         DECLARATION,
     };
-    ConstDeclarations(GrammarType gt): grammar_type(gt) {};
-    GrammarType GetType() {
+    ConstDeclarations(GrammarType gt)
+        : grammar_type(gt){};
+    GrammarType GetType()
+    {
         return grammar_type;
     };
 
-private:
+  private:
     GrammarType grammar_type;
 };
 
 class ConstDeclaration : public AstNode {
     // 若GrammarType为SINGLE_ID，则子节点为两个叶子节点（id、 const_value）
     // 若GrammarType为MULTIPLE_ID，则子节点为ConstDeclaration节点与两个叶子节点（id、 const_value）
-public:
-    enum class GrammarType {
-        SINGLE_ID,       // const_declaration -> id = const_value  
-        MULTIPLE_ID      // const_declaration -> const_declaration ; id = const_value 
+  public:
+    enum class GrammarType
+    {
+        SINGLE_ID,   // const_declaration -> id = const_value
+        MULTIPLE_ID  // const_declaration -> const_declaration ; id = const_value
     };
     ConstDeclaration(GrammarType gt, BasicType *bt)
-        : grammar_type(gt), type(bt) {};
+        : grammar_type(gt)
+        , type(bt){};
 
-private:
+  private:
     GrammarType grammar_type;
-    BasicType *type;     // 记录该常变量的类型。
+    BasicType *type;  // 记录该常变量的类型。
 };
 
 class VarDeclarations : public AstNode {
     // 拥有单个子节点VarDeclaration或没有
-    // var_declarations -> ε | var var_declaration ; 
-public:
-    enum class GrammarType{
+    // var_declarations -> ε | var var_declaration ;
+  public:
+    enum class GrammarType
+    {
         EPSILON,
         DECLARATION,
     };
-    VarDeclarations (GrammarType gt): grammar_type(gt) {};
-    GrammarType GetType() {
+    VarDeclarations(GrammarType gt)
+        : grammar_type(gt){};
+    GrammarType GetType()
+    {
         return grammar_type;
     };
 
-private:
+  private:
     GrammarType grammar_type;
 };
 
@@ -168,15 +194,17 @@ class VarDeclaration : public AstNode {
     // 若GrammarType为SINGLE_ID，则子节点为两个节点TypeNode与IdList
     // 若GrammarType为MULTIPLE_ID，则子节点为VarDeclaration节点与两个节点TypeNode与IdList
     // 顺序为先IdList后TypeNode
-public:
-    enum class GrammarType {
+  public:
+    enum class GrammarType
+    {
         SINGLE_DECL,   // var_declaration -> idlist : type
         MULTIPLE_DECL  // var_declaration -> var_declaration ; idlist : type
     };
     VarDeclaration(GrammarType gt)
-        : grammar_type(gt) {}
+        : grammar_type(gt)
+    {}
 
-private:
+  private:
     GrammarType grammar_type;
 };
 
@@ -186,15 +214,18 @@ private:
 *************************************************/
 class TypeNode : public AstNode {
     //子节点为各个类型节点
-public:
-    enum class VarType { 
-        BASIC_TYPE, 
-        ARRAY_TYPE, 
-        RECORD_TYPE, 
-        STRING_TYPE 
+  public:
+    enum class VarType
+    {
+        BASIC_TYPE,
+        ARRAY_TYPE,
+        RECORD_TYPE,
+        STRING_TYPE
     };
 
-    TypeNode(VarType vt) : var_type(vt) {}
+    TypeNode(VarType vt)
+        : var_type(vt)
+    {}
     VarType GetVarType() { return var_type; }
 
 private:
@@ -203,9 +234,11 @@ private:
 
 class BasicTypeNode : public AstNode {
     // BasicType -> integer | real | boolean | char
-public:
+  public:
     BasicTypeNode() {}
-    BasicTypeNode(BasicType *type) : btype(type) {}
+    BasicTypeNode(BasicType *type)
+        : btype(type)
+    {}
 
     void set_type(BasicType *type) { btype = type; }
     BasicType *type() { return btype; }
@@ -244,11 +277,11 @@ private:
 // 还需要调整
 class PeriodNode : public AstNode {
     // Period → const_var ... const var
-public:
+  public:
     int len() { return len_; }
     void set_len(int len) { len_ = len; }
 
-private:
+  private:
     int len_;
 };
 
@@ -469,8 +502,9 @@ public:
 class VariableList: public AstNode
 {
     // 子节点为多个Variable节点
-public:
-    enum class GrammarType {
+  public:
+    enum class GrammarType
+    {
         VARIABLE,                // variable_list -> variable
         VARIABLE_LIST_VARIABLE,  // variable_list -> variable_list , variable
     };
@@ -513,7 +547,9 @@ public:
         EXP_LIST,  // id_varpart -> [ expression_list ]
     };
 
-    IDVarPart(GrammarType gt) : grammar_type_(gt) {}
+    IDVarPart(GrammarType gt)
+        : grammar_type_(gt)
+    {}
     GrammarType grammar_type() { return grammar_type_; }
     void set_array_lb(int lb) { array_lb_ = lb; }
 
@@ -525,16 +561,17 @@ public:
 /*表达式节点*/
 class ExpressionList : public AstNode {
     //子节点为多个Expression节点
-public:
-    enum class ExpressionType {
-        SINGLE,           // expression_list -> expression
-        MULTIPLE,         // expression_list -> expression_list , expression
+  public:
+    enum class ExpressionType
+    {
+        SINGLE,    // expression_list -> expression
+        MULTIPLE,  // expression_list -> expression_list , expression
     };
 
     ExpressionList(ExpressionType et) : expression_type(et) {}
     bool set_types(std::vector<BaseType *> *type_list);
 
-private:
+  private:
     std::vector<BasicType *> basic_types;
     ExpressionType expression_type;
 };
@@ -543,44 +580,52 @@ class Expression : public AstNode {
     //子节点为至多两个SimpleExpression节点
     // expression -> simple_expression
     //            | simple_expression relop simple_expression
-public:
-    enum class ExpressionType {
+  public:
+    enum class ExpressionType
+    {
         EXPRESSION,
         VAR_ARRAY,
     };
-    enum class SymbolType {
+    enum class SymbolType
+    {
         //> < >= <=
 
     };
-    Expression(SymbolType st) : symbol_type(st) {}
+    Expression(SymbolType st)
+        : symbol_type(st)
+    {}
     SymbolType GetType() { return symbol_type; }
 
-private:
+  private:
     ExpressionType expression_type;
-    SymbolType symbol_type;   
-
+    SymbolType symbol_type;
 };
 
 class SimpleExpression: public AstNode {
     // 子节点为可能存在的 SimpleExpression 节点 与 一个 Term 节点
     // simple_expression -> term | simple_expression addop term
-public:
-    enum class SymbolType{
+  public:
+    enum class SymbolType
+    {
         AND,
         MINUS,
         OR,
     };
-    enum class ExpressionType{
+    enum class ExpressionType
+    {
         INT,
         REAL,
         CHAR,
         STRING,
     };
-    SimpleExpression(SymbolType st, ExpressionType et) : symbol_type(st), expression_type(et) {}
+    SimpleExpression(SymbolType st, ExpressionType et)
+        : symbol_type(st)
+        , expression_type(et)
+    {}
     SymbolType GetSymType() { return symbol_type; }
     ExpressionType GetExpType() { return expression_type; }
 
-private:
+  private:
     SymbolType symbol_type;
     ExpressionType expression_type;
 };
@@ -588,25 +633,29 @@ private:
 class Term : public AstNode {
     // 子节点为可能存在的 Term 节点 与 一个 Factor 节点
     // term -> factor | term mulop factor
-public:
-    enum class SymbolType{
+  public:
+    enum class SymbolType
+    {
         MULTIPLY,
         DEVIDE,
         MOD,
         AND,
     };
-    enum class TermType{
+    enum class TermType
+    {
         INT,
         REAL,
         CHAR,
         STRING,
     };
-    Term(SymbolType st, TermType et) : symbol_type(st), term_type(et) {};
+    Term(SymbolType st, TermType et)
+        : symbol_type(st)
+        , term_type(et){};
     SymbolType GetSymType() { return symbol_type; }
     TermType GetExpType() { return term_type; }
 
-private:
-    SymbolType symbol_type; 
+  private:
+    SymbolType symbol_type;
     TermType term_type;
 };
 
@@ -623,10 +672,28 @@ public:
         STRING,       // factor -> ′ letter ′
     };
 
-    Factor(FactorType ft) : factor_type(ft) {}
+    Factor(FactorType ft)
+        : factor_type(ft)
+    {}
 
-private:
+  private:
     FactorType factor_type;
 };
+
+class Visitor
+{
+  public:
+    virtual void visit(AST &AST, FILE *fs)         = 0;
+    virtual void visit(AstNode &AstNode, FILE *fs) = 0;
+    virtual void visit(LeafNode &leafnode, FILE *fs) = 0;
+};
+
+class GenerationVisitor: public Visitor
+{
+  public:
+    void visit(AST &AST, FILE *fs) override;
+    void visit(AstNode &AstNode, FILE *fs) override;
+    void visit(LeafNode &leafnode, FILE *fs) override;
+}
 
 }  // namespace ast
