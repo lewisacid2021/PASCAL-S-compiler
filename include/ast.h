@@ -252,14 +252,16 @@ private:
     int len_;
 };
 
-class StringNode : public AstNode {
+class StringTypeNode : public AstNode {
 public:
+    StringTypeNode() {}
+    StringTypeNode(StringType *type) : string_type(type) {}
 
-    StringNode(GrammarType gt): grammar_type(gt){};
-
+    void set_type(StringType *type) { string_type = type; }
+    StringType *type() { return string_type; }
 
 private:
-    String grammar_type;
+    StringType* string_type;
 };
 
 /**************************************************

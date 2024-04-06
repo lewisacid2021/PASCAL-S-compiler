@@ -73,7 +73,9 @@ public:
         LIMIT,    
         NOLIMIT,
     };
-    StringType(GrammarType gt): grammar_type(gt){};
+    StringType(GrammarType gt, int len): grammar_type(gt), length(len){};
+    int GetLen() { return length; }
+    GrammarType GetGrammarType() { return grammar_type; }
 
 private:
     GrammarType grammar_type;
@@ -153,6 +155,7 @@ public:
         }
     }
     ConstvalueType type() { return value_type; }
+    ConstValue &operator=(const ConstValue &other);
 
 private:
     ConstvalueType value_type;
