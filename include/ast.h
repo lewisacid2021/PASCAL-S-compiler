@@ -82,9 +82,6 @@ class LeafNode: public AstNode
     LeafNode(ConstValue val, LeafType lt)
         : value_(val), leaf_type(lt)
     {}
-    LeafNode(std::string name, LeafType lt)
-        : id_name(name), leaf_type(lt)
-    {}
     // getter and setter
     void set_value(ConstValue value) { value_ = value; }
     void set_ref(bool ref) { is_ref = ref; }
@@ -101,9 +98,8 @@ class LeafNode: public AstNode
     //bool AnalyzeReference(TableSet *ts, FunctionSymbol *fn);
 
   private:
-    ConstValue value_;    // const values
+    ConstValue value_;    // const values（包括常量与变量名）
     LeafType leaf_type;
-    std::string id_name;
     bool is_ref = false;  // 是否为引用
 };
 
