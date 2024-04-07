@@ -276,6 +276,7 @@ class BasicTypeNode: public AstNode
     {}
 
     void set_type(BasicType *type) { btype = type; }
+    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
     BasicType *type() { return btype; }
 
   private:
@@ -292,6 +293,7 @@ class ArrayTypeNode: public AstNode
     {}
 
     void set_type(BasicType *type) { btype = type; }
+    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
     BasicType *type() { return btype; }
 
   private:
