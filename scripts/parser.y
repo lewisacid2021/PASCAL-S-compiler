@@ -1,6 +1,6 @@
 %{
 #include "log.h"
-#include"parser.h"
+#include "parser.h"
 using namespace pascals;
 using namespace pascals::ast;
 using std::string;
@@ -40,16 +40,64 @@ void semantic_error(AST* real_ast,std::string msg,int line,int row){
 
 %}
 
-%union
-{}
+%union {
+    IdListAttr id_list_node_info;
+    TypeAttr type_node_info;
+    StandardTypeAttr standared_type_node_info;
+    PeriodsAttr periods_node_info;
+    PeriodAttr period_node_info;
+    RecordAttr record_node_info;
+    FormalParameterAttr formal_parameter_node_info;
+    ParameterListsAttr parameter_lists_node_info;
+    ParameterListAttr parameter_list_node_info;
+    VarParameterAttr var_parameter_node_info;
+    ValueParameterAttr value_parameter_node_info;
+
+    VariableDeclarationAttr variable_declaration_node_info;
+    VariableAttr variable_node_info;
+    VariableListAttr variable_list_node_info;
+    ExpressionAttr expression_node_info;
+    SimpleExpressionAttr simple_expression_node_info;
+    StrExpressionAttr str_expression_node_info;
+    TermAttr term_node_info;
+    FactorAttr factor_node_info;
+    UnsignedConstantVarAttr unsigned_constant_var_node_info;
+    IDVarpartsAttr id_varparts_node_info;
+    IDVarpartAttr id_varpart_node_info;
+    ExpressionListAttr expression_list_node_info;
+    CaseBodyAttr case_body_node_info;
+    BranchListAttr branch_list_node_info;
+    BranchAttr branch_node_info;
+    ConstListAttr const_list_node_info;
+
+    pascals::ast::ProgramNode* program_node;
+    pascals::ast::ProgramHeadNode* program_head_node;
+    pascals::ast::ProgramBodyNode* program_body_node;
+    pascals::ast::ConstDeclarationsNode* const_declarations_node;
+    pascals::ast::ConstDeclarationNode* const_declaration_node;
+    pascals::ast::TypeDeclarationsNode* type_declarations_node;
+    pascals::ast::TypeDeclarationNode* type_declaration_node;
+    pascals::ast::BasicTypeNode* basic_type_node;
+    pascals::ast::VariableDeclarationsNode* variable_declarations_node;
+    pascals::ast::SubprogramDeclarationsNode* subprogram_declarations_node;
+    pascals::ast::SubprogramDeclarationNode* subprogram_declaration_node;
+    pascals::ast::SubprogramHeadNode* subprogram_head_node;
+    pascals::ast::SubprogramBodyNode* subprogram_body_node;
+    pascals::ast::CompoundStatementNode* compound_statement_node;
+    pascals::ast::StatementListNode* statement_list_node;
+    pascals::ast::StatementNode* statement_node;
+    pascals::ast::ElseNode* else_node;
+    pascals::ast::UpdownNode* updown_node;
+    pascals::ast::ProcedureCallNode* procedure_call_node;
+};
 %parse-param {pascals::ast::AST *real_ast}
 %start program
 %token PROGRAM FUNCTION PROCEDURE TO DOWNTO 
 %token ARRAY TYPE CONST RECORD
 %token IF THEN ELSE CASE OF WHILE DO FOR REPEAT UNTIL BEGIN_ END
 %token ADDOP NOT PLUS UMINUS CONSTASSIGNOP  
-%token<token_info> ID CHAR INT_NUM REAL_NUM BASIC_TYPE RELOP MULOP STRING_ VAR SUBCATALOG
-%token<token_info> ASSIGNOP WRITE WRITELN SEP READ READLN TRUE FALSE ';'
+%token <token_info> ID CHAR INT_NUM REAL_NUM BASIC_TYPE RELOP MULOP STRING_ VAR SUBCATALOG
+%token <token_info> ASSIGNOP WRITE WRITELN SEP READ READLN TRUE FALSE ';'
 %type<id_list_node_info> id_list
 %type<value_node_info> const_variable num
 %type<periods_node_info> periods
@@ -99,13 +147,12 @@ void semantic_error(AST* real_ast,std::string msg,int line,int row){
 
 %%
 
-program : 
-    program_head program_body '.'
+program : program_head program_body '.'
     {   
         // prgram -> program_head program_body '.'
-	ProgramNode* node = new ProgramNode();
-        node->append_child($1);
-        node->append_child($2);
+	    ProgramNode* headnode = new ProgramNode();
+        headnode->append_child($1);
+        headnode->append_child($2);
 
         if((!error_flag) && (!semantic_error_flag) && (!lex_error_flag)){
             real_ast->set_root(node);
@@ -113,85 +160,56 @@ program :
         }
         delete top_table_set;
     };
-program_head :
-    PROGRAM ID '(' id_list ')' ';' {
+program_head : PROGRAM ID '(' id_list ')' ';' {
         // program_head -> PROGRAM ID '(' id_list ')' ';'
-    	if(error_flag)
-	        break;
-        $$ = new ProgramHeadNode();
+        $$ = new ProgramHead();
         LeafNode* leaf_node = new LeafNode($2.value);
+        $$->append_child()
         $$->append_child(leaf_node);
-        table_set_queue.push(top_table_set);
-        real_ast->libs()->Preset(table_set_queue.top()->symbols());
     } | PROGRAM ID '('  ')' ';' {
         // program_head -> PROGRAM ID '('  ')' ';'
-	    if(error_flag)
-	        break;
-        $$ = new ProgramHeadNode();
-        LeafNode* leaf_node = new LeafNode($2.value);
-        $$->append_child(leaf_node);
-        table_set_queue.push(top_table_set);
-        real_ast->libs()->Preset(table_set_queue.top()->symbols());
+        $$ = new ProgramHead();
     } | PROGRAM ID ';' {
         // program_head -> PROGRAM ID ';'
-        if(error_flag)
-            break;
-        $$ = new ProgramHeadNode();
-        LeafNode* leaf_node = new LeafNode($2.value);
-        $$->append_child(leaf_node);
-        table_set_queue.push(top_table_set);
-        real_ast->libs()->Preset(table_set_queue.top()->symbols());
+        $$ = new ProgramHead();
     }
-program_body :
-    const_declarations type_declarations var_declarations 
-    subprogram_declarations compound_statement {
+program_body : const_declarations record_declarations var_declarations subprogram_declarations compound_statement {
         // program_body -> const_declarations type_declarations var_declarations subprogram_declarations compound_statement
         if(error_flag)
             break;
-        $$ = new ProgramBodyNode();
+        $$ = new ProgramBody();
         $$->append_child($1);
         $$->append_child($2);
         $$->append_child($3);
         $$->append_child($4);
         $$->append_child($5);
     };
-id_list :
-    id_list ',' ID { 
+id_list : id_list ',' ID { 
         // id_list -> id_list ',' ID
-        $1.list_ref->push_back(std::make_pair($3.value.get<string>(),$3.column_num));
-        $$.list_ref = $1.list_ref;
-        $$.id_list_node = new IdListNode(IdListNode::GrammarType::MULTIPLE_ID);
-        if(error_flag)
-            break;
-        LeafNode* leaf_node = new LeafNode($3.value);
+        // 插入idlist node以及 ID叶子节点
+        LeafNode* leaf_node = new LeafNode($3.id, LeafNode::LeafType::NAME);
         $$.id_list_node->append_child($1.id_list_node);
         $$.id_list_node->append_child(leaf_node);
     } | ID {
         // id_list -> ID
-        $$.list_ref = new std::vector<std::pair<std::string,int>>();
-        $$.list_ref->push_back(std::make_pair($1.value.get<string>(),$1.column_num));
-        if(error_flag)
-            break;
-        $$.id_list_node = new IdListNode(IdListNode::GrammarType::SINGLE_ID);
-        LeafNode* leaf_node = new LeafNode($1.value);
+        LeafNode* leaf_node = new LeafNode($1.id, LeafNode::LeafType::NAME);
         $$.id_list_node->append_child(leaf_node);
     };
 const_declarations :{
         // const_declarations -> empty
         if(error_flag)
             break;
-        $$ = new ConstDeclarationsNode();
+        $$ = new ConstDeclarations();
     }
     | CONST const_declaration ';'
     {   
         // const_declarations -> CONST const_declaration ';'
         if(error_flag)
             break;
-        $$ = new ConstDeclarationsNode(); 
+        $$ = new ConstDeclarations(); 
         $$->append_child($2);
     };
-const_declaration :
-    const_declaration ';' ID '=' const_variable
+const_declaration : const_declaration ';' ID '=' const_variable
     {
         // const_declaration -> const_declaration ';' ID '=' const_variable
         if(error_flag)

@@ -10,7 +10,7 @@
 extern int yydebug;
 
 struct Token {
-  ConstValue value;
+  std::string id;
   int length;
   int line_num;
   int column_num;

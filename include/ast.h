@@ -74,11 +74,17 @@ class AST
 class LeafNode: public AstNode
 {
   public:
+    enum class LeafType{
+      VALUE,
+      NAME,
+    };
     LeafNode() {}
-    LeafNode(ConstValue val)
-        : value_(val)
+    LeafNode(ConstValue val, LeafType lt)
+        : value_(val), leaf_type(lt)
     {}
-
+    LeafNode(std::string name, LeafType lt)
+        : id_name(name), leaf_type(lt)
+    {}
     // getter and setter
     void set_value(ConstValue value) { value_ = value; }
     void set_ref(bool ref) { is_ref = ref; }
@@ -96,6 +102,8 @@ class LeafNode: public AstNode
 
   private:
     ConstValue value_;    // const values
+    LeafType leaf_type;
+    std::string id_name;
     bool is_ref = false;  // 是否为引用
 };
 
@@ -112,6 +120,7 @@ class ProgramHead: public AstNode
 class ProgramBody: public AstNode
 {
     // program_body -> const_declarations
+    //                 record_delcarations
     //                 var_declarations
     //                 subprogram_declarations
     //                 compound_statement
