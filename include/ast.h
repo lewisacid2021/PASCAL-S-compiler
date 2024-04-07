@@ -162,8 +162,6 @@ class ConstDeclarations: public AstNode
         DECLARATION,
     };
 
-    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
-
     ConstDeclarations(GrammarType gt)
         : grammar_type(gt){};
     GrammarType GetGrammarType()
@@ -239,6 +237,13 @@ class VarDeclaration: public AstNode
         : grammar_type(gt)
     {}
 
+    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
+
+    GrammarType GetGrammarType()
+    {
+        return grammar_type;
+    };
+
   private:
     GrammarType grammar_type;
 };
@@ -263,6 +268,8 @@ class TypeNode: public AstNode
         : var_type(vt)
     {}
     VarType GetVarType() { return var_type; }
+
+    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
 
   private:
     VarType var_type;
@@ -748,6 +755,8 @@ class Visitor
     virtual void visit(LeafNode *leafnode, FILE *fs)                 = 0;
     virtual void visit(IdList *idlist, FILE *fs)                     = 0;
     virtual void visit(ConstDeclaration *constdeclaration, FILE *fs) = 0;
+    virtual void visit(TypeNode *typenode, FILE *fs) = 0;
+    virtual void visit(VarDeclaration *constdeclaration, FILE *fs) = 0;
 };
 
 class GenerationVisitor: public Visitor
@@ -758,6 +767,8 @@ class GenerationVisitor: public Visitor
     void visit(LeafNode *leafnode, FILE *fs) override;
     void visit(IdList *idlist, FILE *fs) override;
     void visit(ConstDeclaration *constdeclaration, FILE *fs) override;
+    void visit(TypeNode *typenode, FILE *fs) override;
+    void visit(VarDeclaration *vardeclaration, FILE *fs) override;
 };
 
 }  // namespace ast
