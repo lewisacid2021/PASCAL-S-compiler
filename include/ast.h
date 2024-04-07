@@ -22,8 +22,7 @@ class AstNode
         }
     }
 
-    virtual void accept(Visitor *visitor, FILE *fs) = 0;  //访问者接口
-
+    virtual void accept(Visitor *visitor, FILE *fs);  //访问者接口
     //添加父节点及查看父节点的方法
     void set_parent(AstNode *parent)
     {
@@ -90,7 +89,7 @@ class LeafNode: public AstNode
         return value_.get<T>();
     }
     ConstValue::ConstvalueType get_type() { return value_.type(); }
-    void accept(Visitor *visitor, FILE *fs);  //访问者接口
+    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
 
     // Analyze reference
     //bool AnalyzeReference(TableSet *ts, FunctionSymbol *fn);
@@ -133,7 +132,7 @@ class IdList: public AstNode
         : grammar_type_(gt)
     {}
 
-    void accept(Visitor *visitor, FILE *fs);  //访问者接口
+    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
 
     GrammarType GetGrammarType()
     {
@@ -154,7 +153,7 @@ class ConstDeclarations: public AstNode
         DECLARATION,
     };
 
-    void accept(Visitor *visitor, FILE *fs);  //访问者接口
+    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
 
     ConstDeclarations(GrammarType gt)
         : grammar_type(gt){};
@@ -182,7 +181,7 @@ class ConstDeclaration: public AstNode
         , type(bt){};
     void print_type(FILE *fs);
 
-    void accept(Visitor *visitor, FILE *fs);  //访问者接口
+    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
 
     GrammarType GetGrammarType()
     {
