@@ -19,33 +19,31 @@ void GenerationVisitor::visit(AstNode *astnode, FILE *fs)
         child->accept(this, fs);
 }
 
-void GenerationVisitor::visit(LeafNode *leafnode, FILE *fs)  
+void GenerationVisitor::visit(LeafNode *leafnode, FILE *fs)
 {
-    if(leafnode->getLeafType()==LeafNode::LeafType::NAME)
-    {
-        fprintf(fs, "%s", leafnode->getIdName().c_str());
-    }
-    else if(leafnode->getLeafType()==LeafNode::LeafType::VALUE)
-    {
-        switch(leafnode->get_type()) {
+    switch (leafnode->get_type()) {
         case ConstValue::ConstvalueType::INTEGER:
-            fprintf(fs, "%d", leafnode->get_value<int>());  
+            fprintf(fs, "%d", leafnode->get_value<int>());
             break;
         case ConstValue::ConstvalueType::REAL:
-            fprintf(fs, "%f", leafnode->get_value<float>()); 
+            fprintf(fs, "%f", leafnode->get_value<float>());
             break;
         case ConstValue::ConstvalueType::BOOLEAN:
-            fprintf(fs, "%s", leafnode->get_value<bool>()?"true":"false");
+            fprintf(fs, "%s", leafnode->get_value<bool>() ? "true" : "false");
             break;
         case ConstValue::ConstvalueType::CHAR:
             fprintf(fs, "\'%c\'", leafnode->get_value<char>());
             break;
         case ConstValue::ConstvalueType::STRING:
-            fprintf(fs, "\"%s\"", leafnode->get_value<string>().c_str());
-            break;
-        default:
+        {
+            if (leafnode->getLeafType() == LeafNode::LeafType::VALUE)
+                fprintf(fs, "\"%s\"", leafnode->get_value<string>().c_str());
+            else
+                fprintf(fs, "%s", leafnode->get_value<string>().c_str());
             break;
         }
+        default:
+            break;
     }
 }
 
@@ -55,24 +53,24 @@ void GenerationVisitor::visit(IdList *idlist, FILE *fs)
     if (idlist->GetGrammarType() == IdList::GrammarType::MULTIPLE_ID) {
         fprintf(fs, ", ");
         idlist->getCnodeList()[1]->accept(this, fs);
-  }
+    }
 }
 
 void ConstDeclaration::print_type(FILE *fs)
 {
-    switch(type)
+    switch (type)
     {
         case ConstValue::ConstvalueType::INTEGER:
-            fprintf(fs, "int");
+            fprintf(fs, "int ");
             break;
         case ConstValue::ConstvalueType::REAL:
-            fprintf(fs, "float");
+            fprintf(fs, "float ");
             break;
         case ConstValue::ConstvalueType::CHAR:
-            fprintf(fs, "char");
+            fprintf(fs, "char ");
             break;
         case ConstValue::ConstvalueType::STRING:
-            fprintf(fs, "string");
+            fprintf(fs, "string ");
             break;
         default:
             break;
@@ -81,56 +79,111 @@ void ConstDeclaration::print_type(FILE *fs)
 
 void GenerationVisitor::visit(ConstDeclaration *constdeclaration, FILE *fs)
 {
-    auto type=constdeclaration->GetGrammarType();
-    if (type == ConstDeclaration::GrammarType::MULTIPLE_ID)
+    if (constdeclaration->GetGrammarType() == ConstDeclaration::GrammarType::MULTIPLE_ID)
     {
         constdeclaration->getCnodeList()[0]->accept(this, fs);
-        
+
         fprintf(fs, "const ");
         constdeclaration->print_type(fs);
         constdeclaration->getCnodeList()[1]->accept(this, fs);
         fprintf(fs, " = ");
         constdeclaration->getCnodeList()[2]->accept(this, fs);
         fprintf(fs, ";\n");
-    } 
-    else if (type == ConstDeclaration::GrammarType::SINGLE_ID)
-     {
+    } else
+    {
         fprintf(fs, "const ");
         constdeclaration->print_type(fs);
         constdeclaration->getCnodeList()[0]->accept(this, fs);
         fprintf(fs, " = ");
         constdeclaration->getCnodeList()[1]->accept(this, fs);
         fprintf(fs, ";\n");
-  }
+    }
 }
 
 void GenerationVisitor::visit(TypeNode *typenode, FILE *fs)
 {
     switch (typenode->GetVarType()) {
-    case TypeNode::VarType::BASIC_TYPE:
-      
-      break;
-    case TypeNode::VarType::ARRAY_TYPE:  // upper funciton will solve this
-      break;
-    case GrammarType::RECORD_TYPE:
-      PRINT("struct {\n")
-      FormatAt(0, dst);
-      PRINT("}")
-      break;
-  }
+        case TypeNode::VarType::BASIC_TYPE:
+        case TypeNode::VarType::ARRAY_TYPE:
+        case TypeNode::VarType::STRING_TYPE:  
+            typenode->getCnodeList()[0]->accept(this, fs);
+            break;
+        case TypeNode::VarType::RECORD_TYPE:
+            fprintf(fs, "struct {\n");
+            typenode->getCnodeList()[0]->accept(this, fs);
+            fprintf(fs, "}");
+            break;
+    }
+}
+
+void GenerationVisitor::visit(BasicTypeNode *basictypenode, FILE *fs)
+{
+    switch (basictypenode->type()->type()) {
+        case BasicType::BASIC_TYPE::INTEGER:
+            fprintf(fs, "int ");
+            break;
+        case BasicType::BASIC_TYPE::REAL:
+            fprintf(fs, "float ");
+            break;
+        case BasicType::BASIC_TYPE::BOOLEAN:
+            fprintf(fs, "bool ");
+            break;
+        case BasicType::BASIC_TYPE::CHAR:
+            fprintf(fs, "char ");
+            break;
+        default:
+            break;
+    }
+}
+
+void GenerationVisitor::visit(ArrayTypeNode *arraytypenode, FILE *fs)
+{
+    switch (arraytypenode->type()->type()) {
+        case BasicType::BASIC_TYPE::INTEGER:
+            fprintf(fs, "int");
+            break;
+        case BasicType::BASIC_TYPE::REAL:
+            fprintf(fs, "float");
+            break;
+        case BasicType::BASIC_TYPE::BOOLEAN:
+            fprintf(fs, "bool");
+            break;
+        case BasicType::BASIC_TYPE::CHAR:
+            fprintf(fs, "char");
+            break;
+        default:
+            break;
+    }
+    arraytypenode->getCnodeList()[0]->accept(this, fs);
+}
+
+void GenerationVisitor::visit(StringTypeNode *stringtypenode, FILE *fs)
+{
+    auto type=stringtypenode->type();
+    switch (type->GetGrammarType())
+    {
+        case StringType::GrammarType::LIMIT:
+            fprintf(fs, "char[%d] ", type->GetLen());
+            break;
+        case StringType::GrammarType::NOLIMIT:
+            fprintf(fs, "char[%d] ", MAX_STRING_LEN);
+            break;
+        default:
+            break;
+        
+    }
 }
 
 void GenerationVisitor::visit(VarDeclaration *vardeclaration, FILE *fs)
 {
-    auto type=vardeclaration->GetGrammarType();
-    if (type == VarDeclaration::GrammarType::MULTIPLE_ID)
+    auto type = vardeclaration->GetGrammarType();
+    if (type == VarDeclaration::GrammarType::MULTIPLE_DECL)
     {
         vardeclaration->getCnodeList()[0]->accept(this, fs);
         fprintf(fs, " ");
         vardeclaration->getCnodeList()[1]->accept(this, fs);
         fprintf(fs, ";\n");
-    } 
-    else if (type == VarDeclaration::GrammarType::SINGLE_ID)
+    } else
     {
         vardeclaration->getCnodeList()[0]->accept(this, fs);
         fprintf(fs, " ");
@@ -165,6 +218,21 @@ void ConstDeclaration::accept(Visitor *visitor, FILE *fs)
 }
 
 void TypeNode::accept(Visitor *visitor, FILE *fs)
+{
+    visitor->visit(this, fs);
+}
+
+void BasicTypeNode::accept(Visitor *visitor, FILE *fs)
+{
+    visitor->visit(this, fs);
+}
+
+void ArrayTypeNode::accept(Visitor *visitor, FILE *fs)
+{
+    visitor->visit(this, fs);
+}   
+
+void StringTypeNode::accept(Visitor *visitor, FILE *fs)
 {
     visitor->visit(this, fs);
 }

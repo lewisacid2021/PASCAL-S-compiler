@@ -92,6 +92,7 @@ class LeafNode: public AstNode
         return value_.get<T>();
     }
     ConstValue::ConstvalueType get_type() { return value_.type(); }
+    LeafType getLeafType() { return leaf_type; }
     void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
 
     // Analyze reference
@@ -339,6 +340,7 @@ public:
     StringTypeNode(StringType *type) : string_type(type) {}
 
     void set_type(StringType *type) { string_type = type; }
+    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
     StringType *type() { return string_type; }
 
 private:
@@ -754,6 +756,9 @@ class Visitor
     virtual void visit(IdList *idlist, FILE *fs)                     = 0;
     virtual void visit(ConstDeclaration *constdeclaration, FILE *fs) = 0;
     virtual void visit(TypeNode *typenode, FILE *fs) = 0;
+    virtual void visit(BasicTypeNode *basictypenode, FILE *fs) = 0;
+    virtual void visit(ArrayTypeNode *arraytypenode, FILE *fs) = 0;
+    virtual void visit(StringTypeNode *stringtypenode, FILE *fs) = 0;
     virtual void visit(VarDeclaration *constdeclaration, FILE *fs) = 0;
 };
 
@@ -766,6 +771,9 @@ class GenerationVisitor: public Visitor
     void visit(IdList *idlist, FILE *fs) override;
     void visit(ConstDeclaration *constdeclaration, FILE *fs) override;
     void visit(TypeNode *typenode, FILE *fs) override;
+    void visit(BasicTypeNode *basictypenode, FILE *fs) override;
+    void visit(ArrayTypeNode *arraytypenode, FILE *fs) override;
+    void visit(StringTypeNode *stringtypenode, FILE *fs) override;
     void visit(VarDeclaration *vardeclaration, FILE *fs) override;
 };
 
