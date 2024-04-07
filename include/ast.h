@@ -458,7 +458,7 @@ class Statement: public AstNode
     Statement(StatementType st)
         : statement_type(st)
     {}
-
+ void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     StatementType statement_type;
 };
@@ -472,7 +472,7 @@ class AssignopStatement: public AstNode
         VARIABLE,  // statement -> variable assignop expression
         FUNC,      // statement -> func_id assignop expression
     };
-
+ void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     LEFTTYPE left_type;
 };
@@ -489,7 +489,7 @@ class ProcedureCall: public AstNode
     ProcedureCall(ProcedureType pt)
         : procedure_type(pt)
     {}
-
+ void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     ProcedureType procedure_type;
 };
@@ -513,6 +513,7 @@ class LoopStatement: public AstNode
     //                 | for id assignop expression downto expression do statement
     //                 | while expression do statement
     //                 | repeat statement until expression
+ void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     LoopType loop_type;
 };
@@ -532,7 +533,7 @@ class ElsePart: public AstNode
     // Statement *GetStatement() {
     //     return cnode_list[0]->DynamicCast<StatementNode>();
     // }
-
+ void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     ELSEType grammar_type_;
 };
@@ -553,7 +554,7 @@ class VariableList: public AstNode
     {}
     std::string FormatString();
     bool set_types(std::vector<BaseType *> *type_list);
-
+ void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     std::vector<BasicType *> basic_types;
     GrammarType grammar_type_;
@@ -642,7 +643,7 @@ class Expression: public AstNode
         : symbol_type(st)
     {}
     SymbolType GetType() { return symbol_type; }
-
+ void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     ExpressionType expression_type;
     SymbolType symbol_type;
@@ -672,7 +673,7 @@ class SimpleExpression: public AstNode
     {}
     SymbolType GetSymType() { return symbol_type; }
     ExpressionType GetExpType() { return expression_type; }
-
+ void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     SymbolType symbol_type;
     ExpressionType expression_type;
@@ -702,7 +703,7 @@ class Term: public AstNode
         , term_type(et){};
     SymbolType GetSymType() { return symbol_type; }
     TermType GetExpType() { return term_type; }
-
+ void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     SymbolType symbol_type;
     TermType term_type;
@@ -726,7 +727,7 @@ class Factor: public AstNode
     Factor(FactorType ft)
         : factor_type(ft)
     {}
-
+ void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     FactorType factor_type;
 };
