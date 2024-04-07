@@ -21,7 +21,13 @@ void GenerationVisitor::visit(AstNode *astnode, FILE *fs)
 
 void GenerationVisitor::visit(LeafNode *leafnode, FILE *fs)  
 {
-    switch(leafnode->get_type()) {
+    if(leafnode->getLeafType()==LeafNode::LeafType::NAME)
+    {
+        fprintf(fs, "%s", leafnode->getIdName().c_str());
+    }
+    else if(leafnode->getLeafType()==LeafNode::LeafType::VALUE)
+    {
+        switch(leafnode->get_type()) {
         case ConstValue::ConstvalueType::INTEGER:
             fprintf(fs, "%d", leafnode->get_value<int>());  
             break;
@@ -32,13 +38,14 @@ void GenerationVisitor::visit(LeafNode *leafnode, FILE *fs)
             fprintf(fs, "%s", leafnode->get_value<bool>()?"true":"false");
             break;
         case ConstValue::ConstvalueType::CHAR:
-            fprintf(fs, "%c", leafnode->get_value<char>());
+            fprintf(fs, "\'%c\'", leafnode->get_value<char>());
             break;
         case ConstValue::ConstvalueType::STRING:
             fprintf(fs, "\"%s\"", leafnode->get_value<string>().c_str());
             break;
         default:
             break;
+        }
     }
 }
 
@@ -100,10 +107,10 @@ void GenerationVisitor::visit(ConstDeclaration *constdeclaration, FILE *fs)
 void GenerationVisitor::visit(TypeNode *typenode, FILE *fs)
 {
     switch (typenode->GetVarType()) {
-    case GrammarType::BASIC_TYPE:
-      FormatAt(0, dst);
+    case TypeNode::VarType::BASIC_TYPE:
+      
       break;
-    case GrammarType::ARRAY:  // upper funciton will solve this
+    case TypeNode::VarType::ARRAY_TYPE:  // upper funciton will solve this
       break;
     case GrammarType::RECORD_TYPE:
       PRINT("struct {\n")
