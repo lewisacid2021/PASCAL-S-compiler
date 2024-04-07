@@ -97,6 +97,41 @@ void GenerationVisitor::visit(ConstDeclaration *constdeclaration, FILE *fs)
   }
 }
 
+void GenerationVisitor::visit(TypeNode *typenode, FILE *fs)
+{
+    switch (typenode->GetVarType()) {
+    case GrammarType::BASIC_TYPE:
+      FormatAt(0, dst);
+      break;
+    case GrammarType::ARRAY:  // upper funciton will solve this
+      break;
+    case GrammarType::RECORD_TYPE:
+      PRINT("struct {\n")
+      FormatAt(0, dst);
+      PRINT("}")
+      break;
+  }
+}
+
+void GenerationVisitor::visit(VarDeclaration *vardeclaration, FILE *fs)
+{
+    auto type=vardeclaration->GetGrammarType();
+    if (type == VarDeclaration::GrammarType::MULTIPLE_ID)
+    {
+        vardeclaration->getCnodeList()[0]->accept(this, fs);
+        fprintf(fs, " ");
+        vardeclaration->getCnodeList()[1]->accept(this, fs);
+        fprintf(fs, ";\n");
+    } 
+    else if (type == VarDeclaration::GrammarType::SINGLE_ID)
+    {
+        vardeclaration->getCnodeList()[0]->accept(this, fs);
+        fprintf(fs, " ");
+        vardeclaration->getCnodeList()[1]->accept(this, fs);
+        fprintf(fs, ";\n");
+    }
+}
+
 void AST::accept(Visitor *visitor, FILE *fs)
 {
     visitor->visit(this, fs);
@@ -122,6 +157,14 @@ void ConstDeclaration::accept(Visitor *visitor, FILE *fs)
     visitor->visit(this, fs);
 }
 
+void TypeNode::accept(Visitor *visitor, FILE *fs)
+{
+    visitor->visit(this, fs);
+}
 
+void VarDeclaration::accept(Visitor *visitor, FILE *fs)
+{
+    visitor->visit(this, fs);
+}
 
 }  // namespace ast
