@@ -186,7 +186,7 @@ program_body : const_declarations record_declarations var_declarations subprogra
     };
 id_list : id_list ',' ID { 
         // id_list -> id_list ',' ID
-        // 插入idlist node以及 ID叶子节点
+        // 插入idlist node以及叶子节点
         LeafNode* leaf_node = new LeafNode($3.id, LeafNode::LeafType::NAME);
         $$.id_list_node->append_child($1.id_list_node);
         $$.id_list_node->append_child(leaf_node);
@@ -212,22 +212,12 @@ const_declarations :{
 const_declaration : const_declaration ';' ID '=' const_variable
     {
         // const_declaration -> const_declaration ';' ID '=' const_variable
-        if(error_flag)
-            break;
-        if (!$5.is_right)
-            break;
-        ConstSymbol *symbol = new ConstSymbol($3.value.get<string>(),$5.value,$3.line_num);
-
-        if(!table_set_queue.top()->Insert<ConstSymbol>($3.value.get<string>(),symbol)){
-            string tn = $3.value.get<string>();
-            semantic_error(real_ast,"redefinition of '"+tn+"'",$3.line_num,$3.column_num);
-        } else{
-            $$ = new ConstDeclarationNode(ConstDeclarationNode::GrammarType::DECLARATION,$5.type_ptr);
-            $$->append_child($1);
-            LeafNode* leaf_node = new LeafNode($3.value);
-            $$->append_child(leaf_node);
-            $$->append_child($5.const_variable_node);
-        }
+        $$ = new ConstDeclaration(ConstDeclarationNode::GrammarType::MULTIPLE_ID,$5.type_ptr);
+        $$->append_child($1);
+        LeafNode* leaf_node = new LeafNode($3.id, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
+        $$->append_child($5.const_variable_node);
+        
     }
     | ID '=' const_variable
     {   
