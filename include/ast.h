@@ -453,17 +453,21 @@ class StatementList: public AstNode
 
 class Statement: public AstNode
 {
+  //子节点为各种statement节点
   public:
     enum class StatementType
     {
         EPSILON,             // statement -> EPSILON
-        ASSIGN_OP_STATEMENT,
+        ASSIGN_OP_STATEMENT, // 子节点为AssignopStatement
 
         PROCEDURE_CALL,      // statement -> procedure_call
+                             // 子节点为ProcedureCall
         COMPOUND_STATEMENT,  // statement -> compound_statement
+                             // 子节点为CompoundStatement
         IF_STATEMENT,        // statement -> if-statement
+                             // 子节点为IfStatement
         LOOP_STATEMENT,      // statement -> loop-statement
-
+                             // 子节点为LoopStatement
         READ_STATEMENT,      // statement -> read ( variable_list )
         READLN_STATEMENT,    // statement -> readln ( variable_list )
         WRITE_STATEMENT,     // statement -> write ( expression_list )
