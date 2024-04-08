@@ -67,6 +67,8 @@ private:
     std::vector<Dimension> dimensions;  // multi-dims bounds
 };
 
+constexpr int MAX_STRING_LEN = 256;
+
 class StringType : public BaseType {
 public:
     enum class GrammarType{
