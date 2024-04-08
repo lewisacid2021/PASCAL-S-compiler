@@ -98,7 +98,7 @@ void semantic_error(AST* real_ast,std::string msg,int line,int row){
 %token ADDOP NOT PLUS UMINUS CONSTASSIGNOP  
 %token <token_info> ID CHAR INT_NUM REAL_NUM BASIC_TYPE RELOP MULOP STRING_ VAR SUBCATALOG
 %token <token_info> ASSIGNOP WRITE WRITELN SEP READ READLN TRUE FALSE ';'
-%type<id_list_node_info> id_list
+%type <id_list_node_info> id_list
 %type<value_node_info> const_variable num
 %type<periods_node_info> periods
 %type<period_node_info> period
@@ -164,7 +164,7 @@ program_head : PROGRAM ID '(' id_list ')' ';' {
         // program_head -> PROGRAM ID '(' id_list ')' ';'
         $$ = new ProgramHead();
         LeafNode* leaf_node = new LeafNode($2.value);
-        $$->append_child()
+        $$->append_child($3)
         $$->append_child(leaf_node);
     } | PROGRAM ID '('  ')' ';' {
         // program_head -> PROGRAM ID '('  ')' ';'
@@ -209,117 +209,49 @@ const_declarations :{
         $$ = new ConstDeclarations(); 
         $$->append_child($2);
     };
-const_declaration : const_declaration ';' ID '=' const_variable
+const_declaration : const_declaration ';' ID '=' const_value
     {
-        // const_declaration -> const_declaration ';' ID '=' const_variable
-        $$ = new ConstDeclaration(ConstDeclarationNode::GrammarType::MULTIPLE_ID,$5.type_ptr);
+        // const_declaration -> const_declaration ';' ID '=' const_value
+        $$ = new ConstDeclaration(ConstDeclarationNode::GrammarType::MULTIPLE_ID, $5.type);
         $$->append_child($1);
+        //初始化 id 叶子节点
         LeafNode* leaf_node = new LeafNode($3.id, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
-        $$->append_child($5.const_variable_node);
+        //初始化 const_value 叶子节点
+        LeafNode* leaf_node = new LeafNode($5.value, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
         
     }
-    | ID '=' const_variable
+    | ID '=' const_value
     {   
-        // const_declaration -> ID '=' const_variable
-        if(error_flag)
-            break;
-        if (!$3.is_right)
-            break;
-        ConstSymbol *symbol = new ConstSymbol($1.value.get<string>(),$3.value,$1.line_num);
-
-        if(!table_set_queue.top()->Insert<ConstSymbol>($1.value.get<string>(),symbol)){
-            string tn = $1.value.get<string>();
-            semantic_error(real_ast,"redefinition of '"+tn+"'",$1.line_num,$1.column_num);
-        } else {
-            $$ = new ConstDeclarationNode(ConstDeclarationNode::GrammarType::VALUE,$3.type_ptr);
-            LeafNode* leaf_node = new LeafNode($1.value);
-            $$->append_child(leaf_node);
-            $$->append_child($3.const_variable_node);
-        }
+        // const_declaration -> ID '=' const_value
+        $$ = new ConstDeclarationNode(ConstDeclarationNode::GrammarType::SINGLE_ID, $3.type);
+        //初始化 id 叶子节点
+        LeafNode* leaf_node = new LeafNode($3.id, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
+        //初始化 const_value 叶子节点
+        LeafNode* leaf_node = new LeafNode($5.value, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
     };
-const_variable :
-    PLUS ID
-    {   
-        // const_variable -> PLUS ID
-        if(error_flag)
-            break;
-        ConstSymbol *symbol = table_set_queue.top()->SearchEntry<ConstSymbol>($2.value.get<string>());
-        $$.type_ptr = TYPE_ERROR;
-        if(!symbol){
-            string tn = $2.value.get<string>();
-            semantic_error(real_ast,"'"+tn+"' undeclared or is not constant",$2.line_num,$2.column_num);
-            $$.is_right = false;
-        } else {
-            /* You cannot use variables to assign values to constants */
-            $$.value = symbol->value();
-            $$.type_ptr = symbol->type();
-            $$.const_variable_node = new LeafNode(ConstValue("+" + $2.value.get<string>()));     
-        }
-    }
-    | UMINUS ID
+
+const_value : INT_NUM
     {
-        // const_variable -> UMINUS ID
-        if(error_flag)
-            break;
-        ConstSymbol *symbol = table_set_queue.top()->SearchEntry<ConstSymbol>($2.value.get<string>());
-        $$.type_ptr = TYPE_ERROR;
-        if(!symbol){
-            string tn = $2.value.get<string>();
-            semantic_error(real_ast,"'"+tn+"' undeclared or is not constant",$2.line_num,$2.column_num);
-            $$.is_right = false;
-        } else {
-            /* You cannot use variables to assign values to constants */
-            $$.type_ptr = symbol->type();
-            $$.value = symbol->value();
-            $$.const_variable_node = new LeafNode(ConstValue("-" + $2.value.get<string>()));
-        }
-    }
-    | ID
-    {
-        // const_variable -> ID
-        if(error_flag)
-            break;
-        ConstSymbol *symbol = table_set_queue.top()->SearchEntry<ConstSymbol>($1.value.get<string>());
-        $$.type_ptr = TYPE_ERROR;
-        if(!symbol){
-            string tn = $1.value.get<string>();
-            semantic_error(real_ast,"'"+tn+"' undeclared or is not constant",$1.line_num,$1.column_num);
-            $$.is_right = false;
-        } else {
-            $$.type_ptr = symbol->type();
-            $$.value = symbol->value();
-        }
-        $$.const_variable_node = new LeafNode($1.value);
-    }
-    |UMINUS num
-    {  
-        // const_variable -> UMINUS num
-        $$.type_ptr = $2.type_ptr;
-        $2.value.set_unimus();
-        $$.value = $2.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode($2.value);
-    }
-    | num
-    {   
-        // const_variable -> num
-        $$.type_ptr = $1.type_ptr;
+        // const_value -> INT_NUM
+        $$.type_ptr = TYPE_INT;
         $$.value = $1.value;
         if(error_flag)
             break; 
         $$.const_variable_node = new LeafNode($1.value);
     }
-    |PLUS num
-    {  
-        // const_variable -> PLUS num
-        $$.type_ptr = $2.type_ptr;
-        $$.value = $2.value;
+    | REAL_NUM
+    {   
+        // const_value -> REAL_NUM
+        $$.type_ptr = TYPE_REAL;
+        $$.value = $1.value;
         if(error_flag)
             break; 
-        $$.const_variable_node = new LeafNode($2.value);
-    }
+        $$.const_variable_node = new LeafNode($1.value);
+    };
     | CHAR
     {
         // const_variable -> CHAR
@@ -329,101 +261,130 @@ const_variable :
             break; 
         $$.const_variable_node = new LeafNode($1.value);
 
-    }| TRUE
+    }
+    | TRUE
     {
         $$.type_ptr = TYPE_BOOL;
         $$.value = $1.value;
         if(error_flag)
             break; 
         $$.const_variable_node = new LeafNode(ConstValue(true));
-    }| FALSE
+    }
+    | FALSE
     {
         $$.type_ptr = TYPE_BOOL;
         $$.value = $1.value;
         if(error_flag)
             break; 
         $$.const_variable_node = new LeafNode(ConstValue(false));
+    }
+    | STRING
+    {
+        $$.type_ptr = TYPE_STRING;
+        $$.value = $1.value;
+        if(error_flag)
+            break; 
+        $$.const_variable_node = new LeafNode(ConstValue(false));
     };
 
-num :
-    INT_NUM
+var_declarations : 
     {
-        // num -> INT_NUM
-        $$.type_ptr = TYPE_INT;
-        $$.value = $1.value;
-    }
-    | REAL_NUM
-    {   
-        // num -> REAL_NUM
-        $$.type_ptr = TYPE_REAL;
-        $$.value = $1.value;
-    };
-type_declarations : 
-    {
-        // type_declarations -> empty
+        // var_declarations -> empty
         if(error_flag)
             break;
-        $$ = new TypeDeclarationsNode();
+        $$ = new VaDeclarations(VarDeclarations::GrammarType::EPSILON);
     }
-    | TYPE type_declaration ';'
+    | VAR var_declaration ';'
     {
-        // type_declarations -> TYPE type_declaration ';'
+        // var_declarations -> VAR var_declaration ';'
         if(error_flag)
-            break;
-        $$ = new TypeDeclarationsNode();
+            break;    
+        $$ = new VaDeclarations(VarDeclarations::GrammarType::DECLARATION);
         $$->append_child($2);
     };
-type_declaration :
-    type_declaration ';' ID '=' type
-    {
-        // type_declaration -> type_declaration ';' ID '=' type
-        if(error_flag)
-            break;
-        string tn = $3.value.get<string>();
-        bool err1 = $5.main_type == TypeAttr::BASIC && !table_set_queue.top()->Insert<BasicType>(tn,dynamic_cast<BasicType*>($5.type_ptr));
-        bool err2 = $5.main_type == TypeAttr::ARRAY && !table_set_queue.top()->Insert<ArrayType>(tn,dynamic_cast<ArrayType*>($5.type_ptr));
-        bool err3 = $5.record_info && !table_set_queue.top()->Insert<RecordType>(tn,dynamic_cast<RecordType*>($5.type_ptr));
-        if(err1 || err2 || err3){
-	    semantic_error(real_ast,"redefinition of '"+tn+"'",$3.line_num,$3.column_num);
-	}
 
-        $$ = new TypeDeclarationNode(TypeDeclarationNode::GrammarType::MULTIPLE_DECL);
-        $$->append_child($1);
-        LeafNode *leaf_node = new LeafNode($3.value);
-        $$->append_child(leaf_node);
+var_declaration : var_declaration ';' id_list ':' type 
+    {
+        // var_declaration -> var_declaration ';' id_list ':' type
+         if(error_flag)
+            break;   
+        $$ = new VarDeclaration(VariableDeclarationNode::GrammarType::MULTIPLE_DECL);
+        $$->append_child($1.variable_declaration_node);
+        $$->append_child($3.id_list_node);
         $$->append_child($5.type_node);
-        delete $5.record_info;
-        if($5.bounds) {
-            delete $5.bounds;
-        }
     }
-    | ID '=' type
+    | id_list ':' type 
     {
-        // type_declaration -> ID '=' type
+        // var_declaration -> id_list ':' type
+        if(error_flag)
+           break;
+        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::SINGLE_DECL,VariableDeclarationNode::ListType::TYPE);
+        $$.variable_declaration_node->append_child($1.id_list_node);
+        $$.variable_declaration_node->append_child($3.type_node);
+    }
+    |var_declaration ';' id_list ':' ID
+    {
+        // var_declaration -> var_declaration ';' id_list ':' ID
         if(error_flag)
             break;
-        string tn = $1.value.get<string>();
-        bool err1 = $3.main_type == TypeAttr::BASIC && !table_set_queue.top()->Insert<BasicType>(tn,dynamic_cast<BasicType*>($3.type_ptr));
-        bool err2 = $3.main_type == TypeAttr::ARRAY && !table_set_queue.top()->Insert<ArrayType>(tn,dynamic_cast<ArrayType*>($3.type_ptr));
-        bool err3 = $3.record_info && !table_set_queue.top()->Insert<RecordType>(tn,dynamic_cast<RecordType*>($3.type_ptr));
-        if(err1 || err2 || err3){
-	    semantic_error(real_ast,"redefinition of '"+tn+"'",$1.line_num,$1.column_num);
-	}
-
-        $$ = new TypeDeclarationNode(TypeDeclarationNode::GrammarType::SINGLE_DECL);
-        LeafNode *leaf_node = new LeafNode($1.value);
-        $$->append_child(leaf_node);
-        $$->append_child($3.type_node);
-        delete $3.record_info;
-        if($3.bounds) {
-            delete $3.bounds;
+        $$.record_info = $1.record_info;
+        $$.pos_info = $1.pos_info;
+        TypeTemplate *tmp = table_set_queue.top()->SearchEntry<TypeTemplate>($5.value.get<string>());
+        if(tmp == nullptr){
+            string tn = $5.value.get<string>();
+            semantic_error(real_ast,"undefined type '"+tn+"'",$5.line_num,$5.column_num);
+            break;
+        } else {
+            for (auto i : *($3.list_ref)){
+                auto res = $$.record_info->insert(make_pair(i.first, tmp));
+                $$.pos_info->insert(make_pair(i.first,std::make_pair(line_count,i.second)));
+                if (!res.second){
+                    semantic_error(real_ast,"redefinition of '"+ i.first +"'",line_count,i.second);
+                }
+            }
         }
-    };
-type :
-    standrad_type
+        if(error_flag)
+            break;
+        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::MULTIPLE_DECL,VariableDeclarationNode::ListType::ID);
+        $$.variable_declaration_node->append_child($1.variable_declaration_node);
+        $$.variable_declaration_node->append_child($3.id_list_node);
+        LeafNode *leaf_node = new LeafNode($5.value);
+        $$.variable_declaration_node->append_child(leaf_node);
+        delete $3.list_ref;
+    }
+    |id_list ':' ID
     {
-        // type -> standrad_type
-        $$.main_type = (TypeAttr::MainType)0;
+        // var_declaration -> id_list ':' ID
+        if(error_flag)
+                break;
+        TypeTemplate *tmp = table_set_queue.top()->SearchEntry<TypeTemplate>($3.value.get<string>());
+        if(tmp==nullptr){
+            string tn = $3.value.get<string>();
+            semantic_error(real_ast,"undefined type '"+tn+"'",$3.line_num,$3.column_num);
+            $$.record_info = new std::unordered_map<std::string, TypeTemplate*>();
+            $$.pos_info = new std::unordered_map<std::string, std::pair<int,int>>();
+            break;
+        } else {
+            $$.record_info = new std::unordered_map<std::string, TypeTemplate*>();
+            $$.pos_info = new std::unordered_map<std::string, std::pair<int,int>>();
+            for (auto i : *($1.list_ref)){
+                auto res = $$.record_info->insert(make_pair(i.first, tmp));
+                $$.pos_info->insert(make_pair(i.first,std::make_pair(line_count,i.second)));
+                if (!res.second){
+                    semantic_error(real_ast,"redefinition of '"+ i.first +"'",line_count,i.second);
+                }
+            }
+        }
+        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::SINGLE_DECL,VariableDeclarationNode::ListType::ID);
+        $$.variable_declaration_node->append_child($1.id_list_node);
+        LeafNode *leaf_node = new LeafNode($3.value);
+        $$.variable_declaration_node->append_child(leaf_node);
+        delete $1.list_ref;
+    };
+type : basic_type
+    {
+        // type -> basic_type
+        $$.main_type = (TypeAttr::MainType);
         $$.type_ptr = $1.type_ptr;
         if(error_flag)
             break;
@@ -467,7 +428,7 @@ type :
             delete $6.record_info;
         }
     }
-    | RECORD record_body END
+    | recordtype
     {
         // type -> RECORD record_body END
         $$.main_type = (TypeAttr::MainType)2;
@@ -484,6 +445,11 @@ type :
         $$.type_node->append_child($2.record_body_node);
         $$.type_node->set_base_type_node($$.type_node);
     };
+    | stringtype
+    {
+
+    }
+
 record_body :
     {
         // record_body -> empty
@@ -508,6 +474,7 @@ record_body :
         $$.record_body_node->append_child($1.variable_declaration_node);
         delete $1.pos_info;
     };
+    
 standrad_type :
     BASIC_TYPE
     {
@@ -582,148 +549,7 @@ period :
         $$.period_node->append_child($1.const_variable_node);
         $$.period_node->append_child($3.const_variable_node);
     };
-var_declarations : 
-    {
-        // var_declarations -> empty
-        if(error_flag)
-            break;
-        $$ = new VariableDeclarationsNode();
-    }
-    | VAR var_declaration ';'
-    {
-        // var_declarations -> VAR var_declaration ';'
-        if(error_flag)
-            break;
-        for (auto i : *($2.record_info)){
-            int line = $2.pos_info->find(i.first)->second.first;
-            int row = $2.pos_info->find(i.first)->second.second;
-            ObjectSymbol *obj = new ObjectSymbol(i.first, i.second,line);
-            if(!table_set_queue.top()->Insert<ObjectSymbol>(i.first,obj)){
-                semantic_error(real_ast,"redefinition of '"+ i.first +"'",line,row);
-                yynote(i.first,table_set_queue.top()->SearchEntry<ObjectSymbol>(i.first)->decl_line());
-            }
-        }
-        $$ = new VariableDeclarationsNode();
-        $$->append_child($2.variable_declaration_node);
-        delete $2.pos_info;
-        if ($2.record_info){
-            delete $2.record_info;
-        }
-    };
-var_declaration :
-    var_declaration ';' id_list ':' type 
-    {
-        // var_declaration -> var_declaration ';' id_list ':' type
-         if(error_flag)
-            break;   
-        $$.record_info = $1.record_info;
-        $$.pos_info = $1.pos_info;
-        for (auto i : *($3.list_ref)){
-            auto res = $$.record_info->insert(make_pair(i.first, $5.type_ptr));
-            $$.pos_info->insert(make_pair(i.first,std::make_pair(line_count,i.second)));
-            if (!res.second){
-                semantic_error(real_ast,"redefinition of '"+ i.first +"'",line_count,i.second);
-            }
-        }
-        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::MULTIPLE_DECL,VariableDeclarationNode::ListType::TYPE);
-        $$.variable_declaration_node->append_child($1.variable_declaration_node);
-        $$.variable_declaration_node->append_child($3.id_list_node);
-        $$.variable_declaration_node->append_child($5.type_node);
-        delete $3.list_ref;
-        if($5.bounds) {
-            delete $5.bounds;
-        }
-        if($5.record_info) {
-            delete $5.record_info;
-        }
-        PtrCollect($5.type_ptr);
 
-    }
-    | id_list ':' type 
-    {
-        // var_declaration -> id_list ':' type
-        if(error_flag)
-           break;
-        $$.record_info = new std::unordered_map<std::string, TypeTemplate*>();
-        $$.pos_info = new std::unordered_map<std::string, std::pair<int,int>>();
-        for (auto i : *($1.list_ref)){
-            auto res = $$.record_info->insert(make_pair(i.first, $3.type_ptr));
-            $$.pos_info->insert(make_pair(i.first,std::make_pair(line_count,i.second)));
-            if (!res.second){
-                semantic_error(real_ast,"redefinition of '"+ i.first +"'",line_count,i.second);
-            }
-        }
-        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::SINGLE_DECL,VariableDeclarationNode::ListType::TYPE);
-        $$.variable_declaration_node->append_child($1.id_list_node);
-        $$.variable_declaration_node->append_child($3.type_node);
-        delete $1.list_ref;
-        if($3.bounds) {
-            delete $3.bounds;
-        }
-        if($3.record_info) {
-            delete $3.record_info;
-        }
-        PtrCollect($3.type_ptr);
-    }
-    |var_declaration ';' id_list ':' ID
-    {
-        // var_declaration -> var_declaration ';' id_list ':' ID
-        if(error_flag)
-            break;
-        $$.record_info = $1.record_info;
-        $$.pos_info = $1.pos_info;
-        TypeTemplate *tmp = table_set_queue.top()->SearchEntry<TypeTemplate>($5.value.get<string>());
-        if(tmp == nullptr){
-            string tn = $5.value.get<string>();
-            semantic_error(real_ast,"undefined type '"+tn+"'",$5.line_num,$5.column_num);
-            break;
-        } else {
-            for (auto i : *($3.list_ref)){
-                auto res = $$.record_info->insert(make_pair(i.first, tmp));
-                $$.pos_info->insert(make_pair(i.first,std::make_pair(line_count,i.second)));
-                if (!res.second){
-                    semantic_error(real_ast,"redefinition of '"+ i.first +"'",line_count,i.second);
-                }
-            }
-        }
-        if(error_flag)
-            break;
-        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::MULTIPLE_DECL,VariableDeclarationNode::ListType::ID);
-        $$.variable_declaration_node->append_child($1.variable_declaration_node);
-        $$.variable_declaration_node->append_child($3.id_list_node);
-        LeafNode *leaf_node = new LeafNode($5.value);
-        $$.variable_declaration_node->append_child(leaf_node);
-        delete $3.list_ref;
-    }
-    |id_list ':' ID
-    {
-        // var_declaration -> id_list ':' ID
-        if(error_flag)
-                break;
-        TypeTemplate *tmp = table_set_queue.top()->SearchEntry<TypeTemplate>($3.value.get<string>());
-        if(tmp==nullptr){
-            string tn = $3.value.get<string>();
-            semantic_error(real_ast,"undefined type '"+tn+"'",$3.line_num,$3.column_num);
-            $$.record_info = new std::unordered_map<std::string, TypeTemplate*>();
-            $$.pos_info = new std::unordered_map<std::string, std::pair<int,int>>();
-            break;
-        } else {
-            $$.record_info = new std::unordered_map<std::string, TypeTemplate*>();
-            $$.pos_info = new std::unordered_map<std::string, std::pair<int,int>>();
-            for (auto i : *($1.list_ref)){
-                auto res = $$.record_info->insert(make_pair(i.first, tmp));
-                $$.pos_info->insert(make_pair(i.first,std::make_pair(line_count,i.second)));
-                if (!res.second){
-                    semantic_error(real_ast,"redefinition of '"+ i.first +"'",line_count,i.second);
-                }
-            }
-        }
-        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::SINGLE_DECL,VariableDeclarationNode::ListType::ID);
-        $$.variable_declaration_node->append_child($1.id_list_node);
-        LeafNode *leaf_node = new LeafNode($3.value);
-        $$.variable_declaration_node->append_child(leaf_node);
-        delete $1.list_ref;
-    };
 subprogram_declarations : 
     {
         // subprogram_declarations -> empty
