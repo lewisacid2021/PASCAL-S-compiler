@@ -157,7 +157,7 @@ void TableRecord::setVarPara(string id_para, int rowNumber_para, string type_par
 
 void TableRecord::setVar(string id_para, int rowNumber_para, string type_para)
 {
-    flag            = "normal variant";
+    flag            = "variant";
     this->id        = id_para;
     this->rowNumber = rowNumber_para;
     this->type      = type_para;
