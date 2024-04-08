@@ -93,7 +93,7 @@ int * generateArray()
     return tmp;
 }
 
-static void mergesort_benchmark(benchmark::State& state) {
+static void test1_benchmark(benchmark::State& state) {
   // Perform setup here
   for (auto _ : state) {
     // This code gets timed
@@ -103,9 +103,9 @@ static void mergesort_benchmark(benchmark::State& state) {
   }
 }
 // Register the function as a benchmark
-BENCHMARK(mergesort_benchmark);
+BENCHMARK(test1_benchmark);
 
-static void quicksort_benchmark(benchmark::State& state) {
+static void test2_benchmark(benchmark::State& state) {
   // Perform setup here
   for (auto _ : state) {
     // This code gets timed
@@ -115,17 +115,6 @@ static void quicksort_benchmark(benchmark::State& state) {
   }
 }
 // Register the function as a benchmark
-BENCHMARK(quicksort_benchmark);
+BENCHMARK(test2_benchmark);
 
-static void std_sort_benchmark(benchmark::State& state) {
-  // Perform setup here
-  for (auto _ : state) {
-    // This code gets timed
-    int * arr=generateArray();
-    sort(arr,arr+n-1,greater<int>());
-    free(arr);
-  }
-}
-// Register the function as a benchmark
-BENCHMARK(std_sort_benchmark);
 BENCHMARK_MAIN();
