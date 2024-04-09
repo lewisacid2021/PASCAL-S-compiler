@@ -172,8 +172,8 @@ class ConstDeclarations: public AstNode
 
 class ConstDeclaration: public AstNode
 {
-    // 若GrammarType为SINGLE_ID，则子节点为两个叶子节点（id、 const_value）
-    // 若GrammarType为MULTIPLE_ID，则子节点为ConstDeclaration节点与两个叶子节点（id、 const_value）
+    // 若GrammarType为SINGLE_ID，则子节点为两个叶子节点（id 、const_value)
+    // 若GrammarType为MULTIPLE_ID，则子节点为ConstDeclaration节点与两个叶子节点（id 、const_value)
   public:
     enum class GrammarType
     {
@@ -195,6 +195,52 @@ class ConstDeclaration: public AstNode
   private:
     GrammarType grammar_type;
     ConstValue::ConstvalueType type;  // 记录该常变量的类型。
+};
+
+class RecordDelcarations: public AstNode
+{
+    // 子节点为单个RecordDelcaration节点或者没有
+    // record_declarations -> ε | record_declaration ;
+    enum class GrammarType
+    {
+        EPSILON,
+        DECLARATION,
+    };
+
+    RecordDelcarations(GrammarType gt)
+        : grammar_type(gt){};
+    GrammarType GetGrammarType()
+    {
+        return grammar_type;
+    };
+
+  private:
+    GrammarType grammar_type;
+};
+
+class RecordDelcaration: public AstNode
+{
+    // 子节点为RecordDelcaration节点，叶子节点id，以及var_declaration节点。
+    // record_declaration -> def-record | record_declaration def-record
+    // def-record -> type 
+    //               record-name = record
+    //               var_declaration
+    //               end;
+    enum class GrammarType
+    {
+        SINGLE_DECLARATION,
+        MULTI_DECLARATION,
+    };
+
+    RecordDelcaration(GrammarType gt)
+        : grammar_type(gt){};
+    GrammarType GetGrammarType()
+    {
+        return grammar_type;
+    };
+
+  private:
+    GrammarType grammar_type;
 };
 
 class VarDeclarations: public AstNode

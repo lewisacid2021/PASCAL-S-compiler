@@ -1,8 +1,6 @@
 %{
-#include "log.h"
-#include "parser.h"
-using namespace pascals;
-using namespace pascals::ast;
+#include "parser.h"`
+using namespace ast;
 using std::string;
 extern "C"			
 {					
@@ -17,78 +15,58 @@ extern std::string cur_line_info;
 extern std::string last_line_info;
 extern int lex_error_flag;
 int semantic_error_flag = 0;
-std::stack<TableSet*> table_set_queue;
-int _ = (log_set_level(LOG_INFO), 0);
-TableSet* top_table_set = new TableSet("main",nullptr);
-
-int error_flag=0;
-char location_pointer[256];
-void location_pointer_refresh();
-
-void yyerror(AST* real_ast,const char *msg);
-void yyerror_var(AST* real_ast,int line);
-void yynote(std::string msg,int line);
-void semantic_error(AST* real_ast,std::string msg,int line,int row){
-    semantic_error_flag=1;
-    real_ast->set_root(nullptr); 
-    if (row)
-        fprintf(stderr,"%d,%d:\033[01;31m \terror\033[0m : %s\n", line,row,msg.c_str());
-    else
-        fprintf(stderr,"%d:\033[01;31m \terror\033[0m : %s\n", line,msg.c_str());
-}
-
 
 %}
 
 %union {
-    IdListAttr id_list_node_info;
-    TypeAttr type_node_info;
-    StandardTypeAttr standared_type_node_info;
-    PeriodsAttr periods_node_info;
-    PeriodAttr period_node_info;
-    RecordAttr record_node_info;
-    FormalParameterAttr formal_parameter_node_info;
-    ParameterListsAttr parameter_lists_node_info;
-    ParameterListAttr parameter_list_node_info;
-    VarParameterAttr var_parameter_node_info;
-    ValueParameterAttr value_parameter_node_info;
+    //主程序
+    // ast::ProgramStruct* program_node;
+    ast::ProgramHead* program_head_node;
+    ast::ProgramBody* program_body_node;
+    ast::IdList* idlist_node;
+    ast::RecordDelcarations* record_declarations_node;
+    ast::RecordDelcaration* record_declaration_node;
+    ast::ConstDeclarations* const_declarations_node;
+    ast::ConstDeclaration* const_declaration_node;
+    ast::VarDeclarations* var_declarations_node;
+    ast::VarDeclaration* var_declaration_node;
+    //类型
+    ast::TypeNode* type_node;
+    ast::RecordNode* record_node; 
+    ast::PeriodsNode* periods_node;
+    ast::PeriodNode* period_node;
+    //子程序
+    ast::SubprogramDeclarations* subprogram_declarations_node;
+    ast::SubprogramDeclaration* subprogram_declaration_node;
+    ast::SubprogramHead* subprogram_head_node;
+    ast::SubprogramBody* subprogram_body_node;
+    //子程序声明中的参数
+    ast::FormalParam* formal_param_node;
+    ast::ParamLists* paramlists_node;
+    ast::ParamList* paramlist_node;
+    ast::VarParam* var_param_node;
+    ast::ValueParam* value_param_node;
+    //语句
+    ast::CompoundStatement* compound_statement_node;
+    ast::StatementList* statement_list_node;
+    ast::Statement* statement_node;
+    ast::AssignopStatement* assignop_statement_node;
+    ast::ProcedureCall* procedure_call_node;
+    ast::IfStatement* ifstatement_node;
+    ast::LoopStatement* loopstatement_node;
+    ast::ElsePart* elsepart_node;
+    //函数与过程的参数
+    ast::VariableList* variablelist_node;
+    ast::Variable* variable_node;
+    ast::IDVarParts* idvarparts_node;
+    ast::IDVarPart* idvarpart_node;
+    //表达式
+    ast::ExpressionList* expression_list_node;
+    ast::Expression* expression_node;
+    ast::SimpleExpression* simple_expression_node;
+    ast::Term* term_node;
+    ast::Factor* factor_node;
 
-    VariableDeclarationAttr variable_declaration_node_info;
-    VariableAttr variable_node_info;
-    VariableListAttr variable_list_node_info;
-    ExpressionAttr expression_node_info;
-    SimpleExpressionAttr simple_expression_node_info;
-    StrExpressionAttr str_expression_node_info;
-    TermAttr term_node_info;
-    FactorAttr factor_node_info;
-    UnsignedConstantVarAttr unsigned_constant_var_node_info;
-    IDVarpartsAttr id_varparts_node_info;
-    IDVarpartAttr id_varpart_node_info;
-    ExpressionListAttr expression_list_node_info;
-    CaseBodyAttr case_body_node_info;
-    BranchListAttr branch_list_node_info;
-    BranchAttr branch_node_info;
-    ConstListAttr const_list_node_info;
-
-    pascals::ast::ProgramNode* program_node;
-    pascals::ast::ProgramHeadNode* program_head_node;
-    pascals::ast::ProgramBodyNode* program_body_node;
-    pascals::ast::ConstDeclarationsNode* const_declarations_node;
-    pascals::ast::ConstDeclarationNode* const_declaration_node;
-    pascals::ast::TypeDeclarationsNode* type_declarations_node;
-    pascals::ast::TypeDeclarationNode* type_declaration_node;
-    pascals::ast::BasicTypeNode* basic_type_node;
-    pascals::ast::VariableDeclarationsNode* variable_declarations_node;
-    pascals::ast::SubprogramDeclarationsNode* subprogram_declarations_node;
-    pascals::ast::SubprogramDeclarationNode* subprogram_declaration_node;
-    pascals::ast::SubprogramHeadNode* subprogram_head_node;
-    pascals::ast::SubprogramBodyNode* subprogram_body_node;
-    pascals::ast::CompoundStatementNode* compound_statement_node;
-    pascals::ast::StatementListNode* statement_list_node;
-    pascals::ast::StatementNode* statement_node;
-    pascals::ast::ElseNode* else_node;
-    pascals::ast::UpdownNode* updown_node;
-    pascals::ast::ProcedureCallNode* procedure_call_node;
 };
 %parse-param {pascals::ast::AST *real_ast}
 %start program
@@ -96,54 +74,43 @@ void semantic_error(AST* real_ast,std::string msg,int line,int row){
 %token ARRAY TYPE CONST RECORD
 %token IF THEN ELSE CASE OF WHILE DO FOR REPEAT UNTIL BEGIN_ END
 %token ADDOP NOT PLUS UMINUS CONSTASSIGNOP  
-%token <token_info> ID CHAR INT_NUM REAL_NUM BASIC_TYPE RELOP MULOP STRING_ VAR SUBCATALOG
-%token <token_info> ASSIGNOP WRITE WRITELN SEP READ READLN TRUE FALSE ';'
-%type <id_list_node_info> id_list
-%type<value_node_info> const_variable num
-%type<periods_node_info> periods
-%type<period_node_info> period
-%type<type_node_info> type
-%type<record_node_info> record_body
-%type<variable_declaration_node_info> var_declaration
-%type<standared_type_node_info> standrad_type
-%type<formal_parameter_node_info> formal_parameter
-%type<parameter_lists_node_info> parameter_lists
-%type<parameter_list_node_info> parameter_list
-%type<var_parameter_node_info> var_parameter
-%type<value_parameter_node_info> value_parameter
-%type<variable_node_info> variable
-%type<variable_list_node_info> variable_list
-%type<expression_node_info> expression
-%type<simple_expression_node_info> simple_expression
-%type<str_expression_node_info> str_expression
-%type<term_node_info> term
-%type<factor_node_info> factor
-%type<unsigned_constant_var_node_info> unsigned_const_variable
-%type<id_varparts_node_info> id_varparts
-%type<id_varpart_node_info> id_varpart
-%type<expression_list_node_info> expression_list
-%type<case_body_node_info> case_body
-%type<branch_list_node_info> branch_list
-%type<branch_node_info> branch
-%type<const_list_node_info> const_list
+%token <token_info> ID CHAR INT_NUM REAL_NUM RELOP MULOP STRING_ VAR SUBCATALOG
+%token <token_info> ASSIGNOP SEP TRUE FALSE ';'
 
-%type<program_head_node> program_head
-%type<program_body_node> program_body
-%type<const_declarations_node> const_declarations
-%type<const_declaration_node> const_declaration
-%type<variable_declarations_node> var_declarations
-%type<type_declarations_node> type_declarations
-%type<type_declaration_node> type_declaration
-%type<subprogram_declarations_node> subprogram_declarations
-%type<subprogram_declaration_node> subprogram_declaration
-%type<subprogram_head_node> subprogram_head
-%type<subprogram_body_node> subprogram_body
+%type <program_head_node> program_head
+%type <program_body_node> program_body
+%type <const_declarations_node> const_declarations
+%type <const_declaration_node> const_declaration
+%type <idlist_node> id_list
+%type <record_declarations_node> record_declarations
+%type <record_declaration_node> record_declaration
+%type <var_declarations_node> var_declarations
+%type <var_declaration_node> var_declaration
+
+%type <type_node> type
+%type <periods_node> periods
+%type <period_node> period
+
+%type <subprogram_declarations_node> subprogram_declarations
+%type <subprogram_declaration_node> subprogram_declaration
+%type <subprogram_head_node> subprogram_head
+%type <subprogram_body_node> subprogram_body
+
+%type <formal_param_node> formal_parameter
+%type <paramlists_node> parameter_lists
+%type <paramlist_node> parameter_list
+%type <var_param_node> var_parameter
+%type <value_param_node> value_parameter
+
 %type<compound_statement_node> compound_statement
 %type<statement_list_node> statement_list
 %type<statement_node> statement
-%type<else_node> else_part
+%type<elsepart_node> else_part
 %type<updown_node> updown
 %type<procedure_call_node> call_procedure_statement
+
+%type <Const_Value> const_value
+%type <Num> num
 
 %%
 
@@ -153,17 +120,12 @@ program : program_head program_body '.'
 	    ProgramNode* headnode = new ProgramNode();
         headnode->append_child($1);
         headnode->append_child($2);
-
-        if((!error_flag) && (!semantic_error_flag) && (!lex_error_flag)){
-            real_ast->set_root(node);
-            real_ast->set_valid(true);
-        }
-        delete top_table_set;
     };
+
 program_head : PROGRAM ID '(' id_list ')' ';' {
         // program_head -> PROGRAM ID '(' id_list ')' ';'
         $$ = new ProgramHead();
-        LeafNode* leaf_node = new LeafNode($2.value);
+        LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
         $$->append_child($3)
         $$->append_child(leaf_node);
     } | PROGRAM ID '('  ')' ';' {
@@ -173,10 +135,9 @@ program_head : PROGRAM ID '(' id_list ')' ';' {
         // program_head -> PROGRAM ID ';'
         $$ = new ProgramHead();
     }
+
 program_body : const_declarations record_declarations var_declarations subprogram_declarations compound_statement {
         // program_body -> const_declarations type_declarations var_declarations subprogram_declarations compound_statement
-        if(error_flag)
-            break;
         $$ = new ProgramBody();
         $$->append_child($1);
         $$->append_child($2);
@@ -184,38 +145,39 @@ program_body : const_declarations record_declarations var_declarations subprogra
         $$->append_child($4);
         $$->append_child($5);
     };
+
 id_list : id_list ',' ID { 
         // id_list -> id_list ',' ID
         // 插入idlist node以及叶子节点
-        LeafNode* leaf_node = new LeafNode($3.id, LeafNode::LeafType::NAME);
-        $$.id_list_node->append_child($1.id_list_node);
+        $$ = new IdList(IdList::GrammarType::MULTIPLE_ID)
+        LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
+        $$.id_list_node->append_child($1);
         $$.id_list_node->append_child(leaf_node);
     } | ID {
         // id_list -> ID
-        LeafNode* leaf_node = new LeafNode($1.id, LeafNode::LeafType::NAME);
+        $$ = new IdList(IdList::GrammarType::SINGLE_ID)
+        LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
         $$.id_list_node->append_child(leaf_node);
     };
+
 const_declarations :{
         // const_declarations -> empty
-        if(error_flag)
-            break;
-        $$ = new ConstDeclarations();
+        $$ = new ConstDeclarations(ConstDeclarations::GrammarType::EPSILON);
     }
     | CONST const_declaration ';'
     {   
         // const_declarations -> CONST const_declaration ';'
-        if(error_flag)
-            break;
         $$ = new ConstDeclarations(); 
         $$->append_child($2);
     };
+
 const_declaration : const_declaration ';' ID '=' const_value
     {
         // const_declaration -> const_declaration ';' ID '=' const_value
-        $$ = new ConstDeclaration(ConstDeclarationNode::GrammarType::MULTIPLE_ID, $5.type);
+        $$ = new ConstDeclaration(ConstDeclarationNode::GrammarType::MULTIPLE_ID, $5.value.get_type());
         $$->append_child($1);
         //初始化 id 叶子节点
-        LeafNode* leaf_node = new LeafNode($3.id, LeafNode::LeafType::NAME);
+        LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         //初始化 const_value 叶子节点
         LeafNode* leaf_node = new LeafNode($5.value, LeafNode::LeafType::NAME);
@@ -225,19 +187,53 @@ const_declaration : const_declaration ';' ID '=' const_value
     | ID '=' const_value
     {   
         // const_declaration -> ID '=' const_value
-        $$ = new ConstDeclarationNode(ConstDeclarationNode::GrammarType::SINGLE_ID, $3.type);
+        $$ = new ConstDeclarationNode(ConstDeclarationNode::GrammarType::SINGLE_ID, $3.value.get_type());
         //初始化 id 叶子节点
-        LeafNode* leaf_node = new LeafNode($3.id, LeafNode::LeafType::NAME);
+        LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         //初始化 const_value 叶子节点
         LeafNode* leaf_node = new LeafNode($5.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
     };
-
-const_value : INT_NUM
+//start from here
+const_value : PLUS INT_NUM
+    {
+        // const_value -> + INT_NUM
+        $$.type_ptr = TYPE_INT;
+        $$.value = $1.value;
+        $$.const_variable_node = new LeafNode($1.value);
+    }
+    | UMINUS INT_NUM
+    {
+        // const_value -> - INT_NUM
+        $$.type_ptr = TYPE_INT;
+        $$.value = $1.value;
+        if(error_flag)
+            break; 
+        $$.const_variable_node = new LeafNode($1.value);
+    }
+    | INT_NUM
     {
         // const_value -> INT_NUM
         $$.type_ptr = TYPE_INT;
+        $$.value = $1.value;
+        if(error_flag)
+            break; 
+        $$.const_variable_node = new LeafNode($1.value);
+    }
+    | PLUS REAL_NUM
+    {   
+        // const_value -> REAL_NUM
+        $$.type_ptr = TYPE_REAL;
+        $$.value = $1.value;
+        if(error_flag)
+            break; 
+        $$.const_variable_node = new LeafNode($1.value);
+    }
+    | UMINUS REAL_NUM
+    {   
+        // const_value -> REAL_NUM
+        $$.type_ptr = TYPE_REAL;
         $$.value = $1.value;
         if(error_flag)
             break; 
@@ -251,7 +247,7 @@ const_value : INT_NUM
         if(error_flag)
             break; 
         $$.const_variable_node = new LeafNode($1.value);
-    };
+    }
     | CHAR
     {
         // const_variable -> CHAR
