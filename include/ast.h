@@ -297,12 +297,12 @@ class VarDeclaration: public AstNode
 *************************************************/
 class TypeNode: public AstNode
 {
-    //子节点为各个类型节点
+    //子节点为IdNode
   public:
     enum class VarType
     {
-        BASIC_TYPE,
         ARRAY_TYPE,
+        ID_TYPE,
         RECORD_TYPE,
         STRING_TYPE
     };
@@ -316,6 +316,18 @@ class TypeNode: public AstNode
 
   private:
     VarType var_type;
+};
+
+class IdNode: public AstNode
+{
+  public:
+    IdNode(std::string &tn) : type_name(tn) {}
+    std::string get_type_name() { return type_name; }
+
+  private:
+    //类型名字
+    std::string type_name;
+
 };
 
 class BasicTypeNode: public AstNode

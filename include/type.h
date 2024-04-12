@@ -115,7 +115,18 @@ public:
     };
     ConstValue() {}
     ~ConstValue() {}
-    ConstValue(const ConstValue &cv){}
+    ConstValue(const ConstValue &cv){
+        if (std::is_same(cv.type(), int))
+        return *(T *)(&C_INT);
+        else if (std::is_same<T, char>::value)
+        return *(T *)(&C_CHAR);
+        else if (std::is_same<T, float>::value)
+        return *(T *)(&C_REAL);
+        else if (std::is_same<T, bool>::value)
+        return *(T *)(&C_BOOLEAN);
+        else if (std::is_same<T, std::string>::value)
+        return *((T *)(&C_STRING));
+    }
     ConstValue(float v) { 
         value_type =  ConstvalueType::REAL;
         C_REAL = v;
@@ -158,6 +169,7 @@ public:
     }
     ConstvalueType type() { return value_type; }
     ConstValue &operator=(const ConstValue &other);
+    void set_uminus(){ Is_Uminus = true; }
 
 private:
     ConstvalueType value_type;
@@ -168,4 +180,5 @@ private:
         bool C_BOOLEAN;
         std::string C_STRING;
     };
+    bool Is_Uminus = false;
 };

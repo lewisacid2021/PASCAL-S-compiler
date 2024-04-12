@@ -10,11 +10,13 @@
 extern int yydebug;
 
 struct Token {
-  ConstValue id;
+  ConstValue value;
   int length;
   int line_num;
   int column_num;
 };
+
+
 
 struct IdListAttr {
   std::vector<std::pair<std::string, int>>* list_ref;

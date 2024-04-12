@@ -67,6 +67,7 @@ int semantic_error_flag = 0;
     ast::Term* term_node;
     ast::Factor* factor_node;
 
+    ConstValue* const_value_node;
 };
 %parse-param {pascals::ast::AST *real_ast}
 %start program
@@ -102,15 +103,19 @@ int semantic_error_flag = 0;
 %type <var_param_node> var_parameter
 %type <value_param_node> value_parameter
 
-%type<compound_statement_node> compound_statement
-%type<statement_list_node> statement_list
-%type<statement_node> statement
-%type<elsepart_node> else_part
+%type <compound_statement_node> compound_statement
+%type <statement_list_node> statement_list
+%type <statement_node> statement
+%type <assignop_statement_node> assignop_statement
+%type <procedure_call_node> procedure_call
+%type <ifstatement_node> ifstatement
+%type <loopstatement_node> loopstatement
+%type <elsepart_node> else_part
+
 %type<updown_node> updown
 %type<procedure_call_node> call_procedure_statement
 
-%type <Const_Value> const_value
-%type <Num> num
+%type <const_value_node> const_value
 
 %%
 
@@ -161,140 +166,133 @@ id_list : id_list ',' ID {
     };
 
 const_declarations :{
-        // const_declarations -> empty
+        // const_declarations -> ε
         $$ = new ConstDeclarations(ConstDeclarations::GrammarType::EPSILON);
     }
     | CONST const_declaration ';'
     {   
         // const_declarations -> CONST const_declaration ';'
-        $$ = new ConstDeclarations(); 
+        $$ = new ConstDeclarations(ConstDeclarations::GrammarType::DECLARATION); 
         $$->append_child($2);
     };
 
 const_declaration : const_declaration ';' ID '=' const_value
     {
         // const_declaration -> const_declaration ';' ID '=' const_value
-        $$ = new ConstDeclaration(ConstDeclarationNode::GrammarType::MULTIPLE_ID, $5.value.get_type());
+        $$ = new ConstDeclaration(ConstDeclarationNode::GrammarType::MULTIPLE_ID, $5->get_type());
         $$->append_child($1);
         //初始化 id 叶子节点
         LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         //初始化 const_value 叶子节点
-        LeafNode* leaf_node = new LeafNode($5.value, LeafNode::LeafType::NAME);
+        leaf_node = new LeafNode($5.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         
     }
     | ID '=' const_value
     {   
         // const_declaration -> ID '=' const_value
-        $$ = new ConstDeclarationNode(ConstDeclarationNode::GrammarType::SINGLE_ID, $3.value.get_type());
+        $$ = new ConstDeclaration(ConstDeclarationNode::GrammarType::SINGLE_ID, $3->get_type());
         //初始化 id 叶子节点
         LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         //初始化 const_value 叶子节点
-        LeafNode* leaf_node = new LeafNode($5.value, LeafNode::LeafType::NAME);
+        leaf_node = new LeafNode($5.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
     };
-//start from here
+
 const_value : PLUS INT_NUM
+    // const_value的节点为ConstValue类型
     {
         // const_value -> + INT_NUM
-        $$.type_ptr = TYPE_INT;
-        $$.value = $1.value;
-        $$.const_variable_node = new LeafNode($1.value);
+        $$ = new ConstValue($1.value);
     }
     | UMINUS INT_NUM
     {
         // const_value -> - INT_NUM
-        $$.type_ptr = TYPE_INT;
-        $$.value = $1.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode($1.value);
+        $$ = new ConstValue($1.value);
+        $$->set_uminus();
     }
     | INT_NUM
     {
         // const_value -> INT_NUM
-        $$.type_ptr = TYPE_INT;
-        $$.value = $1.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode($1.value);
+        $$ = new ConstValue($1.value);
     }
     | PLUS REAL_NUM
     {   
         // const_value -> REAL_NUM
-        $$.type_ptr = TYPE_REAL;
-        $$.value = $1.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode($1.value);
+        $$ = new ConstValue($1.value);
     }
     | UMINUS REAL_NUM
     {   
         // const_value -> REAL_NUM
-        $$.type_ptr = TYPE_REAL;
-        $$.value = $1.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode($1.value);
+        $$ = new ConstValue($1.value);
+        $$->set_uminus();
     }
     | REAL_NUM
     {   
         // const_value -> REAL_NUM
-        $$.type_ptr = TYPE_REAL;
-        $$.value = $1.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode($1.value);
+        $$ = new ConstValue($1.value);
     }
     | CHAR
     {
-        // const_variable -> CHAR
-        $$.type_ptr = TYPE_CHAR;
-        $$.value = $1.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode($1.value);
+        // const_variable -> CHAR | TRUE | FALSE
+        if($1.value.get() == "TRUE"){\
+            //boolean true
+            $$ = new ConstValue(true);
+        }
+        else if($1.value.get() == "FALSE"){
+            //boolean false
+            $$ = new ConstValue(false);
+        }
+        else {
+            //字符
+            $$ = new ConstValue($1.value);
+        }
+    }
+    | STRING_
+    {
+        // const_variable -> string
+        $$ = new ConstValue($1.value);
+    }
+
+record_declarations :
+    {
+        $$ = new RecordDeclarations(RecordDelcarations::GrammarType::EPSILON);
+    }
+    | record_declaration
+    {
+        // record_declarations -> ε | record_declaration
+        $$ = new RecordDeclarations(RecordDelcarations::GrammarType::DECLARATION);
+        $$->append_child($1);
+    }
+
+record_declaration : TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
+    {
+        // record_declaration -> def-record | record_declaration def-record
+        $$ = new RecordDeclaration(RecordDelcaration::GrammarType::SINGLE_DECLARATION);
+        LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
+        $$->append_child($5);
 
     }
-    | TRUE
+    | record_declaration TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
     {
-        $$.type_ptr = TYPE_BOOL;
-        $$.value = $1.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode(ConstValue(true));
+        $$ = new RecordDeclaration(RecordDelcaration::GrammarType::MULTI_DECLARATION);
+        $$->append_child($1);
+        LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
+        $$->append_child($6);
     }
-    | FALSE
-    {
-        $$.type_ptr = TYPE_BOOL;
-        $$.value = $1.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode(ConstValue(false));
-    }
-    | STRING
-    {
-        $$.type_ptr = TYPE_STRING;
-        $$.value = $1.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode(ConstValue(false));
-    };
 
 var_declarations : 
     {
-        // var_declarations -> empty
-        if(error_flag)
-            break;
+        // var_declarations -> ε
         $$ = new VaDeclarations(VarDeclarations::GrammarType::EPSILON);
     }
     | VAR var_declaration ';'
     {
         // var_declarations -> VAR var_declaration ';'
-        if(error_flag)
-            break;    
         $$ = new VaDeclarations(VarDeclarations::GrammarType::DECLARATION);
         $$->append_child($2);
     };
@@ -302,92 +300,26 @@ var_declarations :
 var_declaration : var_declaration ';' id_list ':' type 
     {
         // var_declaration -> var_declaration ';' id_list ':' type
-         if(error_flag)
-            break;   
-        $$ = new VarDeclaration(VariableDeclarationNode::GrammarType::MULTIPLE_DECL);
-        $$->append_child($1.variable_declaration_node);
-        $$->append_child($3.id_list_node);
-        $$->append_child($5.type_node);
+        $$ = new VarDeclaration(VarDeclaration::GrammarType::MULTIPLE_DECL);
+        $$->append_child($1);
+        $$->append_child($3);
+        $$->append_child($5);
     }
     | id_list ':' type 
     {
         // var_declaration -> id_list ':' type
-        if(error_flag)
-           break;
-        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::SINGLE_DECL,VariableDeclarationNode::ListType::TYPE);
-        $$.variable_declaration_node->append_child($1.id_list_node);
-        $$.variable_declaration_node->append_child($3.type_node);
-    }
-    |var_declaration ';' id_list ':' ID
-    {
-        // var_declaration -> var_declaration ';' id_list ':' ID
-        if(error_flag)
-            break;
-        $$.record_info = $1.record_info;
-        $$.pos_info = $1.pos_info;
-        TypeTemplate *tmp = table_set_queue.top()->SearchEntry<TypeTemplate>($5.value.get<string>());
-        if(tmp == nullptr){
-            string tn = $5.value.get<string>();
-            semantic_error(real_ast,"undefined type '"+tn+"'",$5.line_num,$5.column_num);
-            break;
-        } else {
-            for (auto i : *($3.list_ref)){
-                auto res = $$.record_info->insert(make_pair(i.first, tmp));
-                $$.pos_info->insert(make_pair(i.first,std::make_pair(line_count,i.second)));
-                if (!res.second){
-                    semantic_error(real_ast,"redefinition of '"+ i.first +"'",line_count,i.second);
-                }
-            }
-        }
-        if(error_flag)
-            break;
-        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::MULTIPLE_DECL,VariableDeclarationNode::ListType::ID);
-        $$.variable_declaration_node->append_child($1.variable_declaration_node);
-        $$.variable_declaration_node->append_child($3.id_list_node);
-        LeafNode *leaf_node = new LeafNode($5.value);
-        $$.variable_declaration_node->append_child(leaf_node);
-        delete $3.list_ref;
-    }
-    |id_list ':' ID
-    {
-        // var_declaration -> id_list ':' ID
-        if(error_flag)
-                break;
-        TypeTemplate *tmp = table_set_queue.top()->SearchEntry<TypeTemplate>($3.value.get<string>());
-        if(tmp==nullptr){
-            string tn = $3.value.get<string>();
-            semantic_error(real_ast,"undefined type '"+tn+"'",$3.line_num,$3.column_num);
-            $$.record_info = new std::unordered_map<std::string, TypeTemplate*>();
-            $$.pos_info = new std::unordered_map<std::string, std::pair<int,int>>();
-            break;
-        } else {
-            $$.record_info = new std::unordered_map<std::string, TypeTemplate*>();
-            $$.pos_info = new std::unordered_map<std::string, std::pair<int,int>>();
-            for (auto i : *($1.list_ref)){
-                auto res = $$.record_info->insert(make_pair(i.first, tmp));
-                $$.pos_info->insert(make_pair(i.first,std::make_pair(line_count,i.second)));
-                if (!res.second){
-                    semantic_error(real_ast,"redefinition of '"+ i.first +"'",line_count,i.second);
-                }
-            }
-        }
-        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::SINGLE_DECL,VariableDeclarationNode::ListType::ID);
-        $$.variable_declaration_node->append_child($1.id_list_node);
-        LeafNode *leaf_node = new LeafNode($3.value);
-        $$.variable_declaration_node->append_child(leaf_node);
-        delete $1.list_ref;
+        $$ = new VarDeclaration(VarDeclaration::GrammarType::SINGLE_DECL);
+        $$->append_child($1);
+        $$->append_child($3);
     };
-type : basic_type
+
+type : ID 
     {
-        // type -> basic_type
-        $$.main_type = (TypeAttr::MainType);
-        $$.type_ptr = $1.type_ptr;
-        if(error_flag)
-            break;
-        $$.type_node = new TypeNode(TypeNode::GrammarType::BASIC_TYPE);
-        $$.base_type_node = $$.type_node;
-        $$.type_node->set_base_type_node($$.type_node);
-        $$.type_node->append_child($1.standard_type_node);
+        // type -> ID
+        // 由于我们将integer等都设为保留字，都识别为ID（integer char boolean string real）
+        $$ = new TypeNode(TypeNode::VarType::ID_TYPE);
+        IdNode* idnode = new IdNode($1.value.get());
+        $$->append_child(idnode);
     }
     | ARRAY '[' periods ']' OF type
     {
@@ -424,43 +356,35 @@ type : basic_type
             delete $6.record_info;
         }
     }
-    | recordtype
+    | RECORD var_declaration END ';'
     {
-        // type -> RECORD record_body END
-        $$.main_type = (TypeAttr::MainType)2;
-        $$.record_info = $2.record_info;
-        if ($2.record_info){
-            $$.type_ptr = new RecordType(*($2.record_info));
-        } else{
-             $$.type_ptr = new RecordType();
-        }
-        if(error_flag)
-            break; 
-        $$.type_node = new TypeNode(TypeNode::GrammarType::RECORD_TYPE);
-        $$.base_type_node = $$.type_node;
-        $$.type_node->append_child($2.record_body_node);
-        $$.type_node->set_base_type_node($$.type_node);
+        // recordtype -> record var_declaration end;
+        $$ = new TypeNode(TypeNode::VarType::RECORD_TYPE);
+        $$->append_child($2);
     };
-    | stringtype
+    | STRING
     {
+        $$ = new TypeNode(TypeNode::VarType::STRING_TYPE);
+    };
 
-    }
-
-record_body :
+/* record_body :
     {
-        // record_body -> empty
+        // record_body -> ε
         $$.record_info = new std::unordered_map<std::string, TypeTemplate*>();
         if(error_flag)
             break;
         $$.record_body_node = new RecordBodyNode();
-    } | var_declaration {
+    } 
+    | var_declaration 
+    {
 	$$.record_info = $1.record_info;
 	if(error_flag)
 	    break;
 	$$.record_body_node = new RecordBodyNode();
 	$$.record_body_node->append_child($1.variable_declaration_node);
 	delete $1.pos_info;
-    } | var_declaration ';'
+    } 
+    | var_declaration ';'
     {
         // record_body -> var_declaration ';'
         $$.record_info = $1.record_info;
@@ -469,27 +393,8 @@ record_body :
         $$.record_body_node = new RecordBodyNode();
         $$.record_body_node->append_child($1.variable_declaration_node);
         delete $1.pos_info;
-    };
+    }; */
     
-standrad_type :
-    BASIC_TYPE
-    {
-        // standrad_type -> BASIC_TYPE
-        string typestr = $1.value.get<string>();
-        if (typestr == "integer"){
-            $$.type_ptr = TYPE_INT;
-        } else if(typestr == "real"){
-            $$.type_ptr = TYPE_REAL;
-        } else if(typestr == "boolean"){
-            $$.type_ptr = TYPE_BOOL;
-        } else{
-            $$.type_ptr = TYPE_CHAR;
-        }
-        if(error_flag)
-            break;
-        $$.standard_type_node = new BasicTypeNode();
-        $$.standard_type_node->set_type(dynamic_cast<BasicType*>($$.type_ptr));
-    };
 periods :
     periods ',' period
     {
@@ -514,8 +419,7 @@ periods :
         $$.periods_node->append_child($1.period_node);
         delete $1.bound;
     };
-period :
-    const_variable SUBCATALOG const_variable
+period : const_variable SUBCATALOG const_variable
     {     
         // period -> const_variable SUBCATALOG const_variable
         int arr_len=0;
@@ -548,45 +452,33 @@ period :
 
 subprogram_declarations : 
     {
-        // subprogram_declarations -> empty
-        if(error_flag)
-            break;
-        $$ = new SubprogramDeclarationsNode();
+        // subprogram_declarations -> ε
+        $$ = new SubprogramDeclarations();
     }
     | subprogram_declarations subprogram_declaration ';'
     {
         // subprogram_declarations -> subprogram_declarations subprogram_declaration ';'
-        if(error_flag)
-            break;
-        $$ = new SubprogramDeclarationsNode();
+        $$ = new SubprogramDeclarations();
         $$->append_child($1);
         $$->append_child($2);
-        TableSet* top = table_set_queue.top();
-        table_set_queue.pop();
-        delete top;
     };
-subprogram_declaration :
-    subprogram_head subprogram_body
+
+subprogram_declaration : subprogram_head subprogram_body
     {
         // subprogram_declaration -> subprogram_head subprogram_body
-        if(error_flag)
-            break;
-        $$ = new SubprogramDeclarationNode();
+        $$ = new SubprogramDeclaration();
         $$->append_child($1);
         $$->append_child($2);
     };
-subprogram_body :
-    const_declarations type_declarations var_declarations compound_statement
+subprogram_body : const_declarations var_declarations compound_statement
     {
-        // subprogram_body -> const_declarations type_declarations var_declarations compound_statement
-        if(error_flag)
-            break;
-        $$ = new SubprogramBodyNode();
+        // subprogram_body -> const_declarations var_declarations compound_statement
+        $$ = new SubprogramBody();
         $$->append_child($1);
         $$->append_child($2);
         $$->append_child($3);
-        $$->append_child($4);
     };
+    
 subprogram_head :
     FUNCTION ID formal_parameter ':' standrad_type ';'
     {
@@ -691,7 +583,7 @@ subprogram_head :
     };
 formal_parameter :
     {   
-        // formal_parameter -> empty
+        // formal_parameter -> ε
         $$.parameters = new std::vector<FunctionSymbol::Parameter>();
         $$.pos_info = new std::vector<std::pair<int,int>>();
         if(error_flag)
@@ -960,7 +852,7 @@ statement:
     }
     | 
     {
-        // statement -> empty
+        // statement -> ε
         if(error_flag)
             break;
         $$ = new StatementNode(StatementNode::GrammarType::EPSILON);
@@ -1183,7 +1075,7 @@ variable:
 
 id_varparts:
     {
-        // id_varparts -> empty.
+        // id_varparts -> ε.
         if(error_flag)
             break;
         $$.var_parts = new std::vector<VarParts>();
@@ -1237,7 +1129,7 @@ id_varpart:
     };
 else_part:
     {
-        // else_part -> empty.
+        // else_part -> ε.
         if(error_flag)
             break;
         $$ = new ElseNode(ElseNode::GrammarType::EPSILON);
@@ -1252,7 +1144,7 @@ else_part:
     } ;
 case_body:
     {
-        // case_body -> empty.
+        // case_body -> ε.
         $$.type_ptr= TYPE_ERROR;
         if(error_flag)
             break;
