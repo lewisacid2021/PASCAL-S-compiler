@@ -22,6 +22,11 @@ class AstNode
         }
     }
 
+    template <typename T>
+    T *DynamicCast() {
+      return dynamic_cast<T *>(this);
+    }
+
     virtual void accept(Visitor *visitor, FILE *fs);  //访问者接口
     //添加父节点及查看父节点的方法
     void set_parent(AstNode *parent)
@@ -40,7 +45,7 @@ class AstNode
     }
     AstNode *get(int pos)
     {
-        return cnode_list[pos];
+        return cnode_list[pos<0?cnode_list.size()+pos:pos];
     }
 
     std::vector<AstNode *> &getCnodeList()
@@ -339,6 +344,7 @@ class ArrayTypeNode: public AstNode
     void set_info(ArrayType *at) { array_info = at; }
     void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
     std::string type() { return type_name; }
+    ArrayType *info() { return array_info; }
 
   private:
     std::string type_name;  // array的类型名("array"表示为数组类型)
@@ -822,7 +828,7 @@ class Visitor
     virtual void visit(TypeNode *typenode, FILE *fs) = 0;
     virtual void visit(ArrayTypeNode *arraytypenode, FILE *fs) = 0;
     virtual void visit(StringTypeNode *stringtypenode, FILE *fs) = 0;
-    virtual void visit(VarDeclaration *constdeclaration, FILE *fs) = 0;
+    virtual void visit(VarDeclaration *vardeclaration, FILE *fs) = 0;
 };
 
 class GenerationVisitor: public Visitor
@@ -834,7 +840,6 @@ class GenerationVisitor: public Visitor
     void visit(IdList *idlist, FILE *fs) override;
     void visit(ConstDeclaration *constdeclaration, FILE *fs) override;
     void visit(TypeNode *typenode, FILE *fs) override;
-    void visit(ArrayTypeNode *arraytypenode, FILE *fs) override;
     void visit(StringTypeNode *stringtypenode, FILE *fs) override;
     void visit(VarDeclaration *vardeclaration, FILE *fs) override;
 };

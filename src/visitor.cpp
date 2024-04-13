@@ -2,6 +2,7 @@
 #include "type.h"
 #include <cstdio>
 #include <iostream>
+#include <sys/types.h>
 
 using std::string;
 using std::vector;
@@ -49,10 +50,10 @@ void GenerationVisitor::visit(LeafNode *leafnode, FILE *fs)
 
 void GenerationVisitor::visit(IdList *idlist, FILE *fs)
 {
-    idlist->getCnodeList()[0]->accept(this, fs);
+    idlist->get(0)->accept(this, fs);
     if (idlist->GetGrammarType() == IdList::GrammarType::MULTIPLE_ID) {
         fprintf(fs, ", ");
-        idlist->getCnodeList()[1]->accept(this, fs);
+        idlist->get(1)->accept(this, fs);
     }
 }
 
@@ -81,21 +82,21 @@ void GenerationVisitor::visit(ConstDeclaration *constdeclaration, FILE *fs)
 {
     if (constdeclaration->GetGrammarType() == ConstDeclaration::GrammarType::MULTIPLE_ID)
     {
-        constdeclaration->getCnodeList()[0]->accept(this, fs);
+        constdeclaration->get(0)->accept(this, fs);
 
         fprintf(fs, "const ");
         constdeclaration->print_type(fs);
-        constdeclaration->getCnodeList()[1]->accept(this, fs);
+        constdeclaration->get(1)->accept(this, fs);
         fprintf(fs, " = ");
-        constdeclaration->getCnodeList()[2]->accept(this, fs);
+        constdeclaration->get(2)->accept(this, fs);
         fprintf(fs, ";\n");
     } else
     {
         fprintf(fs, "const ");
         constdeclaration->print_type(fs);
-        constdeclaration->getCnodeList()[0]->accept(this, fs);
+        constdeclaration->get(0)->accept(this, fs);
         fprintf(fs, " = ");
-        constdeclaration->getCnodeList()[1]->accept(this, fs);
+        constdeclaration->get(1)->accept(this, fs);
         fprintf(fs, ";\n");
     }
 }
@@ -103,42 +104,16 @@ void GenerationVisitor::visit(ConstDeclaration *constdeclaration, FILE *fs)
 void GenerationVisitor::visit(TypeNode *typenode, FILE *fs)
 {
     switch (typenode->GetVarType()) {
-        case TypeNode::VarType::BASIC_TYPE:
-            {
-                
-                break;
-            }
-        case TypeNode::VarType::ARRAY_TYPE:
-        case TypeNode::VarType::STRING_TYPE:  
-            typenode->getCnodeList()[0]->accept(this, fs);
-            break;
         case TypeNode::VarType::RECORD_TYPE:
-            fprintf(fs, "struct {\n");
-            typenode->getCnodeList()[0]->accept(this, fs);
-            fprintf(fs, "}");
+            fprintf(fs, "struct ");
+        case TypeNode::VarType::ID_TYPE:
+        case TypeNode::VarType::ARRAY_TYPE:
+            fprintf(fs,"%s", typenode->get_type_name().c_str());
+            break;
+        case TypeNode::VarType::STRING_TYPE:  
+            typenode->get(0)->accept(this, fs);
             break;
     }
-}
-
-void GenerationVisitor::visit(ArrayTypeNode *arraytypenode, FILE *fs)
-{
-    switch (arraytypenode->type()->type()) {
-        case BasicType::BASIC_TYPE::INTEGER:
-            fprintf(fs, "int");
-            break;
-        case BasicType::BASIC_TYPE::REAL:
-            fprintf(fs, "float");
-            break;
-        case BasicType::BASIC_TYPE::BOOLEAN:
-            fprintf(fs, "bool");
-            break;
-        case BasicType::BASIC_TYPE::CHAR:
-            fprintf(fs, "char");
-            break;
-        default:
-            break;
-    }
-    arraytypenode->getCnodeList()[0]->accept(this, fs);
 }
 
 void GenerationVisitor::visit(StringTypeNode *stringtypenode, FILE *fs)
@@ -154,25 +129,42 @@ void GenerationVisitor::visit(StringTypeNode *stringtypenode, FILE *fs)
             break;
         default:
             break;
-        
     }
 }
 
 void GenerationVisitor::visit(VarDeclaration *vardeclaration, FILE *fs)
 {
-    auto type = vardeclaration->GetGrammarType();
-    if (type == VarDeclaration::GrammarType::MULTIPLE_DECL)
+    //check if it is a array type
+    auto type_node = vardeclaration->get(-1)->DynamicCast<TypeNode>();
+    auto grammar_type = vardeclaration->GetGrammarType();
+
+    if (grammar_type == VarDeclaration::GrammarType::MULTIPLE_DECL)
+        vardeclaration->get(0)->accept(this, fs);
+
+    //type
+    vardeclaration->get(-1)->accept(this, fs);
+    fprintf(fs, " ");
+
+    if(type_node->GetVarType() == TypeNode::VarType::ARRAY_TYPE)
     {
-        vardeclaration->getCnodeList()[0]->accept(this, fs);
-        fprintf(fs, " ");
-        vardeclaration->getCnodeList()[1]->accept(this, fs);
-        fprintf(fs, ";\n");
-    } else
-    {
-        vardeclaration->getCnodeList()[0]->accept(this, fs);
-        fprintf(fs, " ");
-        vardeclaration->getCnodeList()[1]->accept(this, fs);
-        fprintf(fs, ";\n");
+    
+        auto ArrayType=type_node->get(0)->DynamicCast<ArrayTypeNode>();
+        
+        auto id_list=vardeclaration->get(-2)->getCnodeList();
+        for(uint i=0;i<id_list.size();i++)
+        {
+            id_list[i]->accept(this, fs);
+            ArrayType->get(0)->accept(this,fs);
+            if(i!=id_list.size()-1)
+                fprintf(fs, ",");
+            else
+                fprintf(fs, ";\n");
+        }
+    }
+    else {
+        //idlist
+        vardeclaration->get(-2)->accept(this, fs);
+        fprintf(fs, ";\n");   
     }
 }
 
