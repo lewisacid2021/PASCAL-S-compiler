@@ -435,6 +435,7 @@ class SubprogramBody: public AstNode
 
 class SubprogramHead: public AstNode
 {
+  //子节点为叶子节点id、FormalParam节点以及可能的type节点
   public:
     enum class SubprogramType
     {
@@ -446,7 +447,7 @@ class SubprogramHead: public AstNode
         : subprogram_type(st)
     {}
     SubprogramType get_type() { return subprogram_type; }
-    void set_id(std::string id) { subprogram_id = id; }
+    void set_id(std::string &id) { subprogram_id = id; }
     std::string get_id() { return subprogram_id; }
 
   private:
@@ -473,6 +474,7 @@ class ParamLists: public AstNode
     ParamLists(GrammarType gt)
         : grammar_type(gt)
     {}
+    GrammarType get_type() { return grammar_type;}
 
   private:
     GrammarType grammar_type;
@@ -487,6 +489,10 @@ class ParamList: public AstNode
         VarParam,
         ValueParam
     };
+    ParamList(ParamType pt)
+        : param_type(pt)
+    {}
+    ParamType get_type() { return param_type;}
 
   private:
     ParamType param_type;
@@ -500,7 +506,7 @@ class VarParam: public AstNode
 
 class ValueParam: public AstNode
 {
-    // 子节点为IdList和BasicType
+    // 子节点为IdList和TypeNode
     // ValueParam -> idlist : basic_type
 };
 
@@ -514,7 +520,7 @@ class CompoundStatement: public AstNode
 
 class StatementList: public AstNode
 {
-    // statement_list -> statement | statement_list ;
+    // statement_list -> statement | statement_list ; statement
 };
 
 class Statement: public AstNode
@@ -543,27 +549,31 @@ class Statement: public AstNode
     Statement(StatementType st)
         : statement_type(st)
     {}
- void accept(Visitor *visitor, FILE *fs);  //访问者接口
+    void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     StatementType statement_type;
 };
 
 class AssignopStatement: public AstNode
 {
-    //
+    // 子节点为ExpressionList或没有
   public:
-    enum class LEFTTYPE
+    enum class LeftType
     {
         VARIABLE,  // statement -> variable assignop expression
-        FUNC,      // statement -> func_id assignop expression
+        FUNCID,      // statement -> func_id assignop expression
     };
+    AssignopStatement(LeftType lt)
+        : left_type(lt)
+    {}
  void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
-    LEFTTYPE left_type;
+    LeftType left_type;
 };
 
 class ProcedureCall: public AstNode
 {
+  // 子节点为
   public:
     enum class ProcedureType
     {
@@ -571,12 +581,15 @@ class ProcedureCall: public AstNode
         WITHOUT_LIST,  // procedure_call -> id ( expression_list )
     };
 
-    ProcedureCall(ProcedureType pt)
-        : procedure_type(pt)
+    ProcedureCall(ProcedureType pt, std::string &id)
+        : procedure_type(pt), procedure_id(id)
     {}
+    std::string get_id() { return procedure_id; }
+
  void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     ProcedureType procedure_type;
+    std::string procedure_id;
 };
 
 class IfStatement: public AstNode
@@ -717,21 +730,16 @@ class Expression: public AstNode
     enum class ExpressionType
     {
         EXPRESSION,
-        VAR_ARRAY,
+        BOOLEAN
     };
-    enum class SymbolType
-    {
-        //> < >= <=
-
-    };
-    Expression(SymbolType st)
-        : symbol_type(st)
+    Expression(ExpressionType et,std::string& st)
+        : expression_type(et),symbol_type(st)
     {}
-    SymbolType GetType() { return symbol_type; }
+    std::string GetType() { return symbol_type; }
  void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     ExpressionType expression_type;
-    SymbolType symbol_type;
+    std::string symbol_type;
 };
 
 class SimpleExpression: public AstNode
@@ -741,15 +749,17 @@ class SimpleExpression: public AstNode
   public:
     enum class SymbolType
     {
-        AND,
-        MINUS,
+        PLUS,
+        UMINUS,
         OR,
+        SINGLE
     };
     enum class ExpressionType
     {
         INT,
         REAL,
         CHAR,
+        BOOLEAN,
         STRING,
     };
     SimpleExpression(SymbolType st, ExpressionType et)
@@ -775,6 +785,7 @@ class Term: public AstNode
         DEVIDE,
         MOD,
         AND,
+        SINGLE
     };
     enum class TermType
     {
