@@ -1,8 +1,6 @@
 %{
-#include "log.h"
-#include "parser.h"
-using namespace pascals;
-using namespace pascals::ast;
+#include "parser.h"`
+using namespace ast;
 using std::string;
 extern "C"			
 {					
@@ -17,133 +15,119 @@ extern std::string cur_line_info;
 extern std::string last_line_info;
 extern int lex_error_flag;
 int semantic_error_flag = 0;
-std::stack<TableSet*> table_set_queue;
-int _ = (log_set_level(LOG_INFO), 0);
-TableSet* top_table_set = new TableSet("main",nullptr);
-
-int error_flag=0;
-char location_pointer[256];
-void location_pointer_refresh();
-
-void yyerror(AST* real_ast,const char *msg);
-void yyerror_var(AST* real_ast,int line);
-void yynote(std::string msg,int line);
-void semantic_error(AST* real_ast,std::string msg,int line,int row){
-    semantic_error_flag=1;
-    real_ast->set_root(nullptr); 
-    if (row)
-        fprintf(stderr,"%d,%d:\033[01;31m \terror\033[0m : %s\n", line,row,msg.c_str());
-    else
-        fprintf(stderr,"%d:\033[01;31m \terror\033[0m : %s\n", line,msg.c_str());
-}
-
 
 %}
 
 %union {
-    IdListAttr id_list_node_info;
-    TypeAttr type_node_info;
-    StandardTypeAttr standared_type_node_info;
-    PeriodsAttr periods_node_info;
-    PeriodAttr period_node_info;
-    RecordAttr record_node_info;
-    FormalParameterAttr formal_parameter_node_info;
-    ParameterListsAttr parameter_lists_node_info;
-    ParameterListAttr parameter_list_node_info;
-    VarParameterAttr var_parameter_node_info;
-    ValueParameterAttr value_parameter_node_info;
+    //主程序
+    // ast::ProgramStruct* program_node;
+    ast::ProgramHead* program_head_node;
+    ast::ProgramBody* program_body_node;
+    ast::IdList* idlist_node;
+    ast::RecordDelcarations* record_declarations_node;
+    ast::RecordDelcaration* record_declaration_node;
+    ast::ConstDeclarations* const_declarations_node;
+    ast::ConstDeclaration* const_declaration_node;
+    ast::VarDeclarations* var_declarations_node;
+    ast::VarDeclaration* var_declaration_node;
+    //类型
+    ast::TypeNode* type_node;
+    ast::ArrayTypeNode array_node;
+    ast::RecordNode* record_node; 
+    ast::StringTypeNode* string_node;
+    ast::PeriodsNode* periods_node;
+    ast::PeriodNode* period_node;
+    //子程序
+    ast::SubprogramDeclarations* subprogram_declarations_node;
+    ast::SubprogramDeclaration* subprogram_declaration_node;
+    ast::SubprogramHead* subprogram_head_node;
+    ast::SubprogramBody* subprogram_body_node;
+    //子程序声明中的参数
+    ast::FormalParam* formal_param_node;
+    ast::ParamLists* paramlists_node;
+    ast::ParamList* paramlist_node;
+    ast::VarParam* var_param_node;
+    ast::ValueParam* value_param_node;
+    //语句
+    ast::CompoundStatement* compound_statement_node;
+    ast::StatementList* statement_list_node;
+    ast::Statement* statement_node;
+    ast::AssignopStatement* assignop_statement_node;
+    ast::ProcedureCall* procedure_call_node;
+    ast::IfStatement* ifstatement_node;
+    ast::LoopStatement* loopstatement_node;
+    ast::ElsePart* elsepart_node;
+    //函数与过程的参数
+    ast::VariableList* variablelist_node;
+    ast::Variable* variable_node;
+    ast::IDVarParts* idvarparts_node;
+    ast::IDVarPart* idvarpart_node;
+    //表达式
+    ast::ExpressionList* expression_list_node;
+    ast::Expression* expression_node;
+    ast::SimpleExpression* simple_expression_node;
+    ast::Term* term_node;
+    ast::Factor* factor_node;
 
-    VariableDeclarationAttr variable_declaration_node_info;
-    VariableAttr variable_node_info;
-    VariableListAttr variable_list_node_info;
-    ExpressionAttr expression_node_info;
-    SimpleExpressionAttr simple_expression_node_info;
-    StrExpressionAttr str_expression_node_info;
-    TermAttr term_node_info;
-    FactorAttr factor_node_info;
-    UnsignedConstantVarAttr unsigned_constant_var_node_info;
-    IDVarpartsAttr id_varparts_node_info;
-    IDVarpartAttr id_varpart_node_info;
-    ExpressionListAttr expression_list_node_info;
-    CaseBodyAttr case_body_node_info;
-    BranchListAttr branch_list_node_info;
-    BranchAttr branch_node_info;
-    ConstListAttr const_list_node_info;
-
-    pascals::ast::ProgramNode* program_node;
-    pascals::ast::ProgramHeadNode* program_head_node;
-    pascals::ast::ProgramBodyNode* program_body_node;
-    pascals::ast::ConstDeclarationsNode* const_declarations_node;
-    pascals::ast::ConstDeclarationNode* const_declaration_node;
-    pascals::ast::TypeDeclarationsNode* type_declarations_node;
-    pascals::ast::TypeDeclarationNode* type_declaration_node;
-    pascals::ast::BasicTypeNode* basic_type_node;
-    pascals::ast::VariableDeclarationsNode* variable_declarations_node;
-    pascals::ast::SubprogramDeclarationsNode* subprogram_declarations_node;
-    pascals::ast::SubprogramDeclarationNode* subprogram_declaration_node;
-    pascals::ast::SubprogramHeadNode* subprogram_head_node;
-    pascals::ast::SubprogramBodyNode* subprogram_body_node;
-    pascals::ast::CompoundStatementNode* compound_statement_node;
-    pascals::ast::StatementListNode* statement_list_node;
-    pascals::ast::StatementNode* statement_node;
-    pascals::ast::ElseNode* else_node;
-    pascals::ast::UpdownNode* updown_node;
-    pascals::ast::ProcedureCallNode* procedure_call_node;
+    ConstValue* const_value_node;
 };
 %parse-param {pascals::ast::AST *real_ast}
 %start program
 %token PROGRAM FUNCTION PROCEDURE TO DOWNTO 
-%token ARRAY TYPE CONST RECORD
+%token ARRAY TYPE CONST RECORD STRING
 %token IF THEN ELSE CASE OF WHILE DO FOR REPEAT UNTIL BEGIN_ END
 %token ADDOP NOT PLUS UMINUS CONSTASSIGNOP  
-%token <token_info> ID CHAR INT_NUM REAL_NUM BASIC_TYPE RELOP MULOP STRING_ VAR SUBCATALOG
-%token <token_info> ASSIGNOP WRITE WRITELN SEP READ READLN TRUE FALSE ';'
-%type<id_list_node_info> id_list
-%type<value_node_info> const_variable num
-%type<periods_node_info> periods
-%type<period_node_info> period
-%type<type_node_info> type
-%type<record_node_info> record_body
-%type<variable_declaration_node_info> var_declaration
-%type<standared_type_node_info> standrad_type
-%type<formal_parameter_node_info> formal_parameter
-%type<parameter_lists_node_info> parameter_lists
-%type<parameter_list_node_info> parameter_list
-%type<var_parameter_node_info> var_parameter
-%type<value_parameter_node_info> value_parameter
-%type<variable_node_info> variable
-%type<variable_list_node_info> variable_list
-%type<expression_node_info> expression
-%type<simple_expression_node_info> simple_expression
-%type<str_expression_node_info> str_expression
-%type<term_node_info> term
-%type<factor_node_info> factor
-%type<unsigned_constant_var_node_info> unsigned_const_variable
-%type<id_varparts_node_info> id_varparts
-%type<id_varpart_node_info> id_varpart
-%type<expression_list_node_info> expression_list
-%type<case_body_node_info> case_body
-%type<branch_list_node_info> branch_list
-%type<branch_node_info> branch
-%type<const_list_node_info> const_list
+%token <token_info> ID CHAR INT_NUM REAL_NUM RELOP MULOP STRING_ VAR SUBCATALOG
+%token <token_info> ASSIGNOP SEP TRUE FALSE ';'
 
-%type<program_head_node> program_head
-%type<program_body_node> program_body
-%type<const_declarations_node> const_declarations
-%type<const_declaration_node> const_declaration
-%type<variable_declarations_node> var_declarations
-%type<type_declarations_node> type_declarations
-%type<type_declaration_node> type_declaration
-%type<subprogram_declarations_node> subprogram_declarations
-%type<subprogram_declaration_node> subprogram_declaration
-%type<subprogram_head_node> subprogram_head
-%type<subprogram_body_node> subprogram_body
-%type<compound_statement_node> compound_statement
-%type<statement_list_node> statement_list
-%type<statement_node> statement
-%type<else_node> else_part
-%type<updown_node> updown
-%type<procedure_call_node> call_procedure_statement
+%type <program_head_node> program_head
+%type <program_body_node> program_body
+%type <const_declarations_node> const_declarations
+%type <const_declaration_node> const_declaration
+%type <idlist_node> id_list
+%type <record_declarations_node> record_declarations
+%type <record_declaration_node> record_declaration
+%type <var_declarations_node> var_declarations
+%type <var_declaration_node> var_declaration
+
+%type <type_node> type
+%type <array_node> array_type
+%type <string_node> string_type
+%type <periods_node> periods
+%type <period_node> period
+
+%type <subprogram_declarations_node> subprogram_declarations
+%type <subprogram_declaration_node> subprogram_declaration
+%type <subprogram_head_node> subprogram_head
+%type <subprogram_body_node> subprogram_body
+
+%type <formal_param_node> formal_parameter
+%type <paramlists_node> parameter_lists
+%type <paramlist_node> parameter_list
+%type <var_param_node> var_parameter
+%type <value_param_node> value_parameter
+
+%type <compound_statement_node> compound_statement
+%type <statement_list_node> statement_list
+%type <statement_node> statement
+%type <assignop_statement_node> assignop_statement
+%type <procedure_call_node> procedure_call
+%type <ifstatement_node> ifstatement
+%type <loopstatement_node> loopstatement
+%type <elsepart_node> else_part
+
+%type <variablelist_node> variable_list
+%type <variable_node> variable
+%type <idvarparts_node> id_varparts
+%type <idvarpart_node> id_varpart
+
+%type <expression_list_node> expression_list
+%type <expression_node> expression
+%type <simple_expression_node> simple_expression
+%type <term_node> term
+%type <factor_node> factor;
+
+%type <const_value_node> const_value
 
 %%
 
@@ -153,18 +137,13 @@ program : program_head program_body '.'
 	    ProgramNode* headnode = new ProgramNode();
         headnode->append_child($1);
         headnode->append_child($2);
-
-        if((!error_flag) && (!semantic_error_flag) && (!lex_error_flag)){
-            real_ast->set_root(node);
-            real_ast->set_valid(true);
-        }
-        delete top_table_set;
     };
+
 program_head : PROGRAM ID '(' id_list ')' ';' {
         // program_head -> PROGRAM ID '(' id_list ')' ';'
         $$ = new ProgramHead();
-        LeafNode* leaf_node = new LeafNode($2.value);
-        $$->append_child()
+        LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
+        $$->append_child($3)
         $$->append_child(leaf_node);
     } | PROGRAM ID '('  ')' ';' {
         // program_head -> PROGRAM ID '('  ')' ';'
@@ -173,10 +152,9 @@ program_head : PROGRAM ID '(' id_list ')' ';' {
         // program_head -> PROGRAM ID ';'
         $$ = new ProgramHead();
     }
+
 program_body : const_declarations record_declarations var_declarations subprogram_declarations compound_statement {
         // program_body -> const_declarations type_declarations var_declarations subprogram_declarations compound_statement
-        if(error_flag)
-            break;
         $$ = new ProgramBody();
         $$->append_child($1);
         $$->append_child($2);
@@ -184,321 +162,234 @@ program_body : const_declarations record_declarations var_declarations subprogra
         $$->append_child($4);
         $$->append_child($5);
     };
+
 id_list : id_list ',' ID { 
         // id_list -> id_list ',' ID
         // 插入idlist node以及叶子节点
-        LeafNode* leaf_node = new LeafNode($3.id, LeafNode::LeafType::NAME);
-        $$.id_list_node->append_child($1.id_list_node);
+        $$ = new IdList(IdList::GrammarType::MULTIPLE_ID)
+        LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
+        $$.id_list_node->append_child($1);
         $$.id_list_node->append_child(leaf_node);
     } | ID {
         // id_list -> ID
-        LeafNode* leaf_node = new LeafNode($1.id, LeafNode::LeafType::NAME);
+        $$ = new IdList(IdList::GrammarType::SINGLE_ID)
+        LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
         $$.id_list_node->append_child(leaf_node);
     };
+
 const_declarations :{
-        // const_declarations -> empty
-        if(error_flag)
-            break;
-        $$ = new ConstDeclarations();
+        // const_declarations -> ε
+        $$ = new ConstDeclarations(ConstDeclarations::GrammarType::EPSILON);
     }
     | CONST const_declaration ';'
     {   
         // const_declarations -> CONST const_declaration ';'
-        if(error_flag)
-            break;
-        $$ = new ConstDeclarations(); 
+        $$ = new ConstDeclarations(ConstDeclarations::GrammarType::DECLARATION); 
         $$->append_child($2);
     };
-const_declaration : const_declaration ';' ID '=' const_variable
+
+const_declaration : const_declaration ';' ID '=' const_value
     {
-        // const_declaration -> const_declaration ';' ID '=' const_variable
-        $$ = new ConstDeclaration(ConstDeclarationNode::GrammarType::MULTIPLE_ID,$5.type_ptr);
+        // const_declaration -> const_declaration ';' ID '=' const_value
+        $$ = new ConstDeclaration(ConstDeclarationNode::GrammarType::MULTIPLE_ID, $5->get_type());
         $$->append_child($1);
-        LeafNode* leaf_node = new LeafNode($3.id, LeafNode::LeafType::NAME);
+        //初始化 id 叶子节点
+        LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
-        $$->append_child($5.const_variable_node);
+        //初始化 const_value 叶子节点
+        leaf_node = new LeafNode($5.value, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
         
     }
-    | ID '=' const_variable
+    | ID '=' const_value
     {   
-        // const_declaration -> ID '=' const_variable
-        if(error_flag)
-            break;
-        if (!$3.is_right)
-            break;
-        ConstSymbol *symbol = new ConstSymbol($1.value.get<string>(),$3.value,$1.line_num);
-
-        if(!table_set_queue.top()->Insert<ConstSymbol>($1.value.get<string>(),symbol)){
-            string tn = $1.value.get<string>();
-            semantic_error(real_ast,"redefinition of '"+tn+"'",$1.line_num,$1.column_num);
-        } else {
-            $$ = new ConstDeclarationNode(ConstDeclarationNode::GrammarType::VALUE,$3.type_ptr);
-            LeafNode* leaf_node = new LeafNode($1.value);
-            $$->append_child(leaf_node);
-            $$->append_child($3.const_variable_node);
-        }
-    };
-const_variable :
-    PLUS ID
-    {   
-        // const_variable -> PLUS ID
-        if(error_flag)
-            break;
-        ConstSymbol *symbol = table_set_queue.top()->SearchEntry<ConstSymbol>($2.value.get<string>());
-        $$.type_ptr = TYPE_ERROR;
-        if(!symbol){
-            string tn = $2.value.get<string>();
-            semantic_error(real_ast,"'"+tn+"' undeclared or is not constant",$2.line_num,$2.column_num);
-            $$.is_right = false;
-        } else {
-            /* You cannot use variables to assign values to constants */
-            $$.value = symbol->value();
-            $$.type_ptr = symbol->type();
-            $$.const_variable_node = new LeafNode(ConstValue("+" + $2.value.get<string>()));     
-        }
-    }
-    | UMINUS ID
-    {
-        // const_variable -> UMINUS ID
-        if(error_flag)
-            break;
-        ConstSymbol *symbol = table_set_queue.top()->SearchEntry<ConstSymbol>($2.value.get<string>());
-        $$.type_ptr = TYPE_ERROR;
-        if(!symbol){
-            string tn = $2.value.get<string>();
-            semantic_error(real_ast,"'"+tn+"' undeclared or is not constant",$2.line_num,$2.column_num);
-            $$.is_right = false;
-        } else {
-            /* You cannot use variables to assign values to constants */
-            $$.type_ptr = symbol->type();
-            $$.value = symbol->value();
-            $$.const_variable_node = new LeafNode(ConstValue("-" + $2.value.get<string>()));
-        }
-    }
-    | ID
-    {
-        // const_variable -> ID
-        if(error_flag)
-            break;
-        ConstSymbol *symbol = table_set_queue.top()->SearchEntry<ConstSymbol>($1.value.get<string>());
-        $$.type_ptr = TYPE_ERROR;
-        if(!symbol){
-            string tn = $1.value.get<string>();
-            semantic_error(real_ast,"'"+tn+"' undeclared or is not constant",$1.line_num,$1.column_num);
-            $$.is_right = false;
-        } else {
-            $$.type_ptr = symbol->type();
-            $$.value = symbol->value();
-        }
-        $$.const_variable_node = new LeafNode($1.value);
-    }
-    |UMINUS num
-    {  
-        // const_variable -> UMINUS num
-        $$.type_ptr = $2.type_ptr;
-        $2.value.set_unimus();
-        $$.value = $2.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode($2.value);
-    }
-    | num
-    {   
-        // const_variable -> num
-        $$.type_ptr = $1.type_ptr;
-        $$.value = $1.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode($1.value);
-    }
-    |PLUS num
-    {  
-        // const_variable -> PLUS num
-        $$.type_ptr = $2.type_ptr;
-        $$.value = $2.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode($2.value);
-    }
-    | CHAR
-    {
-        // const_variable -> CHAR
-        $$.type_ptr = TYPE_CHAR;
-        $$.value = $1.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode($1.value);
-
-    }| TRUE
-    {
-        $$.type_ptr = TYPE_BOOL;
-        $$.value = $1.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode(ConstValue(true));
-    }| FALSE
-    {
-        $$.type_ptr = TYPE_BOOL;
-        $$.value = $1.value;
-        if(error_flag)
-            break; 
-        $$.const_variable_node = new LeafNode(ConstValue(false));
+        // const_declaration -> ID '=' const_value
+        $$ = new ConstDeclaration(ConstDeclarationNode::GrammarType::SINGLE_ID, $3->get_type());
+        //初始化 id 叶子节点
+        LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
+        //初始化 const_value 叶子节点
+        leaf_node = new LeafNode($5.value, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
     };
 
-num :
-    INT_NUM
+const_value : PLUS INT_NUM
+    // const_value的节点为ConstValue类型
     {
-        // num -> INT_NUM
-        $$.type_ptr = TYPE_INT;
-        $$.value = $1.value;
+        // const_value -> + INT_NUM
+        $$ = new ConstValue($1.value);
+    }
+    | UMINUS INT_NUM
+    {
+        // const_value -> - INT_NUM
+        $$ = new ConstValue($1.value);
+        $$->set_uminus();
+    }
+    | INT_NUM
+    {
+        // const_value -> INT_NUM
+        $$ = new ConstValue($1.value);
+    }
+    | PLUS REAL_NUM
+    {   
+        // const_value -> REAL_NUM
+        $$ = new ConstValue($1.value);
+    }
+    | UMINUS REAL_NUM
+    {   
+        // const_value -> REAL_NUM
+        $$ = new ConstValue($1.value);
+        $$->set_uminus();
     }
     | REAL_NUM
     {   
-        // num -> REAL_NUM
-        $$.type_ptr = TYPE_REAL;
-        $$.value = $1.value;
-    };
-type_declarations : 
-    {
-        // type_declarations -> empty
-        if(error_flag)
-            break;
-        $$ = new TypeDeclarationsNode();
+        // const_value -> REAL_NUM
+        $$ = new ConstValue($1.value);
     }
-    | TYPE type_declaration ';'
+    | CHAR
     {
-        // type_declarations -> TYPE type_declaration ';'
-        if(error_flag)
-            break;
-        $$ = new TypeDeclarationsNode();
+        // const_variable -> CHAR | TRUE | FALSE
+        if($1.value.get<string>() == "TRUE"){\
+            //boolean true
+            $$ = new ConstValue(true);
+        }
+        else if($1.value.get<string>() == "FALSE"){
+            //boolean false
+            $$ = new ConstValue(false);
+        }
+        else {
+            //字符
+            $$ = new ConstValue($1.value);
+        }
+    }
+    | STRING_
+    {
+        // const_variable -> string
+        $$ = new ConstValue($1.value);
+    }
+
+record_declarations :
+    {
+        $$ = new RecordDeclarations(RecordDelcarations::GrammarType::EPSILON);
+    }
+    | record_declaration
+    {
+        // record_declarations -> ε | record_declaration
+        $$ = new RecordDeclarations(RecordDelcarations::GrammarType::DECLARATION);
+        $$->append_child($1);
+    }
+
+record_declaration : TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
+    {
+        // record_declaration -> def-record | record_declaration def-record
+        $$ = new RecordDeclaration(RecordDelcaration::GrammarType::SINGLE_DECLARATION);
+        LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
+        $$->append_child($5);
+
+    }
+    | record_declaration TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
+    {
+        $$ = new RecordDeclaration(RecordDelcaration::GrammarType::MULTI_DECLARATION);
+        $$->append_child($1);
+        LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
+        $$->append_child($6);
+    }
+
+var_declarations : 
+    {
+        // var_declarations -> ε
+        $$ = new VaDeclarations(VarDeclarations::GrammarType::EPSILON);
+    }
+    | VAR var_declaration ';'
+    {
+        // var_declarations -> VAR var_declaration ';'
+        $$ = new VaDeclarations(VarDeclarations::GrammarType::DECLARATION);
         $$->append_child($2);
     };
-type_declaration :
-    type_declaration ';' ID '=' type
-    {
-        // type_declaration -> type_declaration ';' ID '=' type
-        if(error_flag)
-            break;
-        string tn = $3.value.get<string>();
-        bool err1 = $5.main_type == TypeAttr::BASIC && !table_set_queue.top()->Insert<BasicType>(tn,dynamic_cast<BasicType*>($5.type_ptr));
-        bool err2 = $5.main_type == TypeAttr::ARRAY && !table_set_queue.top()->Insert<ArrayType>(tn,dynamic_cast<ArrayType*>($5.type_ptr));
-        bool err3 = $5.record_info && !table_set_queue.top()->Insert<RecordType>(tn,dynamic_cast<RecordType*>($5.type_ptr));
-        if(err1 || err2 || err3){
-	    semantic_error(real_ast,"redefinition of '"+tn+"'",$3.line_num,$3.column_num);
-	}
 
-        $$ = new TypeDeclarationNode(TypeDeclarationNode::GrammarType::MULTIPLE_DECL);
+var_declaration : var_declaration ';' id_list ':' type 
+    {
+        // var_declaration -> var_declaration ';' id_list ':' type
+        $$ = new VarDeclaration(VarDeclaration::GrammarType::MULTIPLE_DECL);
         $$->append_child($1);
-        LeafNode *leaf_node = new LeafNode($3.value);
-        $$->append_child(leaf_node);
-        $$->append_child($5.type_node);
-        delete $5.record_info;
-        if($5.bounds) {
-            delete $5.bounds;
-        }
+        $$->append_child($3);
+        $$->append_child($5);
     }
-    | ID '=' type
+    | id_list ':' type 
     {
-        // type_declaration -> ID '=' type
-        if(error_flag)
-            break;
-        string tn = $1.value.get<string>();
-        bool err1 = $3.main_type == TypeAttr::BASIC && !table_set_queue.top()->Insert<BasicType>(tn,dynamic_cast<BasicType*>($3.type_ptr));
-        bool err2 = $3.main_type == TypeAttr::ARRAY && !table_set_queue.top()->Insert<ArrayType>(tn,dynamic_cast<ArrayType*>($3.type_ptr));
-        bool err3 = $3.record_info && !table_set_queue.top()->Insert<RecordType>(tn,dynamic_cast<RecordType*>($3.type_ptr));
-        if(err1 || err2 || err3){
-	    semantic_error(real_ast,"redefinition of '"+tn+"'",$1.line_num,$1.column_num);
-	}
+        // var_declaration -> id_list ':' type
+        $$ = new VarDeclaration(VarDeclaration::GrammarType::SINGLE_DECL);
+        $$->append_child($1);
+        $$->append_child($3);
+    };
 
-        $$ = new TypeDeclarationNode(TypeDeclarationNode::GrammarType::SINGLE_DECL);
-        LeafNode *leaf_node = new LeafNode($1.value);
-        $$->append_child(leaf_node);
-        $$->append_child($3.type_node);
-        delete $3.record_info;
-        if($3.bounds) {
-            delete $3.bounds;
-        }
-    };
-type :
-    standrad_type
+type : ID 
     {
-        // type -> standrad_type
-        $$.main_type = (TypeAttr::MainType)0;
-        $$.type_ptr = $1.type_ptr;
-        if(error_flag)
-            break;
-        $$.type_node = new TypeNode(TypeNode::GrammarType::BASIC_TYPE);
-        $$.base_type_node = $$.type_node;
-        $$.type_node->set_base_type_node($$.type_node);
-        $$.type_node->append_child($1.standard_type_node);
+        // type -> ID
+        // 由于我们将integer等都设为保留字，都识别为ID（integer char boolean string real）
+        $$ = new TypeNode(TypeNode::VarType::ID_TYPE, $1.value.get<string>());
+        //IdTypeNode* idnode = new IdTypeNode($1.value.get());
+        //$$->append_child(idnode);
     }
-    | ARRAY '[' periods ']' OF type
+    | array_type
     {
-        // type -> ARRAY '[' periods ']' OF type
-        $$.main_type = (TypeAttr::MainType)1;
-        $$.base_type_node = $6.base_type_node;
-        $$.bounds = $3.bounds;
-        if ($3.bounds){
-            auto merged_bounds = new std::vector<ArrayType::ArrayBound>();
-            for (auto i : *($3.bounds)){
-                merged_bounds->push_back(i);
-            }
-            auto basic_type = $6.type_ptr;
-            if($6.type_ptr->template_type() == TypeTemplate::TYPE::ARRAY) {
-                for (auto i : *($6.bounds)){
-                    merged_bounds->push_back(i);
-                    $$.bounds->push_back(i);
-                }
-                basic_type = $6.type_ptr->DynamicCast<ArrayType>()->base_type();
-            }
-            PtrCollect($6.type_ptr);
-            $$.type_ptr = new ArrayType(basic_type, *merged_bounds);
-            
-            delete merged_bounds;
-        }
-        if(error_flag)
-            break; 
-        $$.type_node = new TypeNode(TypeNode::GrammarType::ARRAY);
-        $$.type_node->set_base_type_node($6.base_type_node);
-        $$.type_node->append_child($3.periods_node);
-        $$.type_node->append_child($6.type_node);
-        delete $6.bounds;
-        if ($6.record_info){
-            delete $6.record_info;
-        }
+        $$ = new TypeNode(TypeNode::VarType::ARRAY_TYPE, "array");
+        $$->append_child($1);
     }
-    | RECORD record_body END
+    | RECORD var_declaration END ';'
     {
-        // type -> RECORD record_body END
-        $$.main_type = (TypeAttr::MainType)2;
-        $$.record_info = $2.record_info;
-        if ($2.record_info){
-            $$.type_ptr = new RecordType(*($2.record_info));
-        } else{
-             $$.type_ptr = new RecordType();
-        }
-        if(error_flag)
-            break; 
-        $$.type_node = new TypeNode(TypeNode::GrammarType::RECORD_TYPE);
-        $$.base_type_node = $$.type_node;
-        $$.type_node->append_child($2.record_body_node);
-        $$.type_node->set_base_type_node($$.type_node);
+        // recordtype -> record var_declaration end;
+        $$ = new TypeNode(TypeNode::VarType::RECORD_TYPE, "record");
+        $$->append_child($2);
     };
-record_body :
+    | string_type
     {
-        // record_body -> empty
+        $$ = new TypeNode(TypeNode::VarType::STRING_TYPE, "string");
+        $$->append_child($1);
+    };
+
+array_type : ARRAY '[' periods ']' OF type
+    {
+        if ($6->var_type == TypeNode::VarType::STRING_TYPE || $6->var_type == TypeNode::VarType::RECORD_TYPE){
+            // 不支持数组的元素类型为string
+            // 不支持在array的type中声明record
+            $$ = new ArrayTypeNode("error");
+        }
+        else if($6->var_type == TypeNode::VarType::ID_TYPE){
+            $$ = new ArrayTypeNode($6->get_type_name());
+        }
+        else {
+            $$ = new ArrayTypeNode("array");
+        }
+        // 添加数组信息
+        ArrayType* at = new ArrayType();
+        at->SetDimension($3->get_dm());
+        $$->set_info(at);
+
+        $$->append_child($3);
+        $$->append_child($6);
+    };
+
+/* record_body :
+    {
+        // record_body -> ε
         $$.record_info = new std::unordered_map<std::string, TypeTemplate*>();
         if(error_flag)
             break;
         $$.record_body_node = new RecordBodyNode();
-    } | var_declaration {
+    } 
+    | var_declaration 
+    {
 	$$.record_info = $1.record_info;
 	if(error_flag)
 	    break;
 	$$.record_body_node = new RecordBodyNode();
 	$$.record_body_node->append_child($1.variable_declaration_node);
 	delete $1.pos_info;
-    } | var_declaration ';'
+    } 
+    | var_declaration ';'
     {
         // record_body -> var_declaration ';'
         $$.record_info = $1.record_info;
@@ -507,747 +398,310 @@ record_body :
         $$.record_body_node = new RecordBodyNode();
         $$.record_body_node->append_child($1.variable_declaration_node);
         delete $1.pos_info;
-    };
-standrad_type :
-    BASIC_TYPE
-    {
-        // standrad_type -> BASIC_TYPE
-        string typestr = $1.value.get<string>();
-        if (typestr == "integer"){
-            $$.type_ptr = TYPE_INT;
-        } else if(typestr == "real"){
-            $$.type_ptr = TYPE_REAL;
-        } else if(typestr == "boolean"){
-            $$.type_ptr = TYPE_BOOL;
-        } else{
-            $$.type_ptr = TYPE_CHAR;
-        }
-        if(error_flag)
-            break;
-        $$.standard_type_node = new BasicTypeNode();
-        $$.standard_type_node->set_type(dynamic_cast<BasicType*>($$.type_ptr));
-    };
-periods :
-    periods ',' period
+    }; */
+    
+periods : periods ',' period
     {
         // periods -> periods ',' period
-        $$.bounds = $1.bounds;
-        $$.bounds->push_back(*($3.bound));
-        if(error_flag)
-            break;
-        $$.periods_node = new PeriodsNode();
-        $$.periods_node->append_child($1.periods_node);
-        $$.periods_node->append_child($3.period_node);
-        delete $3.bound;
+        $$ = new PeriodsNode(PeriodsNode::PeriodType::MULTI);
+        
+        // 插入新的维度
+        std::vector<ArrayType::Dimension> dim;
+        dim = $1->get_dm();
+        ArrayType::Dimension nd($3->get_lowb(), $3->get_upb());
+        dim.emplace_back(nd);
+        $$->set_dm(dim);
+
+        $$->append_child($1);
+        $$->append_child($3);
     }
     | period
     {
         // periods -> period
-        $$.bounds = new std::vector<ArrayType::ArrayBound>();
-        $$.bounds->push_back(*($1.bound));
-        if(error_flag)
-            break;
-        $$.periods_node = new PeriodsNode();
-        $$.periods_node->append_child($1.period_node);
-        delete $1.bound;
+        $$ = new PeriodsNode(PeriodsNode::PeriodType::SINGLE);
+        
+        // 底层新建维度vector
+        std::vector<ArrayType::Dimension> dim;
+        ArrayType::Dimension nd($1->get_lowb(), $1->get_upb());
+        dim.emplace_back(nd);
+        $$->set_dm(dim);
+        $$->append_child($1);
     };
-period :
-    const_variable SUBCATALOG const_variable
-    {     
-        // period -> const_variable SUBCATALOG const_variable
-        int arr_len=0;
-        $$.bound = new ArrayType::ArrayBound();
-        if ($1.type_ptr == TYPE_INT&&$3.type_ptr == TYPE_INT){
-            arr_len = ($3.value - $1.value).get<int>();
-            $$.bound-> type_ = TYPE_INT;
-            $$.bound->lb_ = $1.value.get<int>();
-            $$.bound->ub_ = $3.value.get<int>();
-        } else if($1.type_ptr == TYPE_CHAR&&$3.type_ptr == TYPE_CHAR){
-            arr_len = (int)($3.value - $1.value).get<char>();
-            $$.bound-> type_ = TYPE_CHAR;
-            $$.bound->lb_ = int($1.value.get<int>());
-            $$.bound->ub_ = int($3.value.get<int>());
-        } else {
-            semantic_error(real_ast,"array bound should be integer or char",$2.line_num,$2.column_num);
-        }
-        if(arr_len < 0){
-            arr_len = 0;
-            semantic_error(real_ast,"array bound should be positive",$2.line_num,$2.column_num);
-        }
-        if(error_flag){
-            break;
-        }
-        $$.period_node =new PeriodNode();
-        $$.period_node->set_len(arr_len+1);
-        $$.period_node->append_child($1.const_variable_node);
-        $$.period_node->append_child($3.const_variable_node);
-    };
-var_declarations : 
-    {
-        // var_declarations -> empty
-        if(error_flag)
-            break;
-        $$ = new VariableDeclarationsNode();
-    }
-    | VAR var_declaration ';'
-    {
-        // var_declarations -> VAR var_declaration ';'
-        if(error_flag)
-            break;
-        for (auto i : *($2.record_info)){
-            int line = $2.pos_info->find(i.first)->second.first;
-            int row = $2.pos_info->find(i.first)->second.second;
-            ObjectSymbol *obj = new ObjectSymbol(i.first, i.second,line);
-            if(!table_set_queue.top()->Insert<ObjectSymbol>(i.first,obj)){
-                semantic_error(real_ast,"redefinition of '"+ i.first +"'",line,row);
-                yynote(i.first,table_set_queue.top()->SearchEntry<ObjectSymbol>(i.first)->decl_line());
-            }
-        }
-        $$ = new VariableDeclarationsNode();
-        $$->append_child($2.variable_declaration_node);
-        delete $2.pos_info;
-        if ($2.record_info){
-            delete $2.record_info;
-        }
-    };
-var_declaration :
-    var_declaration ';' id_list ':' type 
-    {
-        // var_declaration -> var_declaration ';' id_list ':' type
-         if(error_flag)
-            break;   
-        $$.record_info = $1.record_info;
-        $$.pos_info = $1.pos_info;
-        for (auto i : *($3.list_ref)){
-            auto res = $$.record_info->insert(make_pair(i.first, $5.type_ptr));
-            $$.pos_info->insert(make_pair(i.first,std::make_pair(line_count,i.second)));
-            if (!res.second){
-                semantic_error(real_ast,"redefinition of '"+ i.first +"'",line_count,i.second);
-            }
-        }
-        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::MULTIPLE_DECL,VariableDeclarationNode::ListType::TYPE);
-        $$.variable_declaration_node->append_child($1.variable_declaration_node);
-        $$.variable_declaration_node->append_child($3.id_list_node);
-        $$.variable_declaration_node->append_child($5.type_node);
-        delete $3.list_ref;
-        if($5.bounds) {
-            delete $5.bounds;
-        }
-        if($5.record_info) {
-            delete $5.record_info;
-        }
-        PtrCollect($5.type_ptr);
 
-    }
-    | id_list ':' type 
-    {
-        // var_declaration -> id_list ':' type
-        if(error_flag)
-           break;
-        $$.record_info = new std::unordered_map<std::string, TypeTemplate*>();
-        $$.pos_info = new std::unordered_map<std::string, std::pair<int,int>>();
-        for (auto i : *($1.list_ref)){
-            auto res = $$.record_info->insert(make_pair(i.first, $3.type_ptr));
-            $$.pos_info->insert(make_pair(i.first,std::make_pair(line_count,i.second)));
-            if (!res.second){
-                semantic_error(real_ast,"redefinition of '"+ i.first +"'",line_count,i.second);
-            }
-        }
-        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::SINGLE_DECL,VariableDeclarationNode::ListType::TYPE);
-        $$.variable_declaration_node->append_child($1.id_list_node);
-        $$.variable_declaration_node->append_child($3.type_node);
-        delete $1.list_ref;
-        if($3.bounds) {
-            delete $3.bounds;
-        }
-        if($3.record_info) {
-            delete $3.record_info;
-        }
-        PtrCollect($3.type_ptr);
-    }
-    |var_declaration ';' id_list ':' ID
-    {
-        // var_declaration -> var_declaration ';' id_list ':' ID
-        if(error_flag)
-            break;
-        $$.record_info = $1.record_info;
-        $$.pos_info = $1.pos_info;
-        TypeTemplate *tmp = table_set_queue.top()->SearchEntry<TypeTemplate>($5.value.get<string>());
-        if(tmp == nullptr){
-            string tn = $5.value.get<string>();
-            semantic_error(real_ast,"undefined type '"+tn+"'",$5.line_num,$5.column_num);
-            break;
-        } else {
-            for (auto i : *($3.list_ref)){
-                auto res = $$.record_info->insert(make_pair(i.first, tmp));
-                $$.pos_info->insert(make_pair(i.first,std::make_pair(line_count,i.second)));
-                if (!res.second){
-                    semantic_error(real_ast,"redefinition of '"+ i.first +"'",line_count,i.second);
-                }
-            }
-        }
-        if(error_flag)
-            break;
-        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::MULTIPLE_DECL,VariableDeclarationNode::ListType::ID);
-        $$.variable_declaration_node->append_child($1.variable_declaration_node);
-        $$.variable_declaration_node->append_child($3.id_list_node);
-        LeafNode *leaf_node = new LeafNode($5.value);
-        $$.variable_declaration_node->append_child(leaf_node);
-        delete $3.list_ref;
-    }
-    |id_list ':' ID
-    {
-        // var_declaration -> id_list ':' ID
-        if(error_flag)
-                break;
-        TypeTemplate *tmp = table_set_queue.top()->SearchEntry<TypeTemplate>($3.value.get<string>());
-        if(tmp==nullptr){
-            string tn = $3.value.get<string>();
-            semantic_error(real_ast,"undefined type '"+tn+"'",$3.line_num,$3.column_num);
-            $$.record_info = new std::unordered_map<std::string, TypeTemplate*>();
-            $$.pos_info = new std::unordered_map<std::string, std::pair<int,int>>();
-            break;
-        } else {
-            $$.record_info = new std::unordered_map<std::string, TypeTemplate*>();
-            $$.pos_info = new std::unordered_map<std::string, std::pair<int,int>>();
-            for (auto i : *($1.list_ref)){
-                auto res = $$.record_info->insert(make_pair(i.first, tmp));
-                $$.pos_info->insert(make_pair(i.first,std::make_pair(line_count,i.second)));
-                if (!res.second){
-                    semantic_error(real_ast,"redefinition of '"+ i.first +"'",line_count,i.second);
-                }
-            }
-        }
-        $$.variable_declaration_node = new VariableDeclarationNode(VariableDeclarationNode::GrammarType::SINGLE_DECL,VariableDeclarationNode::ListType::ID);
-        $$.variable_declaration_node->append_child($1.id_list_node);
-        LeafNode *leaf_node = new LeafNode($3.value);
-        $$.variable_declaration_node->append_child(leaf_node);
-        delete $1.list_ref;
+period : INT_NUM SUBCATALOG INT_NUM
+    {     
+        // period -> INT_NUM SUBCATALOG INT_NUMe
+        $$ = new PeriodNode($1.value.get<int>(), $3.value.get<int>());
+        $$->append_child(new LeafNode($1.value.get<int>(), LeafNode::LeafType::VALUE));
+        $$->append_child(new LeafNode($3.value.get<int>(), LeafNode::LeafType::VALUE));
     };
+
+string_type : STRING '[' INT_NUM ']'
+    {
+        StringType* string_info = new StringType(StringType::Grammar::TypeLIMIT, $3.value.get<int>());
+        $$ = new StringTypeNode(string_info);
+    }
+    | STRING
+    {
+        StringType* string_info = new StringType(StringType::Grammar::TypeLIMIT, 0);
+        $$ = new StringTypeNode(string_info);
+    };
+
 subprogram_declarations : 
     {
-        // subprogram_declarations -> empty
-        if(error_flag)
-            break;
-        $$ = new SubprogramDeclarationsNode();
+        // subprogram_declarations -> ε
+        $$ = new SubprogramDeclarations();
     }
     | subprogram_declarations subprogram_declaration ';'
     {
         // subprogram_declarations -> subprogram_declarations subprogram_declaration ';'
-        if(error_flag)
-            break;
-        $$ = new SubprogramDeclarationsNode();
+        $$ = new SubprogramDeclarations();
         $$->append_child($1);
         $$->append_child($2);
-        TableSet* top = table_set_queue.top();
-        table_set_queue.pop();
-        delete top;
     };
-subprogram_declaration :
-    subprogram_head subprogram_body
+
+subprogram_declaration : subprogram_head subprogram_body
     {
         // subprogram_declaration -> subprogram_head subprogram_body
-        if(error_flag)
-            break;
-        $$ = new SubprogramDeclarationNode();
+        $$ = new SubprogramDeclaration();
         $$->append_child($1);
         $$->append_child($2);
     };
-subprogram_body :
-    const_declarations type_declarations var_declarations compound_statement
+subprogram_body : const_declarations var_declarations compound_statement
     {
-        // subprogram_body -> const_declarations type_declarations var_declarations compound_statement
-        if(error_flag)
-            break;
-        $$ = new SubprogramBodyNode();
+        // subprogram_body -> const_declarations var_declarations compound_statement
+        $$ = new SubprogramBody();
         $$->append_child($1);
         $$->append_child($2);
         $$->append_child($3);
-        $$->append_child($4);
     };
-subprogram_head :
-    FUNCTION ID formal_parameter ':' standrad_type ';'
+    
+subprogram_head : FUNCTION ID formal_parameter ':' type ';'
     {
         // subprogram_head -> FUNCTION ID formal_parameter ':' standrad_type ';'
-        FunctionSymbol* tmp ;
-        if($3.parameters){
-            tmp = new FunctionSymbol($2.value.get<string>(), $5.type_ptr, $2.line_num, *$3.parameters);
-        } else {
-            tmp = new FunctionSymbol($2.value.get<string>(), $5.type_ptr, $2.line_num);
-        }
-        if (!table_set_queue.top()->Insert<FunctionSymbol>($2.value.get<string>(), tmp)){
-            string tn = $2.value.get<string>();
-            semantic_error(real_ast,"redefinition of function '"+tn+"'",$2.line_num,$2.column_num);
-            yynote($2.value.get<string>(),table_set_queue.top()->SearchEntry<FunctionSymbol>($2.value.get<string>())->decl_line());
-        } 
-
-        TableSet* now_table_set = new TableSet($2.value.get<string>(), table_set_queue.top());
-        table_set_queue.push(now_table_set);
-        real_ast->libs()->Preset(table_set_queue.top()->symbols());
-        FunctionSymbol* tmp2 = new FunctionSymbol(*tmp);
-        string tag = $2.value.get<string>();
-        table_set_queue.top()->Insert<FunctionSymbol>(tag, tmp2);
-        ObjectSymbol* tmp3 = new ObjectSymbol("__"+tag+"__", $5.type_ptr, $2.line_num);
-        table_set_queue.top()->Insert<ObjectSymbol>("__"+tag+"__", tmp3);
-        if ($3.parameters){
-            int cnt = 0;
-            for (auto i : *($3.parameters)){
-                ObjectSymbol *tmp = new ObjectSymbol(i.first, i.second.first, $2.line_num);
-                if (i.second.second == FunctionSymbol::PARAM_MODE::REFERENCE){
-                    tmp->set_ref(true);
-                }
-                if(!table_set_queue.top()->Insert<ObjectSymbol>(i.first, tmp)){
-                    int line = $3.pos_info->at(cnt).first;
-                    int row = $3.pos_info->at(cnt).second;
-                    semantic_error(real_ast,"redefinition of '"+ i.first +"'",line,row);
-                    yynote(i.first,table_set_queue.top()->SearchEntry<ObjectSymbol>(i.first)->decl_line());
-                }
-                cnt++;
-            }
-        }
-        if(error_flag)
-            break;
-        $$ = new SubprogramHeadNode(SubprogramHeadNode::GrammarType::FUNCTION);
+        $$ = new SubprogramHead(SubprogramHead::GrammarType::FUNCTION);
         $$->set_id($2.value.get<string>());
-        LeafNode *leaf_node = new LeafNode($2.value);
+        LeafNode *leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
-        $$->append_child($3.formal_parameter_node);
-        $$->append_child($5.standard_type_node);
-        if($3.parameters){
-            delete $3.parameters;
-        }
-        if($3.pos_info){
-            delete $3.pos_info;
-        }
+        $$->append_child($3);
+        $$->append_child($5);
     }
     | PROCEDURE ID formal_parameter ';'
     {
         // subprogram_head -> PROCEDURE ID formal_parameter ';'
-        if(error_flag)
-            break;
-        FunctionSymbol* tmp ;
-        if($3.parameters){
-            tmp = new FunctionSymbol($2.value.get<string>(), nullptr, $2.line_num, *$3.parameters);
-        } else {
-            tmp = new FunctionSymbol($2.value.get<string>(), nullptr, $2.line_num);
-        }
-        
-        if (!table_set_queue.top()->Insert<FunctionSymbol>($2.value.get<string>(), tmp)){
-            string tn = $2.value.get<string>();
-            semantic_error(real_ast,"redefinition of procedure '"+tn+"'",$2.line_num,$2.column_num);
-            yynote($2.value.get<string>(),table_set_queue.top()->SearchEntry<FunctionSymbol>($2.value.get<string>())->decl_line());
-        } 
-
-        TableSet* now_table_set = new TableSet($2.value.get<string>(),table_set_queue.top());
-        table_set_queue.push(now_table_set);
-        real_ast->libs()->Preset(table_set_queue.top()->symbols());
-        FunctionSymbol* tmp2 = new FunctionSymbol(*tmp);
-        table_set_queue.top()->Insert<FunctionSymbol>($2.value.get<string>(), tmp2);
-        if ($3.parameters){
-            int cnt = 0;
-            for (auto i : *($3.parameters)){
-                ObjectSymbol *tmp = new ObjectSymbol(i.first, i.second.first, $2.line_num);
-                if (i.second.second == FunctionSymbol::PARAM_MODE::REFERENCE){
-                    tmp->set_ref(true);
-                }
-                if(!table_set_queue.top()->Insert<ObjectSymbol>(i.first, tmp)){
-                    int line = $3.pos_info->at(cnt).first;
-                    int row = $3.pos_info->at(cnt).second;
-                    semantic_error(real_ast,"redefinition of '"+ i.first +"'",line,row);
-                    yynote(i.first,table_set_queue.top()->SearchEntry<ObjectSymbol>(i.first)->decl_line());
-                }
-                cnt++;
-            }
-        }
-        
-        $$ = new SubprogramHeadNode(SubprogramHeadNode::GrammarType::PROCEDURE);
+        $$ = new SubprogramHead(SubprogramHead::GrammarType::PROCEDURE);
         LeafNode *leaf_node = new LeafNode($2.value);
+        $$->set_id($2.value.get<string>());
         $$->append_child(leaf_node);
-        $$->append_child($3.formal_parameter_node);
-        delete $3.parameters;
-        delete $3.pos_info;
+        $$->append_child($3);
     };
+    
 formal_parameter :
     {   
-        // formal_parameter -> empty
-        $$.parameters = new std::vector<FunctionSymbol::Parameter>();
-        $$.pos_info = new std::vector<std::pair<int,int>>();
-        if(error_flag)
-            break;
-        $$.formal_parameter_node = new FormalParamNode();
+        // formal_parameter -> ε
+        $$ = new FormalParam();
     }
     | '(' parameter_lists ')'
     {
         // formal_parameter -> '(' parameter_lists ')'
-        $$.parameters = $2.parameters;
-        $$.pos_info = $2.pos_info;
-        if(error_flag)
-            break;
-        $$.formal_parameter_node = new FormalParamNode();
-        $$.formal_parameter_node->append_child($2.param_lists_node);
+        $$ = new FormalParam();
+        $$->append_child($2);
     };
-parameter_lists :
-    parameter_lists ';' parameter_list
+
+parameter_lists : parameter_lists ';' parameter_list
     {   
         // parameter_lists -> parameter_lists ';' parameter_list
-        $$.parameters = $1.parameters;
-        $$.pos_info = $1.pos_info;
-        $$.parameters->insert($$.parameters->end(), $3.parameters->begin(), $3.parameters->end());
-        $$.pos_info->insert($$.pos_info->end(),$3.pos_info->begin(), $3.pos_info->end());
-        if(error_flag)
-            break;
-        $$.param_lists_node = new ParamListsNode(ParamListsNode::GrammarType::MULTIPLE_PARAM_LIST);
-        $$.param_lists_node->append_child($1.param_lists_node);
-        $$.param_lists_node->append_child($3.param_list_node);
+        $$ = new ParamLists(ParamLists::GrammarType::MULTIPLE_PARAM_LIST);
+        $$->append_child($1);
+        $$->append_child($3);
     }
     | parameter_list
     {  
         // parameter_lists -> parameter_list
-        $$.parameters = $1.parameters;
-        $$.pos_info = $1.pos_info;
-        if(error_flag)
-            break;
-        $$.param_lists_node = new ParamListsNode(ParamListsNode::GrammarType::SINGLE_PARAM_LIST);
-        $$.param_lists_node->append_child($1.param_list_node);
+        $$ = new ParamListsNode(ParamListsNode::GrammarType::SINGLE_PARAM_LIST);
+        $$->append_child($1);
     };
-parameter_list :
-    var_parameter
+
+parameter_list : var_parameter
     {   
         // parameter_list -> var_parameter
-        $$.parameters = $1.parameters;
-        $$.pos_info = $1.pos_info;
-        if(error_flag)
-            break;
-        $$.param_list_node = new ParamListNode();
-        $$.param_list_node->append_child($1.var_parameter_node);
+        $$ = new ParamList(ParamList::ParamType::VarParam);
+        $$->append_child($1);
     }
     | value_parameter
     {   
         // parameter_list -> value_parameter
-        $$.parameters = $1.parameters;
-        $$.pos_info = $1.pos_info;
-        if(error_flag)
-            break;
-        $$.param_list_node = new ParamListNode();
-        $$.param_list_node->append_child($1.value_parameter_node);
+        $$ = new ParamList(ParamList::ParamType::ValueParam);
+        $$->append_child($1);
     };
-var_parameter :
-    VAR value_parameter
+
+var_parameter : VAR value_parameter
     {   
         // var_parameter -> VAR value_parameter
-        int para_len = $2.parameters->size();
-        for (int i = 0; i < para_len; i++){
-            $2.parameters->at(i).second.second = FunctionSymbol::PARAM_MODE::REFERENCE;
-        }
-        $$.parameters = $2.parameters;
-        $$.pos_info = $2.pos_info;
-        if(error_flag)
-            break;
-        $$.var_parameter_node = new VarParamNode();
-        $$.var_parameter_node->append_child($2.value_parameter_node);
-    };
-value_parameter :
-    id_list ':' standrad_type
-    {   
-        // value_parameter -> id_list ':' standrad_type
-        $$.parameters = new std::vector<FunctionSymbol::Parameter>();
-        $$.pos_info = new std::vector<std::pair<int,int>>();
-        FunctionSymbol::ParamType tmp($3.type_ptr,FunctionSymbol::PARAM_MODE::VALUE);
-        for (auto i : *($1.list_ref)){
-            FunctionSymbol::Parameter tmp_pair(i.first,tmp);
-            $$.parameters->push_back(tmp_pair);
-            $$.pos_info->push_back(std::make_pair(line_count,i.second));
-        }
-        
-        if(error_flag)
-            break;
-        $$.value_parameter_node = new ValueParamNode();
-        $$.value_parameter_node->append_child($1.id_list_node);
-        $$.value_parameter_node->append_child($3.standard_type_node);
-        delete $1.list_ref;
-    };
-compound_statement :
-    BEGIN_ statement_list END 
-    {
-        // compound_statement -> BEGIN_ statement_list END
-        if(error_flag)
-            break;
-        $$ = new CompoundStatementNode();
+        $$ = new VarParam();
         $$->append_child($2);
     };
-statement_list :
-    statement_list ';' statement
-    {
-        // statement_list -> statement_list ';' statement
-        if(error_flag)
-            break;
-        $$ = new StatementListNode();
+
+value_parameter : id_list ':' type
+    {   
+        // value_parameter -> id_list ':' standrad_type
+        $$ = new ValueParam();
         $$->append_child($1);
         $$->append_child($3);
-    } | statement
+    };
+
+compound_statement : BEGIN_ statement_list END 
+    {
+        // compound_statement -> Begin statement_list end
+        $$ = new CompoundStatement();
+        $$->append_child($2);
+    };
+
+statement_list : statement_list ';' statement
+    {
+        // statement_list -> statement_list ';' statement
+        $$ = new StatementList();
+        $$->append_child($1);
+        $$->append_child($3);
+    } 
+    | statement
     {
         // statement_list -> statement
-        if(error_flag)
-            break;
-        $$ = new StatementListNode();
+        $$ = new StatementList();
         $$->append_child($1);
     };
-statement:
-    variable ASSIGNOP expression
-    {   
-        //statement -> variable ASSIGNOP expression
-        if(error_flag)
-            break;
-        bool var_flag = ($1.type_ptr==TYPE_REAL && $3.type_ptr==TYPE_INT) || is_same($1.type_ptr,$3.type_ptr);
-        bool str_flag = ($1.type_ptr != TYPE_ERROR &&
-        		 $1.type_ptr->StringLike() &&
-        		 $3.type_ptr==TYPE_STRINGLIKE);
-        if(!var_flag && !str_flag){
-            string tn1 = type_name($1.type_ptr);
-            string tn2 = type_name($3.type_ptr);
-            semantic_error(real_ast,"incompatible type assigning '"+tn1+"' from '"+tn2+"'",line_count,0);
-            break;
-        }
-        std::string func_name = table_set_queue.top()->tag();
 
-        if(func_name == *$1.name){
-            $$ = new StatementNode(StatementNode::GrammarType::FUNC_ASSIGN_OP_EXP);
-        }else{
-            $$ = new StatementNode(StatementNode::GrammarType::VAR_ASSIGN_OP_EXP);
-            if (!$1.is_lvalue){
-                semantic_error(real_ast,"lvalue required as left operand of assignment",$2.line_num,$2.column_num);
-            }
-        }
-        if(error_flag)
-            break;
-        $$->append_child($1.variable_node);
-        $$->append_child($3.expression_node);
-        delete $1.name;
+statement : assignop_statement
+    {   
+        //statement -> AssignopStatement
+        $$ = new Statement(Statement::StatementType::ASSIGN_OP_STATEMENT);
+        $$->append_child($1);
     }
-    | call_procedure_statement
+    | procedure_call
     {
         // statement -> call_procedure_statement
-        if(error_flag)
-            break;
-        $$ = new StatementNode(StatementNode::GrammarType::PROCEDURE_CALL);
+        $$ = new Statement(Statement::StatementType::PROCEDURE_CALL);
         $$->append_child($1);
     }
     | compound_statement
     {
         // statement -> compound_statement
-        if(error_flag)
-            break;
-        $$ = new StatementNode(StatementNode::GrammarType::COMPOUND_STATEMENT);
+        $$ = new Statement(Statement::StatementrType::COMPOUND_STATEMENT);
         $$->append_child($1);
     }
-    | IF expression THEN statement else_part
+    | ifstatement
     {   
         // statement -> IF expression THEN statement else_part
-        if(error_flag)
-            break;
-        //类型检查
-        if(!is_same($2.type_ptr,TYPE_BOOL)){
-            string tn = type_name($2.type_ptr);
-            semantic_error(real_ast,"IF quantity cannot be '"+tn+"'",line_count,0);
-        }
-        $$ = new StatementNode(StatementNode::GrammarType::IF_STATEMENT);
-        $$->append_child($2.expression_node);
-        $$->append_child($4);
-        $$->append_child($5);
+        $$ = new Statement(Statement::GrammarType::IF_STATEMENT);
+        $$->append_child($1);
     }
-    | CASE expression OF case_body END
+    | loopstatement
     {
         // statement -> CASE expression OF case_body END
-        if(error_flag)
-            break;
-        //类型检查
-        bool valid = $2.type_ptr == TYPE_INT || $2.type_ptr == TYPE_BOOL || $2.type_ptr == TYPE_CHAR;
-        if(!valid){
-            string tn = type_name($2.type_ptr);
-            semantic_error(real_ast,"CASE quantity cannot be '"+tn+"'",line_count,0);
-        }
-        if(!is_same($4.type_ptr,TYPE_ERROR)){
-            if(!is_same($2.type_ptr,$4.type_ptr)){
-            	string tn = type_name($2.type_ptr);
-            	string tn2 = type_name($4.type_ptr);
-                semantic_error(real_ast,"CASE label cannot reduce from '"+tn2+"' to '"+tn+"'",line_count,0);
-            }
-        }
-        $$ = new StatementNode(StatementNode::GrammarType::CASE_STATEMET);
-        $$->append_child($2.expression_node);
-        $$->append_child($4.case_body_node);
+        $$ = new Statement(Statement::GrammarType::LOOP_STATEMENT);
+        $$->append_child($1);
     }
-    | WHILE expression DO statement
+    | 
+    {
+        // statement -> ε
+        $$ = new Statement(Statement::GrammarType::EPSILON);
+    };
+
+assignop_statement : variable ASSIGNOP expression
+    {
+        // assignop_statement -> variable ASSIGNOP expression
+        $$ = new AssignopStatement(AssignopStatement::LeftType::VARIABLE);
+        $$->append_child($1);
+        $$->append_child($3);
+    };
+
+procedure_call : ID
+    {
+        // procedure_call -> id
+        $$ = new ProcedureCall(ProcedureCall::ProcedureType::WITHOUT_LIST, $1.value.get<string>());
+    }
+    | ID '(' ')'
+    {
+        $$ = new ProcedureCall(ProcedureCall::ProcedureType::WITHOUT_LIST, $1.value.get<string>());
+    }
+    | ID '(' expression_list ')'
+    {
+        // procedure_call -> id ( expression_list )
+        $$ = new ProcedureCall(ProcedureCall::ProcedureType::WITHOUT_LIST, $1.value.get<string>());
+        $$->append_child($3);
+    };
+
+ifstatement : IF expression THEN statement else_part
+    {
+        // if_statement -> if expression then statement else_part
+        $$ = new IfStatement();
+        $$->append_child($1);
+        $$->append_child($4);
+        $$->append_child($5);
+    };
+
+else_part : 
+    {
+        // else_part -> ε | else statement
+        $$ = new ElsePart(ElsePart::ELSEType::EPSILON);
+    }
+    | ELSE statement
+    {   
+        // else_part -> else statement
+        $$ = new ElsePart(ElsePart::ELSEType::ELSE_STATEMENT);
+        $$->append_child($2);
+    };
+
+loopstatement : WHILE expression DO statement
     {
         // statement -> WHILE expression DO statement
-        if(error_flag)
-            break;
-        if(!is_same($2.type_ptr,TYPE_BOOL)){
-            string tn = type_name($2.type_ptr);
-            semantic_error(real_ast,"WHILE quantity cannot be '"+tn+"'",line_count,0);
-        }
-        $$ = new StatementNode(StatementNode::GrammarType::WHILE_STATEMENT);
-        $$->append_child($2.expression_node);
+        $$ = new LoopStatement(LoopStatement::LoopType::WHILE);
+        $$->append_child($2);
         $$->append_child($4);
 
     } 
     | REPEAT statement_list UNTIL expression
     {
-        // statement -> REPEAT statement_list UNTIL expression
-        if(error_flag)
-            break;
-        //类型检查
-        if(!is_same($4.type_ptr,TYPE_BOOL)){
-            string tn = type_name($4.type_ptr);
-            semantic_error(real_ast,"REPEAT quantity cannot be '"+tn+"'",line_count,0);
-        }
-        $$ = new StatementNode(StatementNode::GrammarType::REPEAT_STATEMENT);
+        // statement -> repeat statement until expression
+        $$ = new LoopStatement(LoopStatement::LoopType::REAPT);
         $$->append_child($2);
-        $$->append_child($4.expression_node);
+        $$->append_child($4);
     }
-    | FOR ID ASSIGNOP expression updown expression DO statement
+    | FOR ID ASSIGNOP expression DOWNTO expression DO statement
     {
-        // statement -> FOR ID ASSIGNOP expression updown expression DO statement
-        if(error_flag)
-            break;
-        //类型检查
-        ObjectSymbol *tmp = table_set_queue.top()->SearchEntry<ObjectSymbol>($2.value.get<string>());
-        if(tmp==nullptr){
-            string tn = $2.value.get<string>();
-            semantic_error(real_ast,"'"+tn+"' undeclared",$2.line_num,$2.column_num);
-            break;
-        }
-        if((!is_basic(tmp->type()))||(!is_same(tmp->type(),$4.type_ptr))){
-            string tn1 = type_name(tmp->type());
-            string tn2 = type_name($4.type_ptr);
-            semantic_error(real_ast,"incompatible type assigning '"+tn1+"' from '"+tn2+"'",line_count,0);
-        }
-
-        if((!is_same($4.type_ptr,$6.type_ptr))||(is_same($4.type_ptr,TYPE_REAL))){
-            string tn1 = type_name($4.type_ptr);
-            string tn2 = type_name($6.type_ptr);
-            semantic_error(real_ast,"invalid updown type from '"+tn1+"' to '"+tn2+"'",line_count,0);
-        }
-        $$ = new StatementNode(StatementNode::GrammarType::FOR_STATEMENT);
-        LeafNode *id_node = new LeafNode($2.value);
-        $$->append_child(id_node);
-        $$->append_child($4.expression_node);
-        $$->append_child($5);
-        $$->append_child($6.expression_node);
+        // statement -> FOR ID ASSIGNOP expression downto expression DO statement
+        $$ = new LoopStatement(LoopStatement::LoopType::FORDOWN);
+        LeafNode *leaf_node = new LeafNode(LeafNode::LeafType::NAME); 
+        $$->append_child(leaf_node);
+        $$->append_child($4);
+        $$->append_child($6);
         $$->append_child($8);
     }
-    | 
+    | FOR ID ASSIGNOP expression TO expression DO statement
     {
-        // statement -> empty
-        if(error_flag)
-            break;
-        $$ = new StatementNode(StatementNode::GrammarType::EPSILON);
-    }
-    |READ '(' variable_list ')'
-    {
-        // statement -> READ '(' variable_list ')'
-        if(error_flag)
-            break;
-        if(!$3.variable_list_node->set_types($3.type_ptr_list)){
-            semantic_error(real_ast,"basic type is expected in READ",$1.line_num,$1.column_num);
-        }  
-        $$ = new StatementNode(StatementNode::GrammarType::READ_STATEMENT);
-        $$->append_child($3.variable_list_node);
-        delete $3.type_ptr_list;
-    }
-    |READLN '(' variable_list ')'
-    {
-        // statement -> READLN '(' variable_list ')'
-        if(error_flag)
-            break;
-        if(!$3.variable_list_node->set_types($3.type_ptr_list)){
-            semantic_error(real_ast,"basic type is expected in READLN",$1.line_num,$1.column_num);
-        }
-        $$ = new StatementNode(StatementNode::GrammarType::READLN_STATEMENT);
-        $$->append_child($3.variable_list_node);
-        delete $3.type_ptr_list;
-    }
-    |READLN '('  ')'
-    {
-        // statement -> READLN '('  ')'
-        if(error_flag)
-            break;
-        $$ = new StatementNode(StatementNode::GrammarType::READLN_STATEMENT);
-    }
-    |READLN
-    {
-        // statement -> READLN
-        if(error_flag)
-            break;
-        $$ = new StatementNode(StatementNode::GrammarType::READLN_STATEMENT);
-    }
-    |WRITE '(' expression_list ')'
-    {
-        // statement -> WRITE '(' expression_list ')'
-        if(error_flag)
-            break;
-        if(!$3.expression_list_node->set_types($3.type_ptr_list)){
-            semantic_error(real_ast,"basic type is expected in WRITE",$1.line_num,$1.column_num);
-        }
-        
-        $$ = new StatementNode(StatementNode::GrammarType::WRITE_STATEMENT);
-        $$->append_child($3.expression_list_node);
-        delete $3.type_ptr_list;
-        delete $3.is_lvalue_list;
-    }
-    |WRITELN'(' expression_list ')'
-    {
-        // statement -> WRITELN'(' expression_list ')'
-        if(error_flag)
-            break;
-        if(!$3.expression_list_node->set_types($3.type_ptr_list)){
-            semantic_error(real_ast,"basic type is expected in WRITELN",$1.line_num,$1.column_num);
-        }
-        $$ = new StatementNode(StatementNode::GrammarType::WRITELN_STATEMENT);
-        $$->append_child($3.expression_list_node);
-        delete $3.type_ptr_list;
-        delete $3.is_lvalue_list;
-    };
-    | WRITELN '(' ')'
-    {
-        // statement -> WRITELN '(' ')'
-        if(error_flag)
-            break;
-        $$ = new StatementNode(StatementNode::GrammarType::WRITELN_STATEMENT);
-    }
-    | WRITELN
-    {
-        // statement -> WRITELN
-        if(error_flag)
-            break;
-        $$ = new StatementNode(StatementNode::GrammarType::WRITELN_STATEMENT);
+        $$ = new LoopStatement(LoopStatement::LoopType::FORUP);
+        LeafNode *leaf_node = new LeafNode(LeafNode::LeafType::NAME); 
+        $$->append_child(leaf_node);
+        $$->append_child($4);
+        $$->append_child($6);
+        $$->append_child($8);
     };
 
-
-variable_list :
-    variable
+variable_list : variable
     { 
         // variable_list -> variable
-        $$.type_ptr_list = new std::vector<TypeTemplate*>();
-        $$.type_ptr_list->push_back($1.type_ptr);
-        if(error_flag)
-            break;
-        $$.variable_list_node = new VariableListNode(VariableListNode::GrammarType::VARIABLE);
-        $$.variable_list_node->append_child($1.variable_node);
-        if($1.name) delete $1.name;
-    } | variable_list ',' variable{
+        $$ = new VariableList(VariableList::GrammarType::VARIABLE);
+        $$->append_child($1);
+    } 
+    | variable_list ',' variable
+    {
         // variable_list -> variable_list ',' variable
-        $$.type_ptr_list = $1.type_ptr_list;
-        $$.type_ptr_list->push_back($3.type_ptr);
-        if(error_flag)
-            break;
-        $$.variable_list_node = new VariableListNode(VariableListNode::GrammarType::VARIABLE_LIST_VARIABLE);
-        $$.variable_list_node->append_child($1.variable_list_node);
-        $$.variable_list_node->append_child($3.variable_node);
-        if($3.name) delete $3.name;
+        $$ = new VariableList(VariableList::GrammarType::VARIABLE_LIST_VARIABLE);
+        $$->append_child($1);
+        $$->append_child($3);
     };
-variable:
-    ID '('')'
+
+variable :   ID '('')'
     {
         // variable -> ID '('')'
         if (error_flag) break;
@@ -1282,656 +736,131 @@ variable:
     | ID id_varparts
     {
         // variable -> ID id_varparts
-        if(error_flag)
-            break;
-        ObjectSymbol *tmp = table_set_queue.top()->SearchEntry<ObjectSymbol>($1.value.get<string>());
-        string name = $1.value.get<string>();
-        $$.name = new std::string($1.value.get<string>());
-        $$.type_ptr = TYPE_ERROR;
-        if(tmp == nullptr) {
-            semantic_error(real_ast,"'"+name+ "' undeclared",$1.line_num,$1.column_num);
-            break;
-        } else {
-            //类型检查
-            $$.is_lvalue = true;
-            if (ObjectSymbol::SYMBOL_TYPE::CONST == tmp->symbol_type()){
-                tmp = dynamic_cast<ConstSymbol*>(tmp);
-                $$.is_lvalue = false;
-            } else if(ObjectSymbol::SYMBOL_TYPE::FUNCTION == tmp->symbol_type()){
-                //函数调用 类型检查
-                if (name!=table_set_queue.top()->tag()){
-                    if(!dynamic_cast<FunctionSymbol*>(tmp)->AssertParams()){
-                        string param = dynamic_cast<FunctionSymbol*>(tmp)->ParamName();
-                        semantic_error(real_ast,"too few arguments to function '"+name+"' (expected '("+param+")')",line_count,0);
-                    }else{
-                    	name += "()";
-                    }
-                }else{
-                    name="__"+name+"__";
-                }
-                $$.is_lvalue = false;
-                real_ast->libs()->Call(tmp->name());
-            } else {
-                if (tmp->type()->template_type() == TypeTemplate::TYPE::ARRAY && !error_flag){
-                    std::vector<ArrayType::ArrayBound> bounds = dynamic_cast<ArrayType*>(tmp->type())->bounds();
-                    $2.id_varparts_node->set_lb(bounds);
-                }
-            }
-            $$.type_ptr = $2.AccessCheck(tmp->type());
-            if($$.type_ptr==nullptr){
-                string tn1 = type_name(tmp->type());
-                if(tmp->symbol_type() == ObjectSymbol::SYMBOL_TYPE::FUNCTION ||
-                   tmp->symbol_type() == ObjectSymbol::SYMBOL_TYPE::CONST ||
-                   tmp->type() == TYPE_ERROR ||
-                   tmp->type()->template_type() == TypeTemplate::TYPE::BASIC){
-                    if($2.var_parts != nullptr && $2.var_parts->size() != 0){
-                    	semantic_error(real_ast,"requested value is nither array nor record (have '"+tn1+"')",line_count,0);
-                    }
-                }else{
-                    string tn2;
-                    std::vector<VarParts>* vp = $2.var_parts;
-                    if(vp == nullptr) tn2 += "error";
-                    else{
-                        for(int i=0;i<vp->size();i++){
-                            if((*vp)[i].flag == 0){
-                                tn2 += "[" + type_name(*((*vp)[i].subscript)) + "]";
-                            }else{
-                            	tn2 += (*vp)[i].name;
-                            }
-			    if(i != vp->size() - 1) tn2 += ",";
-		        }
-                    }
-                    semantic_error(real_ast,"invalid request from '"+tn1+"' with '"+tn2+"'",line_count,0);
-                }
-            }
-            if(tmp->is_ref()){
-                name = "*("+name+")";
-            }
-        }
-
-        $$.variable_node = new VariableNode();
-        LeafNode *id_node = new LeafNode(name);
-        $$.variable_node->append_child(id_node);
-        $$.variable_node->append_child($2.id_varparts_node);
-        for (auto i : *($2.var_parts)){
-            delete i.subscript;
-        }
-        delete $2.var_parts;
+        $$ = new Variable();
+        LeafNode *leaf_node = new LeafNode($1.value.get<string>());
+        $$.variable_node->append_child(leaf_node);
+        $$.variable_node->append_child($2);
     };
 
-id_varparts:
+id_varparts :
     {
-        // id_varparts -> empty.
-        if(error_flag)
-            break;
-        $$.var_parts = new std::vector<VarParts>();
-        if(error_flag)
-            break;
-        $$.id_varparts_node = new IDVarPartsNode();
+        // id_varparts -> ε.
+        $$ = new IDVarParts();
     }
     | id_varparts id_varpart
     {
         // id_varparts -> id_varparts id_varpart.
-        if(error_flag)
-            break;
-        if($1.var_parts){
-            $$.var_parts = $1.var_parts;
-        } else {
-            $$.var_parts = new std::vector<VarParts>();
-        }
-        
-        $$.var_parts->push_back(*($2.var_part));
-
-        $$.id_varparts_node = new IDVarPartsNode();
-        $$.id_varparts_node->append_child($1.id_varparts_node);
-        $$.id_varparts_node->append_child($2.id_varpart_node);
-        delete $2.var_part;
+        $$ = new IDVarParts();
+        $$->append_child($1);
+        $$->append_child($2);
     };
 
-id_varpart:
-    '[' expression_list ']'
+id_varpart : '[' expression_list ']'
     {   
         // id_varpart -> [expression_list].
-        $$.var_part= new VarParts();
-        $$.var_part->flag = 0;//数组
-        $$.var_part->subscript = $2.type_ptr_list;
-        if(error_flag)
-            break;
-        $$.id_varpart_node = new IDVarPartNode(IDVarPartNode::GrammarType::EXP_LIST);
-        $$.id_varpart_node->append_child($2.expression_list_node);
-        delete $2.is_lvalue_list;
+        $$ = new IDVarPart(IDVarPart::GrammarType::EXP_LIST);
+        $$->append_child($2);
     }
     | '.' ID
     {
         // id_varpart -> .id.
-        $$.var_part= new VarParts();
-        $$.var_part->flag = 1;//结构体
-        $$.var_part->name = $2.value.get<string>();
-        if(error_flag)
-            break;
-        $$.id_varpart_node = new IDVarPartNode(IDVarPartNode::GrammarType::_ID);
-        LeafNode *id_node = new LeafNode($2.value);
-        $$.id_varpart_node->append_child(id_node);
+        $$ = new IDVarPart(IDVarPart::GrammarType::_ID);
+        LeafNode *leaf_node = new LeafNode($2.value.get<string>());
+        $$->append_child(leaf_node);
     };
-else_part:
-    {
-        // else_part -> empty.
-        if(error_flag)
-            break;
-        $$ = new ElseNode(ElseNode::GrammarType::EPSILON);
-    }
-    | ELSE statement
-    {
-        // else_part -> ELSE statement.
-        if(error_flag)
-            break;
-        $$ = new ElseNode(ElseNode::GrammarType::ELSE_STATEMENT);
-        $$->append_child($2);
-    } ;
-case_body:
-    {
-        // case_body -> empty.
-        $$.type_ptr= TYPE_ERROR;
-        if(error_flag)
-            break;
-        $$.case_body_node = new CaseBodyNode();
-    }
-    | branch_list
-    {
-        // case_body -> branch_list.
-        $$.type_ptr = $1.type_ptr;
-        if(error_flag)
-            break;
-        $$.case_body_node = new CaseBodyNode();
-        $$.case_body_node->append_child($1.branch_list_node);
-    };
-branch_list:
-    branch_list ';' branch
-    {
-        // branch_list -> branch_list branch.
-        if(error_flag)
-            break;        
-        if($1.type_ptr!=$3.type_ptr){
-            string tn1 = type_name($1.type_ptr);
-            string tn2 = type_name($3.type_ptr);
-            semantic_error(real_ast,"branch type conflict between '"+tn1+"' and '"+tn2+"'",line_count,0);
-        }
-        $$.type_ptr = $1.type_ptr;
 
-        $$.branch_list_node = new BranchListNode();
-        $$.branch_list_node->append_child($1.branch_list_node);
-        $$.branch_list_node->append_child($3.branch_node);
-    }
-    | branch
-    {
-        // branch_list -> branch.
-        $$.type_ptr = $1.type_ptr;
-        if(error_flag)
-            break;
-        $$.branch_list_node = new BranchListNode();
-        $$.branch_list_node->append_child($1.branch_node);
-    };
-branch:
-    const_list ':' statement
-    {
-        // branch -> const_list : statement.
-        $$.type_ptr = $1.type_ptr;
-        if(error_flag)
-            break;
-        $$.branch_node = new BranchNode();
-        $$.branch_node->append_child($1.const_list_node);
-        $$.branch_node->append_child($3);
-    };
-const_list:
-    const_list ',' const_variable
-    {
-        // const_list -> const_list , const_variable.
-        if($1.type_ptr != $3.type_ptr) {
-           string tn1 = type_name($1.type_ptr);
-           string tn2 = type_name($3.type_ptr);
-           semantic_error(real_ast,"constlist type conflict between '"+tn1+"' and '"+tn2+"'",line_count,0);
-        }
-        $$.type_ptr = $1.type_ptr;
-        if(error_flag)
-            break;
-        $$.const_list_node = new ConstListNode();
-        $$.const_list_node->append_child($1.const_list_node);
-        $$.const_list_node->append_child($3.const_variable_node);
-    }
-    | const_variable
-    {
-        // const_list -> const_variable.
-        $$.type_ptr = $1.type_ptr;
-        if(error_flag)
-            break;
-        $$.const_list_node = new ConstListNode();
-        $$.const_list_node->append_child($1.const_variable_node);
-    };
-updown:
-    TO
-    {
-        // updown -> TO.
-        if(error_flag)
-            break;
-        $$ = new UpdownNode(true);
-    }
-    | DOWNTO
-    {
-        // updown -> DOWNTO.
-        if(error_flag)
-            break;
-        $$ = new UpdownNode(false);
-    };
-call_procedure_statement:
-    ID '(' expression_list ')'
-    {
-        // call_procedure_statement -> id (expression_list).
-        FunctionSymbol *tmp = table_set_queue.top()->SearchEntry<FunctionSymbol>($1.value.get<string>());
-        if(tmp == nullptr) {
-            string tn = $1.value.get<string>();
-            semantic_error(real_ast,"undefined procedure '"+tn+"'",$1.line_num,$1.column_num);
-            break;
-        }
-        if(!tmp || !tmp->AssertParams(*($3.type_ptr_list),*($3.is_lvalue_list))){
-            string tn = $1.value.get<string>();
-            string param = tmp->ParamName();
-            string input = type_name(*($3.type_ptr_list));
-            semantic_error(real_ast,"invalid arguments '("+input+")' to procedure '"+tn+"' (expected '("+param+")')",line_count,0);
-        }
-        if(error_flag)
-            break;
-        $$ = new ProcedureCallNode(ProcedureCallNode::GrammarType::ID_EXP_LIST);
-        LeafNode *id_node = new LeafNode($1.value);
-        $$->append_child(id_node);
-        $$->append_child($3.expression_list_node);
-        auto ref_vec = tmp->ParamRefVec();
-        auto ref_stack = new std::stack<bool>();
-        for (auto i : ref_vec){
-            ref_stack->push(i);
-        }
-        $3.expression_list_node->DynamicCast<ExpressionListNode>()->set_ref(ref_stack);
-        delete ref_stack;
-        real_ast->libs()->Call(tmp->name());
-        delete $3.is_lvalue_list;
-        delete $3.type_ptr_list;
-    };
-    | ID
-    {   
-        // call_procedure_statement -> id.
-        FunctionSymbol *tmp = table_set_queue.top()->SearchEntry<FunctionSymbol>($1.value.get<string>());
-        if(tmp == nullptr) {
-            string tn = $1.value.get<string>();
-            semantic_error(real_ast,"undefined procedure '"+tn+"'",$1.line_num,$1.column_num);
-            break;
-        } else {
-            //函数调用 类型检查
-            if(!dynamic_cast<FunctionSymbol*>(tmp)->AssertParams()){
-                string tn = $1.value.get<string>();
-                string param = dynamic_cast<FunctionSymbol*>(tmp)->ParamName();
-	        semantic_error(real_ast,"too few arguments to procedure '"+tn+"' (expected '("+param+")')",line_count,0);
-            }
-        }
-        if(error_flag)
-            break;
-        $$ = new ProcedureCallNode(ProcedureCallNode::GrammarType::ID);
-        LeafNode *id_node = new LeafNode($1.value);
-        $$->append_child(id_node);
-        real_ast->libs()->Call(tmp->name());
-    };
-    | ID '(' ')'
-    {
-        // call_procedure_statement -> id().
-        FunctionSymbol *tmp = table_set_queue.top()->SearchEntry<FunctionSymbol>($1.value.get<string>());
-        if(tmp == nullptr) {
-            string tn = $1.value.get<string>();
-            semantic_error(real_ast,"undefined procedure '"+tn+"'",$1.line_num,$1.column_num);
-            break;
-        } else {
-            //函数调用 类型检查
-            if(!dynamic_cast<FunctionSymbol*>(tmp)->AssertParams()){
-                string tn = $1.value.get<string>();
-                string param = dynamic_cast<FunctionSymbol*>(tmp)->ParamName();
-	        semantic_error(real_ast,"too many arguments to procedure '"+tn+"' (expected '("+param+")')",$1.line_num,0);
-            }
-        }
-        if(error_flag)
-            break;
-        $$ = new ProcedureCallNode(ProcedureCallNode::GrammarType::ID);
-        LeafNode *id_node = new LeafNode($1.value);
-        $$->append_child(id_node);
-        real_ast->libs()->Call(tmp->name());
-    };
-expression_list:
-    expression_list ',' expression
+expression_list : expression_list ',' expression
     {
         // expression_list -> expression_list ',' expression
-        $$.type_ptr_list = $1.type_ptr_list;
-        $$.type_ptr_list->push_back($3.type_ptr);
-        $$.is_lvalue_list = $1.is_lvalue_list;
-        $$.is_lvalue_list->push_back($3.is_lvalue);
-        if(error_flag)
-            break;
-        $$.expression_list_node = new ExpressionListNode((ExpressionListNode::GrammarType)1);
-        $$.expression_list_node->append_child($1.expression_list_node);
-        $$.expression_list_node->append_child($3.expression_node);
+        $$ = new ExpressionList(ExpressionList::ExpressionType::MULTIPLE);
+        $$->append_child($1);
+        $$->append_child($3);
     }
     | expression
     {
         // expression_list -> expression
-        $$.type_ptr_list = new std::vector<TypeTemplate*>();
-        $$.type_ptr_list->push_back($1.type_ptr);
-        $$.is_lvalue_list = new std::vector<bool>();
-        $$.is_lvalue_list->push_back($1.is_lvalue);
-        if(error_flag)
-            break;
-        $$.expression_list_node = new ExpressionListNode((ExpressionListNode::GrammarType)0);
-        $$.expression_list_node->append_child($1.expression_node);
+        $$ = new ExpressionList(ExpressionList::ExpressionType::SINGLE);
+        $$->append_child($1);
     };
-expression:
-    simple_expression RELOP simple_expression
+
+expression : simple_expression RELOP simple_expression
     {
         // expression -> simple_expression RELOP simple_expression.
-        if(error_flag)
-            break;
-        // 类型检查
-        //从这里开始进行运算检查
-        if((!is_basic($1.type_ptr))||(!is_basic($3.type_ptr))){
-            string tn1 = type_name($1.type_ptr);
-            string tn2 = type_name($3.type_ptr);
-            string tn3 = $2.value.get<string>();
-            semantic_error(real_ast,"invalid operands to binary "+tn3+" (have '"+tn1+"' and '"+tn2+"')",line_count,0);
-        }
-        auto result=compute((BasicType*)$1.type_ptr, (BasicType*)$3.type_ptr, $2.value.get<string>());
-        if(result==TYPE_ERROR){
-            string tn1 = type_name($1.type_ptr);
-	    string tn2 = type_name($3.type_ptr);
-	    string tn3 = $2.value.get<string>();
-	    semantic_error(real_ast,"invalid operands to binary "+tn3+" (have '"+tn1+"' and '"+tn2+"')",line_count,0);
-        }
-        $$.is_lvalue = false;
-        $$.type_ptr = result;
-        
-        std::string relop = $2.value.get<string>();
-        if($2.value.get<string>() == "<>") {
-            relop = "!=";
-        }
-        $$.expression_node = new ExpressionNode();
-        $$.expression_node->append_child($1.simple_expression_node);
-        LeafNode *relop_node = new LeafNode(ConstValue(relop));
-        $$.expression_node->append_child(relop_node);
-        $$.expression_node->append_child($3.simple_expression_node);
+        $$ = new Expression(Expression::ExpressionType::BOOLEAN, $2.value.get<string>());
+        $$->append_child($1);
+        $$->append_child($3);
     }
-    | simple_expression '=' simple_expression
+    | simple_expression CONSTASSIGNOP simple_expression
     {
         // expression -> simple_expression '=' simple_expression.
-        // 类型检查
-        if((!is_basic($1.type_ptr))||(!is_basic($3.type_ptr))){
-           string tn1 = type_name($1.type_ptr);
-           string tn2 = type_name($3.type_ptr);
-           semantic_error(real_ast,"invalid operands to binary = (have '"+tn1+"' and '"+tn2+"')",line_count,0);
-        }
-        auto result=compute((BasicType*)$1.type_ptr, (BasicType*)$3.type_ptr, "=");
-        
-        if(result==TYPE_ERROR){
-           string tn1 = type_name($1.type_ptr);
-           string tn2 = type_name($3.type_ptr);
-           semantic_error(real_ast,"invalid operands to binary = (have '"+tn1+"' and '"+tn2+"')",line_count,0);
-        }
-        $$.is_lvalue = false;
-        $$.type_ptr = result;
-
-        if(error_flag)
-            break;
-        $$.expression_node = new ExpressionNode();
-        $$.expression_node->append_child($1.simple_expression_node);
-        LeafNode *relop_node = new LeafNode(ConstValue("=="));
-        $$.expression_node->append_child(relop_node);
-        $$.expression_node->append_child($3.simple_expression_node);
+        $$ = new Expression(Expression::ExpressionType::BOOLEAN, $2.value.get<string>());
+        $$->append_child($1);
+        $$->append_child($3);
     }
     | simple_expression
     {
         // expression -> simple_expression.
-        $$.type_ptr = $1.type_ptr;
-        $$.is_lvalue = $1.is_lvalue;
-        if(error_flag)
-            break;
-        if($$.type_ptr && $$.type_ptr->template_type() == TypeTemplate::TYPE::ARRAY) {
-            $$.expression_node = new ExpressionNode(ExpressionNode::TargetType::VAR_ARRAY);
-        } else {
-            $$.expression_node = new ExpressionNode();
-        }
-        
-        $$.expression_node->append_child($1.simple_expression_node);
-    }| str_expression
-    {
-        // expression -> str_expression.
-        $$.type_ptr = $1.type_ptr;
-        $$.length = $1.length;
-        $$.is_lvalue = false;
-        if(error_flag)
-            break;
-        $$.expression_node = new ExpressionNode(ExpressionNode::TargetType::CONST_STRING);
-        $$.expression_node->append_child($1.str_expression_node);
+        $$ = new Expression(Expression::ExpressionType::EXPRESSION, $2.value.get<string>());
+        $$->append_child($1);
     };
 
-str_expression :
-    STRING_ {
-        // str_expression -> string.
-        if(error_flag)
-            break;
-        $$.type_ptr = TYPE_STRINGLIKE;
-        $$.length = $1.value.get<string>().length();
-        $$.is_lvalue = false;
-        if(error_flag)
-            break;
-        $$.str_expression_node = new StrExpressionNode();
-        LeafNode *string_node = new LeafNode($1.value);
-        $$.str_expression_node->append_child(string_node);
-    } | str_expression PLUS STRING_ {
-        // str_expression -> str_expression + string.
-        $$.type_ptr = TYPE_STRINGLIKE;
-        $$.length = $1.length + $3.value.get<string>().length();
-        $$.is_lvalue = false;
-        if(error_flag)
-	    break;
-        $$.str_expression_node = new StrExpressionNode();
-        $$.str_expression_node->append_child($1.str_expression_node);
-        LeafNode *string_node = new LeafNode($3.value);
-        $$.str_expression_node->append_child(string_node);
-    } | str_expression PLUS CHAR  {
-        // str_expression -> str_expression + char.
-        $$.type_ptr = TYPE_STRINGLIKE;
-        $$.length = $1.length + 1;
-        char c = $3.value.get<char>();
-        $3.value.set(std::string(1, c));
-        $$.is_lvalue = false;
-        if(error_flag)
-            break;
-        $$.str_expression_node = new StrExpressionNode();
-        $$.str_expression_node->append_child($1.str_expression_node);
-        LeafNode *string_node = new LeafNode($3.value);
-        $$.str_expression_node->append_child(string_node);
-    }
-simple_expression:
-    term
+simple_expression : term
     {   
         // simple_expression -> term.
-        $$.type_ptr = $1.type_ptr;
-        $$.is_lvalue = $1.is_lvalue;
-        if(error_flag)
-            break;
-        $$.simple_expression_node = new SimpleExpressionNode();
-        $$.simple_expression_node->append_child($1.term_node);
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::SINGLE, );
+        $$->append_child($1);
     }
-    |PLUS term
+    | PLUS term
     {
         // simple_expression -> + term.
-        //类型检查
-        if(!is_basic($2.type_ptr)){
-            semantic_error(real_ast,"wrong type argument to unary plus",line_count,0);
-        }
-
-        auto result=compute((BasicType*)$2.type_ptr, "+");
-        
-        if(result==TYPE_ERROR){
-            semantic_error(real_ast,"wrong type argument to unary plus",line_count,0);
-        }
-        $$.is_lvalue = false;
-        $$.type_ptr = result;
-
-        if(error_flag)
-            break;
-        $$.simple_expression_node = new SimpleExpressionNode();
-        LeafNode *plus_node = new LeafNode(ConstValue("+"));
-        $$.simple_expression_node->append_child(plus_node);
-        $$.simple_expression_node->append_child($2.term_node);
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::PLUS, );
+        $$->append_child($2);
     }
-    |UMINUS term
+    | UMINUS term
     {
         // simple_expression -> - term.
-        //类型检查
-        if(!is_basic($2.type_ptr)){
-            semantic_error(real_ast,"wrong type argument to unary minus",line_count,0);
-        }
-        auto result=compute((BasicType*)$2.type_ptr, "-");
-        
-        if(result==TYPE_ERROR){
-            semantic_error(real_ast,"wrong type argument to unary minus",line_count,0);
-        }
-        $$.is_lvalue = false;
-        $$.type_ptr = result;
-        if(error_flag)
-            break;
-        $$.simple_expression_node = new SimpleExpressionNode();
-        LeafNode *minus_node = new LeafNode(ConstValue("-"));
-        $$.simple_expression_node->append_child(minus_node);
-        $$.simple_expression_node->append_child($2.term_node);
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::UMINUS,);
+        $$->append_child($2);
     }
     | simple_expression ADDOP term
     {
         // simple_expression -> simple_expression or term.、
-        //类型检查
-        if($1.type_ptr!=$3.type_ptr){
-            string tn1 = type_name($1.type_ptr);
-            string tn2 = type_name($3.type_ptr);
-            semantic_error(real_ast,"invalid operands to binary or (have '"+tn1+"' and '"+tn2+"')",line_count,0);
-        }
-        $$.is_lvalue = false;
-        $$.type_ptr = $1.type_ptr;
-
-        if(error_flag)
-            break;
-        $$.simple_expression_node = new SimpleExpressionNode();
-        $$.simple_expression_node->append_child($1.simple_expression_node);
-        LeafNode *addop_node = new LeafNode(ConstValue("||"));
-        $$.simple_expression_node->append_child(addop_node);
-        $$.simple_expression_node->append_child($3.term_node);
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::OR,);
+        $$->append_child($1);
+        $$->append_child($3);
     }
     | simple_expression PLUS term
     { 
-        // 类型检查
         // simple_expression -> simple_expression + term.
-        $$.is_lvalue = false;
-        if(error_flag)
-            break;
-        if((!is_basic($1.type_ptr))||(!is_basic($3.type_ptr))){
-           string tn1 = type_name($1.type_ptr);
-           string tn2 = type_name($3.type_ptr);
-           semantic_error(real_ast,"invalid operands to binary + (have '"+tn1+"' and '"+tn2+"')",line_count,0);
-           $$.type_ptr = $1.type_ptr;
-        }
-        else{
-            auto result=compute((BasicType*)$1.type_ptr, (BasicType*)$3.type_ptr,"+");
-            if(result==TYPE_ERROR){
-                 string tn1 = type_name($1.type_ptr);
-                 string tn2 = type_name($3.type_ptr);
-                 semantic_error(real_ast,"invalid operands to binary + (have '"+tn1+"' and '"+tn2+"')",line_count,0);
-            }
-            $$.type_ptr = result;
-        }
-        $$.simple_expression_node = new SimpleExpressionNode();
-        $$.simple_expression_node->append_child($1.simple_expression_node);
-        LeafNode *plus_node = new LeafNode(ConstValue("+"));
-        $$.simple_expression_node->append_child(plus_node);
-        $$.simple_expression_node->append_child($3.term_node);
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::PLUS,);
+        $$->append_child($1);
+        $$->append_child($3);
     }
     | simple_expression UMINUS term
     {
-        $$.is_lvalue = false;
-        if(error_flag)
-            break;
-        // 类型检查
-        // simple_expression -> simple_expression - term.
-        if((!is_basic($1.type_ptr))||(!is_basic($3.type_ptr))){
-            string tn1 = type_name($1.type_ptr);
-            string tn2 = type_name($3.type_ptr);
-            semantic_error(real_ast,"invalid operands to binary - (have '"+tn1+"' and '"+tn2+"')",line_count,0);
-        }
-        auto result=compute((BasicType*)$1.type_ptr, (BasicType*)$3.type_ptr,"-");
-        if(result==TYPE_ERROR){
-            string tn1 = type_name($1.type_ptr);
-            string tn2 = type_name($3.type_ptr);
-            semantic_error(real_ast,"invalid operands to binary - (have '"+tn1+"' and '"+tn2+"')",line_count,0);
-        }
-        $$.type_ptr = result;
-
-        $$.simple_expression_node = new SimpleExpressionNode();
-        $$.simple_expression_node->append_child($1.simple_expression_node);
-        LeafNode *minus_node = new LeafNode(ConstValue("-"));
-        $$.simple_expression_node->append_child(minus_node);
-        $$.simple_expression_node->append_child($3.term_node);
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::UNIMUS,);
+        $$->append_child($1);
+        $$->append_child($3);
     };
-term:
-    factor
+
+term : factor
     {   
         // term -> factor.
-        $$.type_ptr = $1.type_ptr;
-        $$.is_lvalue = $1.is_lvalue;
-        if(error_flag)
-            break;
-        $$.term_node = new TermNode();
-        $$.term_node->append_child($1.factor_node);
+
+        $$ = new Term(Term::SymbolType::SINGLE,);
+        $$->append_child($1);
     }
     | term MULOP factor
     {  
         // term -> term mulop factor.
-        // 类型检查
-        if((!is_basic($1.type_ptr))||(!is_basic($3.type_ptr))){
-            string tn1 = type_name($1.type_ptr);
-            string tn2 = type_name($3.type_ptr);
-            string tn3 = $2.value.get<string>();
-            semantic_error(real_ast,"invalid operands to binary "+tn3+" (have '"+tn1+"' and '"+tn2+"')",line_count,0);
-        }
-        auto result=compute((BasicType*)$1.type_ptr, (BasicType*)$3.type_ptr,$2.value.get<string>());
-        if(result==TYPE_ERROR){
-            string tn1 = type_name($1.type_ptr);
-            string tn2 = type_name($3.type_ptr);
-            string tn3 = $2.value.get<string>();
-            semantic_error(real_ast,"invalid operands to binary "+tn3+" (have '"+tn1+"' and '"+tn2+"')",line_count,0);
-        }
-        $$.is_lvalue = false;
-        $$.type_ptr = result;
+        $$ = new Term(Term::SymbolType::SINGLE,);
         
-        std::string mulop = $2.value.get<string>();
-        if(mulop == "/" && !error_flag){
-            $1.term_node->set_op_div(true);
-        } else if(mulop == "div"){
-            mulop = "/";
-        } else if (mulop == "mod"){
-            mulop = "%";
-        } else if (mulop == "and"){
-            mulop = "&&";
-        }
-        if(error_flag)
-            break;
-        $$.term_node = new TermNode();
-        $$.term_node->append_child($1.term_node);
-        LeafNode *mulop_node = new LeafNode(ConstValue(mulop));
-        $$.term_node->append_child(mulop_node);
-        $$.term_node->append_child($3.factor_node);
+        $$->append_child($1);
+
+        $$->append_child($3);
     };
-factor:
-    unsigned_const_variable
+    
+factor : unsigned_const_variable
     {   
         // factor -> unsigned_const_variable.
         $$.type_ptr = $1.type_ptr;
@@ -2063,7 +992,7 @@ unsigned_const_variable :
 | Error handler  |
 `---------------*/
 /*--紧急恢复--*/
-program:error
+program : error
     {
         location_pointer_refresh();
         new_line_flag=false;

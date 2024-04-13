@@ -48,15 +48,16 @@ public:
         int lowbound;
         int upbound;
 
-        Dimension() : lowbound(0), upbound(0){};
+        Dimension(int low = 0, int up = 0) : lowbound(low), upbound(up){};
     };
 
     ArrayType() : BaseType(TYPE::ARRAY), base_type(nullptr) {}
     ArrayType(BaseType *type) : BaseType(TYPE::ARRAY), base_type(type) {}
-    ArrayType(const ArrayType &a2);
+    ArrayType(const ArrayType &a);
     ~ArrayType() {}
 
     // getter and setter
+    void SetDimension(std::vector<Dimension> &dim) { dimensions = dim; }
     BaseType *GetBasetype() { return base_type; }
     size_t GetDimsum() { return dimensions.size(); }               // get dimensions
     std::vector<Dimension> GetDimensions() { return dimensions; }  // get bounds
@@ -115,7 +116,18 @@ public:
     };
     ConstValue() {}
     ~ConstValue() {}
-    ConstValue(const ConstValue &cv){}
+    ConstValue(const ConstValue &cv){
+        if (std::is_same(cv.type(), int))
+        return *(T *)(&C_INT);
+        else if (std::is_same<T, char>::value)
+        return *(T *)(&C_CHAR);
+        else if (std::is_same<T, float>::value)
+        return *(T *)(&C_REAL);
+        else if (std::is_same<T, bool>::value)
+        return *(T *)(&C_BOOLEAN);
+        else if (std::is_same<T, std::string>::value)
+        return *((T *)(&C_STRING));
+    }
     ConstValue(float v) { 
         value_type =  ConstvalueType::REAL;
         C_REAL = v;
@@ -158,6 +170,7 @@ public:
     }
     ConstvalueType type() { return value_type; }
     ConstValue &operator=(const ConstValue &other);
+    void set_uminus(){ Is_Uminus = true; }
 
 private:
     ConstvalueType value_type;
@@ -168,4 +181,5 @@ private:
         bool C_BOOLEAN;
         std::string C_STRING;
     };
+    bool Is_Uminus = false;
 };

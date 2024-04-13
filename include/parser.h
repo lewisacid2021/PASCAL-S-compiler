@@ -10,23 +10,25 @@
 extern int yydebug;
 
 struct Token {
-  ConstValue id;
+  ConstValue value;
   int length;
   int line_num;
   int column_num;
 };
+
+
 
 struct IdListAttr {
   std::vector<std::pair<std::string, int>>* list_ref;
   pascals::ast::IdListNode* id_list_node;
 };
 
-struct ValueAttr {
-  pascals::BasicType* type_ptr;
-  pascals::ConstValue value;
-  pascals::ast::LeafNode* const_variable_node;
-  bool is_right = true;
-};
+// struct ValueAttr {
+//   pascals::BasicType* type_ptr;
+//   pascals::ConstValue value;
+//   pascals::ast::LeafNode* const_variable_node;
+//   bool is_right = true;
+// };
 
 struct StandardTypeAttr {
   pascals::BasicType* type_ptr;
@@ -211,7 +213,7 @@ struct YYSTYPE {
     ParameterListAttr parameter_list_node_info;
     VarParameterAttr var_parameter_node_info;
     ValueParameterAttr value_parameter_node_info;
-
+    
     VariableDeclarationAttr variable_declaration_node_info;
     VariableAttr variable_node_info;
     VariableListAttr variable_list_node_info;
@@ -229,11 +231,12 @@ struct YYSTYPE {
     BranchAttr branch_node_info;
     ConstListAttr const_list_node_info;
 
-    pascals::ast::ProgramNode* program_node;
-    pascals::ast::ProgramHeadNode* program_head_node;
-    pascals::ast::ProgramBodyNode* program_body_node;
-    pascals::ast::ConstDeclarationsNode* const_declarations_node;
-    pascals::ast::ConstDeclarationNode* const_declaration_node;
+    pascals::ast::Program* program_node;
+    pascals::ast::ProgramHead* program_head_node;
+    pascals::ast::ProgramBody* program_body_node;
+    pascals::ast::ConstDeclarations* const_declarations_node;
+    pascals::ast::ConstDeclaration* const_declaration_node;
+
     pascals::ast::TypeDeclarationsNode* type_declarations_node;
     pascals::ast::TypeDeclarationNode* type_declaration_node;
     pascals::ast::BasicTypeNode* basic_type_node;
