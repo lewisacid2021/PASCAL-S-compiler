@@ -100,89 +100,89 @@ SEP                     (";"|"."|","|":")
 SUBCATALOG              ".."
   
 %% 
-"\t"                    { write_cache(); char_count += 4; }
-"\n"                    { wrap(); new_line_flag = true;}
-{white_spaces}          { write_cache(); char_count += yyleng; }
+"\t"                            { write_cache(); char_count += 4; }
+"\n"                            { wrap(); new_line_flag = true;}
+{white_spaces}                  { write_cache(); char_count += yyleng; }
+        
+{PROGRAM}                       { write_cache(); to_str(); return PROGRAM; }
+{CONST}                         { write_cache(); to_str(); return CONST; }
+{TYPE}                          { write_cache(); to_str(); return TYPE; }
+        
+{ARRAY}                         { write_cache(); to_str(); return ARRAY; }
+{RECORD}                        { write_cache(); to_str(); return RECORD;}
+{OF}                            { write_cache(); to_str(); return OF; }
+{VAR}                           { write_cache(); to_str(); return VAR; }
+{FUNCTION}                      { write_cache(); to_str(); return FUNCTION; }
+{PROCEDURE}                     { write_cache(); to_str(); return PROCEDURE; }
+{BEGIN_}                        { write_cache(); to_str(); return BEGIN_; }
+{END}                           { write_cache(); to_str(); return END; }
+{IF}                            { write_cache(); to_str(); return IF; }
+{THEN}                          { write_cache(); to_str(); return THEN; }
+{ELSE}                          { write_cache(); to_str(); return ELSE; }
+{CASE}                          { write_cache(); to_str(); return CASE; }
+{WHILE}                         { write_cache(); to_str(); return WHILE; }
+{REPEAT}                        { write_cache(); to_str(); return REPEAT; }
+{UNTIL}                         { write_cache(); to_str(); return UNTIL; }
+{FOR}                           { write_cache(); to_str(); return FOR; }
+{TO}                            { write_cache(); to_str(); return TO; }
+{DOWNTO}                        { write_cache(); to_str(); return DOWNTO; }
+{DO}                            { write_cache(); to_str(); return DO; }
+        
+{NOT}                           { write_cache(); to_str(); return NOT; }
+{PLUS}                          { write_cache(); to_str(); return PLUS; }
+{UMINUS}                        { write_cache(); to_str(); return UMINUS; }
+        
+{INT_NUM}                       { write_cache(); to_int(); return INT_NUM; }
+{REAL_NUM}                      { write_cache(); to_float(); return REAL_NUM; }
+        
+{ANNO}                          { skip_anno(); }
+        
+{CHAR}                          { write_cache(); to_char(); return CHAR; }
+{STRING_}                       { write_cache(); to_str_case_sensitive(); return STRING_; }
+        
+{RELOP}                         { write_cache(); to_str(); return RELOP; }
+{ADDOP}                         { write_cache(); to_str(); return ADDOP; }
+{MULOP}                         { write_cache(); to_str(); return MULOP; }
+{ASSIGNOP}                      { write_cache(); to_str(); return ASSIGNOP; }
+        
+{ID}                            { write_cache(); to_str(); return ID; }
+        
+{CONSTASSIGNOP}                 { write_cache(); to_str(); return yytext[0]; }
+{SEP}                           { write_cache(); to_str(); return yytext[0]; }
+{SUBCATALOG}                    { write_cache(); to_str(); return SUBCATALOG; }
+        
+("[")                           { write_cache(); to_str(); left_Mbrackets_num++;return yytext[0];}    
+("(")                           { write_cache(); to_str(); left_brackets_num++;return yytext[0];}
+("]")                           { 
+                                    write_cache(); to_str(); 
+                                    left_Mbrackets_num--;
+                                    if(left_Mbrackets_num<0){
+                                        left_Mbrackets_num=0;
+                                        print_syntax_error("expected '['");
+                                    }
+                                    return yytext[0];
+                                }
+(")")                           { 
+                                    write_cache(); to_str(); 
+                                    left_brackets_num--;
+                                    if(left_brackets_num<0){
+                                        left_brackets_num=0;
+                                        print_syntax_error("expected '('");
+                                    }
+                                    return yytext[0];
+                                }
 
-{PROGRAM}               { write_cache(); to_str(); return PROGRAM; }
-{CONST}                 { write_cache(); to_str(); return CONST; }
-{TYPE}                  { write_cache(); to_str(); return TYPE; }
+('')                            { write_cache(); print_lex_error("illegal character constant"); }
+(''')                           { write_cache(); print_lex_error("illegal character constant"); }
+('\n')                          { write_cache(); print_lex_error("illegal character constant"); skip_error_token(); }
 
-{ARRAY}                 { write_cache(); to_str(); return ARRAY; }
-{RECORD}                { write_cache(); to_str(); return RECORD;}
-{OF}                    { write_cache(); to_str(); return OF; }
-{VAR}                   { write_cache(); to_str(); return VAR; }
-{FUNCTION}              { write_cache(); to_str(); return FUNCTION; }
-{PROCEDURE}             { write_cache(); to_str(); return PROCEDURE; }
-{BEGIN_}                { write_cache(); to_str(); return BEGIN_; }
-{END}                   { write_cache(); to_str(); return END; }
-{IF}                    { write_cache(); to_str(); return IF; }
-{THEN}                  { write_cache(); to_str(); return THEN; }
-{ELSE}                  { write_cache(); to_str(); return ELSE; }
-{CASE}                  { write_cache(); to_str(); return CASE; }
-{WHILE}                 { write_cache(); to_str(); return WHILE; }
-{REPEAT}                { write_cache(); to_str(); return REPEAT; }
-{UNTIL}                 { write_cache(); to_str(); return UNTIL; }
-{FOR}                   { write_cache(); to_str(); return FOR; }
-{TO}                    { write_cache(); to_str(); return TO; }
-{DOWNTO}                { write_cache(); to_str(); return DOWNTO; }
-{DO}                    { write_cache(); to_str(); return DO; }
-
-{NOT}                   { write_cache(); to_str(); return NOT; }
-{PLUS}                  { write_cache(); to_str(); return PLUS; }
-{UMINUS}                { write_cache(); to_str(); return UMINUS; }
-
-{INT_NUM}               { write_cache(); to_int(); return INT_NUM; }
-{REAL_NUM}              { write_cache(); to_float(); return REAL_NUM; }
-
-{ANNO}                { skip_anno(); }
-
-{CHAR}                  { write_cache(); to_char(); return CHAR; }
-{STRING_}               { write_cache(); to_str_case_sensitive(); return STRING_; }
-
-{RELOP}                 { write_cache(); to_str(); return RELOP; }
-{ADDOP}                 { write_cache(); to_str(); return ADDOP; }
-{MULOP}                 { write_cache(); to_str(); return MULOP; }
-{ASSIGNOP}              { write_cache(); to_str(); return ASSIGNOP; }
-
-{ID}                    { write_cache(); to_str(); return ID; }
-
-{CONSTASSIGNOP}         { write_cache(); to_str(); return yytext[0]; }
-{SEP}                   { write_cache(); to_str(); return yytext[0]; }
-{SUBCATALOG}            { write_cache(); to_str(); return SUBCATALOG; }
-
-("[")                   { write_cache(); to_str(); left_Mbrackets_num++;return yytext[0];}    
-("(")                   { write_cache(); to_str(); left_brackets_num++;return yytext[0];}
-("]")                   { 
-                            write_cache(); to_str(); 
-                            left_Mbrackets_num--;
-                            if(left_Mbrackets_num<0){
-                                left_Mbrackets_num=0;
-                                print_syntax_error("expected '['");
-                            }
-                            return yytext[0];
-                        }
-(")")                   { 
-                            write_cache(); to_str(); 
-                            left_brackets_num--;
-                            if(left_brackets_num<0){
-                                left_brackets_num=0;
-                                print_syntax_error("expected '('");
-                            }
-                            return yytext[0];
-                        }
-
-('')                        { write_cache(); print_lex_error("illegal character constant"); }
-(''')                       { write_cache(); print_lex_error("illegal character constant"); }
-('\n')                      { write_cache(); print_lex_error("illegal character constant"); skip_error_token(); }
-
-('[^'\n][^']*(\n)[^']*')    { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
-('[^']*(\n)[^']*[^'\n]')    { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
+('[^'\n][^']*(\n)[^']*')        { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
+('[^']*(\n)[^']*[^'\n]')        { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
               
-(\{[^}]*)                   { write_cache(); print_lex_error("unclosed comment"); skip_error_token(); }
-('[^']*)                    { write_cache(); print_lex_error("unclosed string constant"); skip_error_token(); }
+(\{|\(\*)[^\{\}(\(\*)(\*\))]*)  { write_cache(); print_lex_error("unclosed comment"); skip_error_token(); }
+('[^']*)                        { write_cache(); print_lex_error("unclosed string constant"); skip_error_token(); }
 
-.                           { write_cache(); print_lex_error("illegal character"); char_count++; }
+.                               { write_cache(); print_lex_error("illegal character"); char_count++; }
 
 %%
 void wrap()

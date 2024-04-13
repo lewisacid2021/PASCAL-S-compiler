@@ -326,36 +326,6 @@ class TypeNode: public AstNode
     std::string type_name;
 };
 
-// class IdTypeNode: public AstNode
-// {
-//   public:
-//     IdTypeNode(std::string &tn) : type_name(tn) {}
-//     std::string get_type_name() { return type_name; }
-
-//   private:
-//     //类型名字
-//     std::string type_name;
-
-// };
-
-class BasicTypeNode: public AstNode
-{
-    // BasicType -> integer | real | boolean | char
-    // 暂时没用
-  public:
-    BasicTypeNode() {}
-    BasicTypeNode(BasicType *type)
-        : btype(type)
-    {}
-
-    void set_type(BasicType *type) { btype = type; }
-    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
-    BasicType *type() { return btype; }
-
-  private:
-    BasicType *btype;
-};
-
 class ArrayTypeNode: public AstNode
 {
     // 子节点为 PeriodsNode 与 TypeNode
@@ -861,7 +831,6 @@ class Visitor
     virtual void visit(IdList *idlist, FILE *fs)                     = 0;
     virtual void visit(ConstDeclaration *constdeclaration, FILE *fs) = 0;
     virtual void visit(TypeNode *typenode, FILE *fs) = 0;
-    virtual void visit(BasicTypeNode *basictypenode, FILE *fs) = 0;
     virtual void visit(ArrayTypeNode *arraytypenode, FILE *fs) = 0;
     virtual void visit(StringTypeNode *stringtypenode, FILE *fs) = 0;
     virtual void visit(VarDeclaration *constdeclaration, FILE *fs) = 0;
@@ -876,7 +845,6 @@ class GenerationVisitor: public Visitor
     void visit(IdList *idlist, FILE *fs) override;
     void visit(ConstDeclaration *constdeclaration, FILE *fs) override;
     void visit(TypeNode *typenode, FILE *fs) override;
-    void visit(BasicTypeNode *basictypenode, FILE *fs) override;
     void visit(ArrayTypeNode *arraytypenode, FILE *fs) override;
     void visit(StringTypeNode *stringtypenode, FILE *fs) override;
     void visit(VarDeclaration *vardeclaration, FILE *fs) override;
