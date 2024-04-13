@@ -48,15 +48,16 @@ public:
         int lowbound;
         int upbound;
 
-        Dimension() : lowbound(0), upbound(0){};
+        Dimension(int low = 0, int up = 0) : lowbound(low), upbound(up){};
     };
 
     ArrayType() : BaseType(TYPE::ARRAY), base_type(nullptr) {}
     ArrayType(BaseType *type) : BaseType(TYPE::ARRAY), base_type(type) {}
-    ArrayType(const ArrayType &a2);
+    ArrayType(const ArrayType &a);
     ~ArrayType() {}
 
     // getter and setter
+    void SetDimension(std::vector<Dimension> &dim) { dimensions = dim; }
     BaseType *GetBasetype() { return base_type; }
     size_t GetDimsum() { return dimensions.size(); }               // get dimensions
     std::vector<Dimension> GetDimensions() { return dimensions; }  // get bounds

@@ -32,7 +32,9 @@ int semantic_error_flag = 0;
     ast::VarDeclaration* var_declaration_node;
     //类型
     ast::TypeNode* type_node;
+    ast::ArrayTypeNode array_node;
     ast::RecordNode* record_node; 
+    ast::StringTypeNode* string_node;
     ast::PeriodsNode* periods_node;
     ast::PeriodNode* period_node;
     //子程序
@@ -89,6 +91,8 @@ int semantic_error_flag = 0;
 %type <var_declaration_node> var_declaration
 
 %type <type_node> type
+%type <array_node> array_type
+%type <string_node> string_type
 %type <periods_node> periods
 %type <period_node> period
 
@@ -317,44 +321,14 @@ type : ID
     {
         // type -> ID
         // 由于我们将integer等都设为保留字，都识别为ID（integer char boolean string real）
-        $$ = new TypeNode(TypeNode::VarType::ID_TYPE);
-        IdNode* idnode = new IdNode($1.value.get());
-        $$->append_child(idnode);
+        $$ = new TypeNode(TypeNode::VarType::ID_TYPE, $1.value.get());
+        //IdTypeNode* idnode = new IdTypeNode($1.value.get());
+        //$$->append_child(idnode);
     }
-    | ARRAY '[' periods ']' OF type
+    | array_type
     {
-        // type -> ARRAY '[' periods ']' OF type
-        $$.main_type = (TypeAttr::MainType)1;
-        $$.base_type_node = $6.base_type_node;
-        $$.bounds = $3.bounds;
-        if ($3.bounds){
-            auto merged_bounds = new std::vector<ArrayType::ArrayBound>();
-            for (auto i : *($3.bounds)){
-                merged_bounds->push_back(i);
-            }
-            auto basic_type = $6.type_ptr;
-            if($6.type_ptr->template_type() == TypeTemplate::TYPE::ARRAY) {
-                for (auto i : *($6.bounds)){
-                    merged_bounds->push_back(i);
-                    $$.bounds->push_back(i);
-                }
-                basic_type = $6.type_ptr->DynamicCast<ArrayType>()->base_type();
-            }
-            PtrCollect($6.type_ptr);
-            $$.type_ptr = new ArrayType(basic_type, *merged_bounds);
-            
-            delete merged_bounds;
-        }
-        if(error_flag)
-            break; 
-        $$.type_node = new TypeNode(TypeNode::GrammarType::ARRAY);
-        $$.type_node->set_base_type_node($6.base_type_node);
-        $$.type_node->append_child($3.periods_node);
-        $$.type_node->append_child($6.type_node);
-        delete $6.bounds;
-        if ($6.record_info){
-            delete $6.record_info;
-        }
+        $$ = new TypeNode(TypeNode::VarType::ARRAY_TYPE, "array");
+        $$->append_child($1);
     }
     | RECORD var_declaration END ';'
     {
@@ -362,9 +336,32 @@ type : ID
         $$ = new TypeNode(TypeNode::VarType::RECORD_TYPE);
         $$->append_child($2);
     };
-    | STRING
+    | string_type
     {
         $$ = new TypeNode(TypeNode::VarType::STRING_TYPE);
+        $$->append_child($1);
+    };
+
+array_type : ARRAY '[' periods ']' OF type
+    {
+        if ($6->var_type == TypeNode::VarType::STRING_TYPE || $6->var_type == TypeNode::VarType::RECORD_TYPE){
+            // 不支持数组的元素类型为string
+            // 不支持在array的type中声明record
+            $$ = new ArrayTypeNode("error");
+        }
+        else if($6->var_type == TypeNode::VarType::ID_TYPE){
+            $$ = new ArrayTypeNode($6->get_type_name());
+        }
+        else {
+            $$ = new ArrayTypeNode("array");
+        }
+        // 添加数组信息
+        ArrayType* at = new ArrayType();
+        at->SetDimension($3->get_dm());
+        $$->set_info(at);
+
+        $$->append_child($3);
+        $$->append_child($6);
     };
 
 /* record_body :
@@ -395,59 +392,51 @@ type : ID
         delete $1.pos_info;
     }; */
     
-periods :
-    periods ',' period
+periods : periods ',' period
     {
         // periods -> periods ',' period
-        $$.bounds = $1.bounds;
-        $$.bounds->push_back(*($3.bound));
-        if(error_flag)
-            break;
-        $$.periods_node = new PeriodsNode();
-        $$.periods_node->append_child($1.periods_node);
-        $$.periods_node->append_child($3.period_node);
-        delete $3.bound;
+        $$ = new PeriodsNode(PeriodsNode::PeriodType::MULTI);
+        
+        // 插入新的维度
+        std::vector<ArrayType::Dimension> dim;
+        dim = $1->get_dm();
+        ArrayType::Dimension nd($3->get_lowb(), $3->get_upb());
+        dim.emplace_back(nd);
+        $$->set_dm(dim);
+
+        $$->append_child($1);
+        $$->append_child($3);
     }
     | period
     {
         // periods -> period
-        $$.bounds = new std::vector<ArrayType::ArrayBound>();
-        $$.bounds->push_back(*($1.bound));
-        if(error_flag)
-            break;
-        $$.periods_node = new PeriodsNode();
-        $$.periods_node->append_child($1.period_node);
-        delete $1.bound;
+        $$ = new PeriodsNode(PeriodsNode::PeriodType::SINGLE);
+        
+        // 底层新建维度vector
+        std::vector<ArrayType::Dimension> dim;
+        ArrayType::Dimension nd($1->get_lowb(), $1->get_upb());
+        dim.emplace_back(nd);
+        $$->set_dm(dim);
+        $$->append_child($1);
     };
-period : const_variable SUBCATALOG const_variable
+
+period : INT_NUM SUBCATALOG INT_NUM
     {     
-        // period -> const_variable SUBCATALOG const_variable
-        int arr_len=0;
-        $$.bound = new ArrayType::ArrayBound();
-        if ($1.type_ptr == TYPE_INT&&$3.type_ptr == TYPE_INT){
-            arr_len = ($3.value - $1.value).get<int>();
-            $$.bound-> type_ = TYPE_INT;
-            $$.bound->lb_ = $1.value.get<int>();
-            $$.bound->ub_ = $3.value.get<int>();
-        } else if($1.type_ptr == TYPE_CHAR&&$3.type_ptr == TYPE_CHAR){
-            arr_len = (int)($3.value - $1.value).get<char>();
-            $$.bound-> type_ = TYPE_CHAR;
-            $$.bound->lb_ = int($1.value.get<int>());
-            $$.bound->ub_ = int($3.value.get<int>());
-        } else {
-            semantic_error(real_ast,"array bound should be integer or char",$2.line_num,$2.column_num);
-        }
-        if(arr_len < 0){
-            arr_len = 0;
-            semantic_error(real_ast,"array bound should be positive",$2.line_num,$2.column_num);
-        }
-        if(error_flag){
-            break;
-        }
-        $$.period_node =new PeriodNode();
-        $$.period_node->set_len(arr_len+1);
-        $$.period_node->append_child($1.const_variable_node);
-        $$.period_node->append_child($3.const_variable_node);
+        // period -> INT_NUM SUBCATALOG INT_NUMe
+        $$ = new PeriodNode($1.value.get(), $3.value.get());
+        $$->append_child(new LeafNode($1.value.get(), LeafNode::LeafType::VALUE));
+        $$->append_child(new LeafNode($3.value.get(), LeafNode::LeafType::VALUE));
+    };
+
+string_type : STRING '[' INT_NUM ']'
+    {
+        StringType* string_info = new StringType(StringType::Grammar::TypeLIMIT, $3.value.get());
+        $$ = new StringTypeNode(string_info);
+    }
+    | STRING
+    {
+        StringType* string_info = new StringType(StringType::Grammar::TypeLIMIT, 0);
+        $$ = new StringTypeNode(string_info);
     };
 
 subprogram_declarations : 
@@ -479,8 +468,7 @@ subprogram_body : const_declarations var_declarations compound_statement
         $$->append_child($3);
     };
     
-subprogram_head :
-    FUNCTION ID formal_parameter ':' standrad_type ';'
+subprogram_head : FUNCTION ID formal_parameter ':' standrad_type ';'
     {
         // subprogram_head -> FUNCTION ID formal_parameter ':' standrad_type ';'
         FunctionSymbol* tmp ;

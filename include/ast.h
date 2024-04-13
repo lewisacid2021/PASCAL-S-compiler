@@ -297,7 +297,10 @@ class VarDeclaration: public AstNode
 *************************************************/
 class TypeNode: public AstNode
 {
-    //子节点为IdNode
+    //子节点为
+    //ID_TYPE 无子节点
+    //STRING_TYPE 对应 StringTypeNode
+    //ARRAY_TYPE 对应 ArrayTypeNode
   public:
     enum class VarType
     {
@@ -310,29 +313,35 @@ class TypeNode: public AstNode
     TypeNode(VarType vt)
         : var_type(vt)
     {}
+    TypeNode(VarType vt, std::string &tn)
+        : var_type(vt), type_name(tn)
+    {}
     VarType GetVarType() { return var_type; }
-
+    std::string get_type_name() { return type_name; }
+    
     void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
 
   private:
     VarType var_type;
-};
-
-class IdNode: public AstNode
-{
-  public:
-    IdNode(std::string &tn) : type_name(tn) {}
-    std::string get_type_name() { return type_name; }
-
-  private:
-    //类型名字
     std::string type_name;
-
 };
+
+// class IdTypeNode: public AstNode
+// {
+//   public:
+//     IdTypeNode(std::string &tn) : type_name(tn) {}
+//     std::string get_type_name() { return type_name; }
+
+//   private:
+//     //类型名字
+//     std::string type_name;
+
+// };
 
 class BasicTypeNode: public AstNode
 {
     // BasicType -> integer | real | boolean | char
+    // 暂时没用
   public:
     BasicTypeNode() {}
     BasicTypeNode(BasicType *type)
@@ -349,20 +358,21 @@ class BasicTypeNode: public AstNode
 
 class ArrayTypeNode: public AstNode
 {
-    // 子节点为 PeriodsNode
+    // 子节点为 PeriodsNode 与 TypeNode
   public:
     ArrayTypeNode() {}
-    ArrayTypeNode(BasicType *type)
-        : btype(type)
+    ArrayTypeNode(std::string &type)
+        : type_name(type)
     {}
 
-    void set_type(BasicType *type) { btype = type; }
+    void set_type(std::string &type) { type_name = type; }
+    void set_info(ArrayType *at) { array_info = at; }
     void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
-    BasicType *type() { return btype; }
+    std::string type() { return type_name; }
 
   private:
-    BasicType *btype;       //指向array的基础类型，可能为nullptr
-    ArrayType *array_type;  //指向储存array信息的对象
+    std::string type_name;  // array的类型名("array"表示为数组类型)
+    ArrayType *array_info;  // 指向储存array信息的对象
 };
 
 class RecordNode: public AstNode
@@ -373,36 +383,58 @@ class RecordNode: public AstNode
 
 class PeriodsNode: public AstNode
 {
-    // period -> digits .. digits
-    // period -> period ， digits .. digits
+    // period -> digits .. digits 子节点为PeriodNode
+    // period -> period ， digits .. digits 子节点为PeriodsNode和PeriodNode
+  public:
+    enum class PeriodType{
+      SINGLE,
+      MULTI
+    } ;
+    PeriodsNode(PeriodType pt) : period_type(pt) {};
+    void set_dm(std::vector<ArrayType::Dimension> &low_dm){
+      dm = low_dm;
+    }
+    std::vector<ArrayType::Dimension> get_dm(){
+      return dm;
+    }
+    PeriodsNode get_type(){
+      return period_type;
+    }
 
   private:
-    int depth;
+    PeriodType period_type; // 语法类型
+    std::vector<ArrayType::Dimension> dm; // 自底向上累积至当前节点的各维度信息
 };
 
-// 还需要调整
+
 class PeriodNode: public AstNode
 {
     // Period → const_var ... const var
   public:
-    int len() { return len_; }
-    void set_len(int len) { len_ = len; }
+    PeriodNode(int low, int up): lowb(low), upb(up){}
+    int get_lowb(){
+      return lowb;
+    }
+    int get_upb(){
+      return upb;
+    }
 
   private:
-    int len_;
+    int lowb = 0;
+    int upb = 0;
 };
 
 class StringTypeNode : public AstNode {
 public:
     StringTypeNode() {}
-    StringTypeNode(StringType *type) : string_type(type) {}
+    StringTypeNode(StringType *type) : string_info(type) {}
 
-    void set_type(StringType *type) { string_type = type; }
+    void set_type(StringType *type) { string_info = type; }
     void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
-    StringType *type() { return string_type; }
+    StringType *type() { return string_info; }
 
 private:
-    StringType* string_type;
+    StringType* string_info;
 };
 
 /**************************************************
