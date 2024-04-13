@@ -10,17 +10,13 @@
 extern int yydebug;
 
 struct Token {
-  ConstValue id;
+  ConstValue value;
   int length;
   int line_num;
   int column_num;
 };
 
-struct ValueAttr {
-  ConstValue value;
-  int line_num;
-  int column_num;
-};
+
 
 struct IdListAttr {
   std::vector<std::pair<std::string, int>>* list_ref;
@@ -217,7 +213,7 @@ struct YYSTYPE {
     ParameterListAttr parameter_list_node_info;
     VarParameterAttr var_parameter_node_info;
     ValueParameterAttr value_parameter_node_info;
-
+    
     VariableDeclarationAttr variable_declaration_node_info;
     VariableAttr variable_node_info;
     VariableListAttr variable_list_node_info;
