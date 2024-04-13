@@ -104,6 +104,10 @@ void GenerationVisitor::visit(TypeNode *typenode, FILE *fs)
 {
     switch (typenode->GetVarType()) {
         case TypeNode::VarType::BASIC_TYPE:
+            {
+                
+                break;
+            }
         case TypeNode::VarType::ARRAY_TYPE:
         case TypeNode::VarType::STRING_TYPE:  
             typenode->getCnodeList()[0]->accept(this, fs);
@@ -112,26 +116,6 @@ void GenerationVisitor::visit(TypeNode *typenode, FILE *fs)
             fprintf(fs, "struct {\n");
             typenode->getCnodeList()[0]->accept(this, fs);
             fprintf(fs, "}");
-            break;
-    }
-}
-
-void GenerationVisitor::visit(BasicTypeNode *basictypenode, FILE *fs)
-{
-    switch (basictypenode->type()->type()) {
-        case BasicType::BASIC_TYPE::INTEGER:
-            fprintf(fs, "int ");
-            break;
-        case BasicType::BASIC_TYPE::REAL:
-            fprintf(fs, "float ");
-            break;
-        case BasicType::BASIC_TYPE::BOOLEAN:
-            fprintf(fs, "bool ");
-            break;
-        case BasicType::BASIC_TYPE::CHAR:
-            fprintf(fs, "char ");
-            break;
-        default:
             break;
     }
 }
@@ -218,11 +202,6 @@ void ConstDeclaration::accept(Visitor *visitor, FILE *fs)
 }
 
 void TypeNode::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void BasicTypeNode::accept(Visitor *visitor, FILE *fs)
 {
     visitor->visit(this, fs);
 }
