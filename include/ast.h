@@ -376,6 +376,7 @@ class PeriodsNode: public AstNode
     PeriodsNode get_type(){
       return period_type;
     }
+    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
 
   private:
     PeriodType period_type; // 语法类型
@@ -837,6 +838,7 @@ class Visitor
     virtual void visit(ArrayTypeNode *arraytypenode, FILE *fs) = 0;
     virtual void visit(StringTypeNode *stringtypenode, FILE *fs) = 0;
     virtual void visit(VarDeclaration *vardeclaration, FILE *fs) = 0;
+    virtual void visit(PeriodsNode *periodsnode, FILE *fs) = 0;
 };
 
 class GenerationVisitor: public Visitor
@@ -850,6 +852,7 @@ class GenerationVisitor: public Visitor
     void visit(TypeNode *typenode, FILE *fs) override;
     void visit(StringTypeNode *stringtypenode, FILE *fs) override;
     void visit(VarDeclaration *vardeclaration, FILE *fs) override;
+    void visit(PeriodsNode *periodsnode, FILE *fs) override;
 };
 
 }  // namespace ast

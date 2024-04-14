@@ -139,7 +139,7 @@ void GenerationVisitor::visit(VarDeclaration *vardeclaration, FILE *fs)
     auto grammar_type = vardeclaration->GetGrammarType();
 
     if (grammar_type == VarDeclaration::GrammarType::MULTIPLE_DECL)
-        vardeclaration->get(0)->accept(this, fs);
+        vardeclaration->get(0)->accept(this, fs);  //vardeclaration
 
     //type
     vardeclaration->get(-1)->accept(this, fs);
@@ -154,7 +154,7 @@ void GenerationVisitor::visit(VarDeclaration *vardeclaration, FILE *fs)
         for(uint i=0;i<id_list.size();i++)
         {
             id_list[i]->accept(this, fs);
-            ArrayType->get(0)->accept(this,fs);
+            ArrayType->get(0)->accept(this,fs);  //periods
             if(i!=id_list.size()-1)
                 fprintf(fs, ",");
             else
@@ -167,6 +167,15 @@ void GenerationVisitor::visit(VarDeclaration *vardeclaration, FILE *fs)
         fprintf(fs, ";\n");   
     }
 }
+
+void GenerationVisitor::visit(PeriodsNode *periodsnode, FILE *fs)
+{
+    for(auto& dm:periodsnode->get_dm())
+    {
+        fprintf(fs, "[%d]",  dm.upbound-dm.lowbound+1);
+    }
+}
+
 
 void AST::accept(Visitor *visitor, FILE *fs)
 {
