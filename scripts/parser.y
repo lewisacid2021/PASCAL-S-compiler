@@ -772,73 +772,79 @@ id_varpart : '[' expression_list ']'
 expression_list : expression_list ',' expression
     {
         // expression_list -> expression_list ',' expression
-        $$ = new ExpressionList(ExpressionList::ExpressionType::MULTIPLE);
+        
+        std::vector<std::string> *type_list = $1->get_types();
+        type_list->emplace_back($3->GetExpType());
+        $$ = new ExpressionList(ExpressionList::ExpressionType::MULTIPLE, type_list);
         $$->append_child($1);
         $$->append_child($3);
     }
     | expression
     {
         // expression_list -> expression
-        $$ = new ExpressionList(ExpressionList::ExpressionType::SINGLE);
+        std::string type = $1->GetExpType();
+        std::vector<std::string> *type_list = new std::vector<std::string>;
+        type_list->emplace_back(type);
+        $$ = new ExpressionList(ExpressionList::ExpressionType::SINGLE, type_list);
         $$->append_child($1);
     };
 
 expression : simple_expression RELOP simple_expression
     {
         // expression -> simple_expression RELOP simple_expression.
-        $$ = new Expression(Expression::ExpressionType::BOOLEAN, $2.value.get<string>());
+        $$ = new Expression(Expression::GrammarType::DOUBLE, $2.value.get<string>(), "bool");
         $$->append_child($1);
         $$->append_child($3);
     }
     | simple_expression CONSTASSIGNOP simple_expression
     {
         // expression -> simple_expression '=' simple_expression.
-        $$ = new Expression(Expression::ExpressionType::BOOLEAN, $2.value.get<string>());
+        $$ = new Expression(Expression::GrammarType::DOUBLE, $2.value.get<string>(), "bool");
         $$->append_child($1);
         $$->append_child($3);
     }
     | simple_expression
     {
         // expression -> simple_expression.
-        $$ = new Expression(Expression::ExpressionType::EXPRESSION, $2.value.get<string>());
+        $$ = new Expression(Expression::ExpressionType::SINGLE, " ", $1->GetExpType());
         $$->append_child($1);
     };
 
 simple_expression : term
     {   
         // simple_expression -> term.
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::SINGLE, );
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::SINGLE, $1->GetTerType());
         $$->append_child($1);
     }
     | PLUS term
     {
         // simple_expression -> + term.
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::PLUS, );
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::PLUS, $2->GetTerType());
         $$->append_child($2);
     }
     | UMINUS term
     {
         // simple_expression -> - term.
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::UMINUS,);
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::UMINUS, $2->GetTerType());
         $$->append_child($2);
     }
     | simple_expression ADDOP term
     {
         // simple_expression -> simple_expression or term.、
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::OR,);
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::OR, 'bool');
         $$->append_child($1);
         $$->append_child($3);
     }
     | simple_expression PLUS term
     { 
         // simple_expression -> simple_expression + term.
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::PLUS,);
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::PLUS, $3->GetTerType());
         $$->append_child($1);
         $$->append_child($3);
     }
     | simple_expression UMINUS term
     {
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::UNIMUS,);
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::UNIMUS, $3->GetTerType());
         $$->append_child($1);
         $$->append_child($3);
     };
@@ -846,20 +852,26 @@ simple_expression : term
 term : factor
     {   
         // term -> factor.
-
-        $$ = new Term(Term::SymbolType::SINGLE,);
+        $$ = new Term(Term::SymbolType::SINGLE, $1->GetFacType());
         $$->append_child($1);
     }
     | term MULOP factor
     {  
         // term -> term mulop factor.
+        sym_type = $2.value.get<string>();
+        if(sym_type == "*")
+        if(sym_type == "/")
+        if(sym_type == "mod")
+        if(sym_type == "and")
+        if(sym_type == "div")
         $$ = new Term(Term::SymbolType::SINGLE,);
         
         $$->append_child($1);
 
         $$->append_child($3);
     };
-    
+
+//从这里开始
 factor : unsigned_const_variable
     {   
         // factor -> unsigned_const_variable.

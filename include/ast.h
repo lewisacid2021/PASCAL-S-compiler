@@ -722,13 +722,15 @@ class ExpressionList: public AstNode
         MULTIPLE,  // expression_list -> expression_list , expression
     };
 
-    ExpressionList(ExpressionType et)
-        : expression_type(et)
+    ExpressionList(ExpressionType et, std::vector<std::string> *tl)
+        : expression_type(et), exp_type(tl)
     {}
-    bool set_types(std::vector<BaseType *> *type_list);
+    std::vector<std::string> * get_types(){
+      return exp_type;
+    };
 
   private:
-    std::vector<std::string> *exp_type;
+    std::vector<std::string> *exp_type;    // 存储从左到当前expression的类型
     ExpressionType expression_type;
 };
 
@@ -738,19 +740,23 @@ class Expression: public AstNode
     // expression -> simple_expression
     //            | simple_expression relop simple_expression
   public:
-    enum class ExpressionType
+    enum class GrammarType
     {
-        EXPRESSION,
-        BOOLEAN
+        SINGLE,          // simple_expression
+        DOUBLE,             // simple_expression relop simple_expression
     };
-    Expression(ExpressionType et,std::string& st)
-        : expression_type(et),symbol_type(st)
+    Expression(GrammarType gt, std::string& st, std::string &et)
+        : grammar_type(gt), symbol_type(st), expression_type(et)
     {}
-    std::string GetType() { return symbol_type; }
- void accept(Visitor *visitor, FILE *fs);  //访问者接口
+    GrammarType GetGraType() { return grammar_type; }  // 返回语法类型
+    std::string GetSymType() { return symbol_type; }   // 返回符号类型
+    std::string GetExpType() { return expression_type;}  // 返回表达式类型
+
+ void accept(Visitor *visitor, FILE *fs);  // 访问者接口
   private:
-    ExpressionType expression_type;
+    GrammarType grammar_type;
     std::string symbol_type;
+    std::string expression_type;
 };
 
 class SimpleExpression: public AstNode
@@ -769,9 +775,9 @@ class SimpleExpression: public AstNode
         : symbol_type(st)
         , expression_type(et)
     {}
-    SymbolType GetSymType() { return symbol_type; }
-    std::string GetExpType() { return expression_type; }
- void accept(Visitor *visitor, FILE *fs);  //访问者接口
+    SymbolType GetSymType() { return symbol_type; } // 返回符号类型
+    std::string GetExpType() { return expression_type; }  // 返回表达式类型
+ void accept(Visitor *visitor, FILE *fs);  // 访问者接口
   private:
     SymbolType symbol_type;
     std::string expression_type;
@@ -794,7 +800,8 @@ class Term: public AstNode
         : symbol_type(st)
         , term_type(et){};
     SymbolType GetSymType() { return symbol_type; }
-    std::string GetExpType() { return term_type; }
+    std::string GetTerType() { return term_type; }
+
  void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     SymbolType symbol_type;
@@ -819,6 +826,8 @@ class Factor: public AstNode
     Factor(GrammerType gt)
         : grammer_type(gt)
     {}
+    std::string GetFacType(){ return factor_type; }
+
  void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     GrammerType grammer_type;
