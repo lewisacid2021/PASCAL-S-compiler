@@ -246,10 +246,10 @@ const_value : PLUS INT_NUM
         // const_value -> REAL_NUM
         $$ = new ConstValue($1.value);
     }
-    | CHAR
+    | STRING_
     {
-        // const_variable -> CHAR | TRUE | FALSE
-        if($1.value.get<string>() == "TRUE"){\
+        // const_variable -> string
+        if($1.value.get<string>() == "TRUE"){
             //boolean true
             $$ = new ConstValue(true);
         }
@@ -262,9 +262,9 @@ const_value : PLUS INT_NUM
             $$ = new ConstValue($1.value);
         }
     }
-    | STRING_
+    | CHAR
     {
-        // const_variable -> string
+        // const_variable -> CHAR | TRUE | FALSE
         $$ = new ConstValue($1.value);
     }
 
@@ -701,43 +701,12 @@ variable_list : variable
         $$->append_child($3);
     };
 
-variable :   ID '('')'
-    {
-        // variable -> ID '('')'
-        if (error_flag) break;
-        FunctionSymbol *tmp = table_set_queue.top()->SearchEntry<FunctionSymbol>($1.value.get<string>());
-        $$.type_ptr = TYPE_ERROR;
-        $$.is_lvalue = false;
-        if(tmp == nullptr){
-            string tn = $1.value.get<string>();
-            semantic_error(real_ast,"undefined function '"+tn+"'",$1.line_num,$1.column_num);
-            break;
-        }
-        if(tmp->type() != nullptr && tmp->symbol_type() == ObjectSymbol::SYMBOL_TYPE::FUNCTION){
-            if(!tmp->AssertParams()){
-                string tn = $1.value.get<string>();
-                string param = tmp->ParamName();
-	        semantic_error(real_ast,"too few arguments to function '"+tn+"' (expected '("+param+")')",$1.line_num,$1.column_num);
-                break;
-            }
-            $$.type_ptr = tmp->type();
-            $$.name = new std::string($1.value.get<string>());
-            real_ast->libs()->Call(*($$.name));
-            string name = $1.value.get<string>()+"()";
-            $$.variable_node = new VariableNode();
-            LeafNode *id_node = new LeafNode(name);
-            $$.variable_node->append_child(id_node);
-        } else {
-            string tn = $1.value.get<string>();
-            semantic_error(real_ast,"undefined function '"+tn+"'",$1.line_num,$1.column_num);
-        }
-         
-    }
-    | ID id_varparts
+variable : ID id_varparts
     {
         // variable -> ID id_varparts
         $$ = new Variable();
-        LeafNode *leaf_node = new LeafNode($1.value.get<string>());
+        LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::NAME);
+        // 变量的类型需要符号表来进行判断
         $$.variable_node->append_child(leaf_node);
         $$.variable_node->append_child($2);
     };
@@ -746,11 +715,16 @@ id_varparts :
     {
         // id_varparts -> ε.
         $$ = new IDVarParts();
+        std::vector<std::string> *name_list = new std::vector<std::string>;
+        $$->set_pointer(name_list);
     }
     | id_varparts id_varpart
     {
         // id_varparts -> id_varparts id_varpart.
         $$ = new IDVarParts();
+        std::vector<std::string> *name_list = $1->get_pointer();
+        name_list->emplace_back($2->get_part_name());
+        $$->set_pointer(name_list);
         $$->append_child($1);
         $$->append_child($2);
     };
@@ -759,13 +733,15 @@ id_varpart : '[' expression_list ']'
     {   
         // id_varpart -> [expression_list].
         $$ = new IDVarPart(IDVarPart::GrammarType::EXP_LIST);
+        
         $$->append_child($2);
     }
     | '.' ID
     {
         // id_varpart -> .id.
         $$ = new IDVarPart(IDVarPart::GrammarType::_ID);
-        LeafNode *leaf_node = new LeafNode($2.value.get<string>());
+        LeafNode *leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
+        $$->set_part_name($2.value.get<string>());
         $$->append_child(leaf_node);
     };
 
@@ -857,154 +833,129 @@ term : factor
     }
     | term MULOP factor
     {  
-        // term -> term mulop factor.
+        // term -> term mulop factor. 
+        $$ = new Term;
         sym_type = $2.value.get<string>();
-        if(sym_type == "*")
-        if(sym_type == "/")
-        if(sym_type == "mod")
-        if(sym_type == "and")
-        if(sym_type == "div")
-        $$ = new Term(Term::SymbolType::SINGLE,);
-        
+        if(sym_type == "*"){
+            $$->SetSymType(Term::SymbolType::MULTIPLY);
+            $$->SetTerType("REAL");
+        }
+        if(sym_type == "/"){
+            $$->SetSymType(Term::SymbolType::DEVIDE);
+            $$->SetTerType("REAL");
+        }
+        if(sym_type == "mod"){
+            $$->SetSymType(Term::SymbolType::MOD);
+            $$->SetTerType("REAL");
+        }
+        if(sym_type == "and"){
+            $$->SetSymType(Term::SymbolType::AND);
+            $$->SetTerType("BOOL");
+        }
+        if(sym_type == "div"){
+            $$->SetSymType(Term::SymbolType::DEVIDE);
+            $$->SetTerType("REAL");
+        }
         $$->append_child($1);
-
         $$->append_child($3);
     };
 
 //从这里开始
-factor : unsigned_const_variable
+factor : INT_NUM
+    {
+        // factor -> num
+        $$ = new Factor(GrammerType::NUM);
+        LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
+        $$->SetFacType("INT");
+        $$->append_child($1);
+    }
+    | REAL_NUM
     {   
-        // factor -> unsigned_const_variable.
-        $$.type_ptr = $1.type_ptr;
-        $$.is_lvalue = false;
-        if(error_flag)
-            break;
-        $$.factor_node = new FactorNode(FactorNode::GrammarType::UCONST_VAR);
-        $$.factor_node->append_child($1.unsigned_constant_var_node);
+        // factor -> num
+        $$ = new Factor(GrammerType::NUM);
+        LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
+        $$->SetFacType("INT");
+        $$->append_child($1);
+    }
+    | STRING_
+    {
+        // factor -> STRING
+        if($1.value.get<string>() == "TRUE"){
+            //boolean true
+            $$ = new Factor(GrammerType::BOOL);
+            LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
+            $$->SetFacType("BOOL");
+            
+        }
+        else if($1.value.get<string>() == "FALSE"){
+            //boolean false
+            $$ = new Factor(GrammerType::BOOL);
+            LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
+            $$->SetFacType("BOOL");
+        }
+        else {
+            //字符
+            $$ = new Factor(GrammerType::STRING);
+            LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
+            $$->SetFacType("STRING");
+        }
+        $$->append_child($1);
+    }
+    | CHAR
+    {
+        // factor -> char
+        $$ = new Factor(GrammerType::CHAR);
+        LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
+        $$->SetFacType("CHAR");
+        $$->append_child($1);
     }
     | variable
     {   
         // factor -> variable.
-        $$.type_ptr = $1.type_ptr;
-        $$.is_lvalue = $1.is_lvalue;
-        if(error_flag)
-            break;
-        $$.factor_node = new FactorNode(FactorNode::GrammarType::VARIABLE);
-        $$.factor_node->append_child($1.variable_node);
-        if($1.name) delete $1.name;
+        $$ = new Factor(GrammerType::VARIABLE);
+        // $$->SetFacType("STRING");
+        $$->append_child($1);
     }
     |ID '(' expression_list ')'
     {
-        if(error_flag)
-            break;
-        $$.is_lvalue = false;
-        FunctionSymbol *tmp = table_set_queue.top()->SearchEntry<FunctionSymbol>($1.value.get<string>());
-        if(tmp == nullptr) {
-            semantic_error(real_ast,"undefined function '" + $1.value.get<string>() + "'",$1.line_num,$1.column_num);
-            break;
-        }else if(!tmp->AssertParams(*($3.type_ptr_list),*($3.is_lvalue_list))){
-            string tn = $1.value.get<string>();
-            string param = tmp->ParamName();
-            string input = type_name(*($3.type_ptr_list));
-            semantic_error(real_ast,"invalid arguments '("+input+")' to function '"+tn+"' (expected '("+param+")')",line_count,0);
-            break;
-        }
-        //if(error_flag)
-        //   break;
-        $$.type_ptr = tmp->type();
-        $$.factor_node = new FactorNode(FactorNode::GrammarType::ID_EXP_LIST);
-        LeafNode *id_node = new LeafNode($1.value);
-        $$.factor_node->append_child(id_node);
-        $$.factor_node->append_child($3.expression_list_node);
-        auto ref_vec = tmp->ParamRefVec();
-        auto ref_stack = new std::stack<bool>();
-        for (auto i : ref_vec){
-            ref_stack->push(i);
-        }
-        $3.expression_list_node->DynamicCast<ExpressionListNode>()->set_ref(ref_stack);
-        delete ref_stack;
-        real_ast->libs()->Call(tmp->name());
-        delete $3.type_ptr_list;
-        delete $3.is_lvalue_list;
-
+        $$ = new Factor(GrammerType::ID_EXP_LIST);
+        LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::NAME)
+        // 类型需要靠符号表确认
+        // $$->SetFacType("STRING");
+        $$->append_child(leaf_node);
+        $$->append_child($3);
     }
     | '(' expression ')'
     {
         // factor -> (expression).
-        $$.type_ptr = $2.type_ptr;
-        $$.is_lvalue = false;
-        if(error_flag)
-            break;
-        $$.factor_node = new FactorNode(FactorNode::GrammarType::EXP);
-        $$.factor_node->append_child($2.expression_node);
+        $$ = new Factor(GrammerType::EXP);
+        $$->SetFacType($2->GetExpType());
+        $$->append_child($2);
     }
     | NOT factor
     {   
         // factor -> not factor.
         // 类型检查
-        if(!is_basic($2.type_ptr)){
-            semantic_error(real_ast,"wrong type argument to unary not",line_count,0);
-        }
-        auto result=compute((BasicType*)$2.type_ptr, "not");
-        
-        if(result==TYPE_ERROR){
-            semantic_error(real_ast,"wrong type argument to unary not",line_count,0);
-        }
-        $$.is_lvalue = false;
-        $$.type_ptr = result;
-
-        if(error_flag)
-            break;
-        $$.factor_node = new FactorNode(FactorNode::GrammarType::NOT);
-        $$.factor_node->append_child($2.factor_node);
+        $$ = new Factor(GrammerType::NOT);
+        $$->SetUminus();
+        $$->SetFacType($2->GetFacType());
+        $$->append_child($2);
     };
-unsigned_const_variable :
-    num
-    {
-        // unsigned_const_variable -> num
-        $$.type_ptr = $1.type_ptr;
-        if(error_flag)
-            break;
-        LeafNode *num_node = new LeafNode($1.value);
-        $$.unsigned_constant_var_node = new UnsignConstVarNode();
-        $$.unsigned_constant_var_node->append_child(num_node);
-    };
-    | CHAR
-    {
-        // unsigned_const_variable -> 'LETTER'
-        $$.type_ptr = TYPE_CHAR;
-        if(error_flag)
-            break;
-        $$.unsigned_constant_var_node = new UnsignConstVarNode();
-        LeafNode *char_node = new LeafNode($1.value);
-        $$.unsigned_constant_var_node->append_child(char_node);
-    }
-    |TRUE
-    {
-        // unsigned_const_variable -> true
-        $$.type_ptr = TYPE_BOOL;
-        if(error_flag)
-            break;
-        $$.unsigned_constant_var_node = new UnsignConstVarNode();
-        LeafNode *true_node = new LeafNode(ConstValue(true));
-        $$.unsigned_constant_var_node->append_child(true_node);
-    }
-    | FALSE
+    | UMINUS factor
     {   
-        // unsigned_const_variable -> false
-        $$.type_ptr = TYPE_BOOL;
-        if(error_flag)
-            break;
-        $$.unsigned_constant_var_node = new UnsignConstVarNode();
-        LeafNode *false_node = new LeafNode(ConstValue(false));
-        $$.unsigned_constant_var_node->append_child(false_node);
+        // factor -> not factor.
+        // 类型检查
+        $$ = new Factor(GrammerType::UMINUS);
+        $$->SetUminus();
+        $$->SetFacType($2->GetFacType());
+        $$->append_child($2);
     };
-
+    
 /*---------------.
 | Error handler  |
 `---------------*/
 /*--紧急恢复--*/
-program : error
+/* program : error
     {
         location_pointer_refresh();
         new_line_flag=false;
@@ -1019,12 +970,12 @@ program : error
         while (yychar!= YYEOF){
             yychar = yylex();
         }        
-    };
+    }; */
 /*--短语级恢复--*/
 
     /*PROGRAM相关错误*/
 
-program_head: PROGRAM error
+/* program_head: PROGRAM error
     {
         location_pointer_refresh();
         new_line_flag=false;
@@ -1064,7 +1015,7 @@ program: program_head program_body error
             fprintf(stderr,"%d:\t| %s\n",line_count,cur_line_info.c_str());
             fprintf(stderr,"\t| %s",location_pointer);
         }
-    };
+    }; */
 
     /*定义语句相关*/
 
@@ -1846,7 +1797,8 @@ statement: variable ':'
         fprintf(stderr,"%d:\t| %s\n",line_count,cur_line_info.c_str());
         fprintf(stderr,"\t| %s",location_pointer);
     }
-    ;    
+    ; 
+
 
 %%
  
@@ -1877,4 +1829,4 @@ void location_pointer_refresh(){
 }
 int yywrap(){
     return 1;
-}
+} 

@@ -663,11 +663,11 @@ class Variable: public AstNode
     // 子节点为 ID叶子节点 与 IDVarParts节点
     // variable -> id id_varparts
   public:
-    Variable(std::string &vn): var_name(vn){}
-    std::string get_vn() { return var_name; }
+    Variable(std::string &vn): var_type(vn){}
+    std::string get_vn() { return var_type; }
 
   private:
-    std::string var_name;   // 类型名
+    std::string var_type;   // 类型名
 };
 
 class IDVarParts: public AstNode
@@ -684,8 +684,11 @@ class IDVarParts: public AstNode
     //         bound.erase(bound.begin());
     //     }
     // }
+    void set_pointer(std::vector<std::string> * pn){ parts_name = pn;}
+    std::vector<std::string> *get_pointer(){ return parts_name; }
+
   private:
-    std::vector<std::string> *parts;
+    std::vector<std::string> *parts_name;
 };
 
 class IDVarPart: public AstNode
@@ -702,10 +705,12 @@ class IDVarPart: public AstNode
     {}
     GrammarType get_type() { return grammar_type; }
     void set_array_lb(int lb) { array_lb_ = lb; }
+    void set_part_name(std::string &pn) { part_name = pn; }
+    std::string get_part_name() { return part_name; }
 
   private:
     int array_lb_ = 0;
-    std::string part_type;
+    std::string part_name = "none";
     GrammarType grammar_type;
 };
 
@@ -799,6 +804,13 @@ class Term: public AstNode
     Term(SymbolType st, std::string &et)
         : symbol_type(st)
         , term_type(et){};
+    Term(){};
+    void SetSymType(SymbolType st){
+      symbol_type = st;
+    }
+    void SetTerType(std::string  &tt){
+      term_type = tt;
+    }
     SymbolType GetSymType() { return symbol_type; }
     std::string GetTerType() { return term_type; }
 
@@ -813,25 +825,31 @@ class Factor: public AstNode
   public:
     enum class GrammerType
     {
-        NUM,          // factor -> num
-        VARIABLE,     // factor -> variable
-        EXP,          // factor -> ( expression )
-        ID_EXP_LIST,  // factor -> id ( expression_list )
-        NOT,          // factor -> not factor
-        UMINUS,       // factor -> - factor
-        CHAR,         // factor -> ′ letter ′
-        STRING
+        NUM,          // factor -> num 子节点为叶子节点
+        VARIABLE,     // factor -> variable 子节点为Variable节点
+        EXP,          // factor -> ( expression ) 子节点为Expression节点
+        ID_EXP_LIST,  // factor -> id ( expression_list ) 子节点为叶子节点和 expression_list节点
+        NOT,          // factor -> not factor 子节点为factor节点
+        UMINUS,       // factor -> - factor 子节点为factor节点
+        CHAR,         // factor -> ′ letter ′ 子节点为叶子节点
+        STRING,       //子节点为叶子节点
+        BOOL          //子节点为叶子节点
     };
 
     Factor(GrammerType gt)
         : grammer_type(gt)
     {}
     std::string GetFacType(){ return factor_type; }
+    bool GetNot() {return is_uminus; }
+    void SetFacType(std::string &ft){ factor_type = ft; }
+    void SetUminus(){ is_uminus = true; }
+
 
  void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     GrammerType grammer_type;
-    std::string factor_type;
+    bool is_uminus = false; // 若为not factor与- factor则为true
+    std::string factor_type = "none";
 
 };
 
