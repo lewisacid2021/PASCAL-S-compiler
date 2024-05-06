@@ -513,18 +513,20 @@ class VarParam: public AstNode
 {
     // 子节点为ValueParam
     // var_param -> var value_param
-    VarParam();
-    bool is_ref() { return isVar; }
-    void set_ref() { isVar = true ;}
-  private:
-    bool isVar = false;
 };
 
 class ValueParam: public AstNode
 {
     // 子节点为IdList和TypeNode
     // ValueParam -> idlist : basic_type
+    
+    ValueParam();
+    bool is_ref() { return isVar; }
+    void set_ref() { isVar = true; }
+    
     void accept(Visitor *visitor, FILE *fs) override;
+  private:
+    bool isVar = false;
 };
 
 /**************************************************
