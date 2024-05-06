@@ -539,6 +539,7 @@ var_parameter : VAR value_parameter
     {   
         // var_parameter -> VAR value_parameter
         $$ = new VarParam();
+        $2->set_ref();
         $$->append_child($2);
     };
 
