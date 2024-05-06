@@ -165,6 +165,7 @@ class ConstDeclarations: public AstNode
 {
     // 子节点为单个ConstDeclaration节点或者没有
     // const_declarations -> ε | const const_declaration ;
+  public:
     enum class GrammarType
     {
         EPSILON,
@@ -209,17 +210,18 @@ class ConstDeclaration: public AstNode
     ConstValue::ConstvalueType type;  // 记录该常变量的类型。
 };
 
-class RecordDelcarations: public AstNode
+class RecordDeclarations: public AstNode
 {
-    // 子节点为单个RecordDelcaration节点或者没有
+    // 子节点为单个RecordDeclaration节点或者没有
     // record_declarations -> ε | record_declaration ;
+  public:
     enum class GrammarType
     {
         EPSILON,
         DECLARATION,
     };
 
-    RecordDelcarations(GrammarType gt)
+    RecordDeclarations(GrammarType gt)
         : grammar_type(gt){};
     GrammarType GetGrammarType()
     {
@@ -230,21 +232,22 @@ class RecordDelcarations: public AstNode
     GrammarType grammar_type;
 };
 
-class RecordDelcaration: public AstNode
+class RecordDeclaration: public AstNode
 {
-    // 子节点为RecordDelcaration节点，叶子节点id，以及var_declaration节点。
+    // 子节点为RecordDeclaration节点，叶子节点id，以及var_declaration节点。
     // record_declaration -> def-record | record_declaration def-record
     // def-record -> type 
     //               record-name = record
     //               var_declaration
     //               end;
+  public:
     enum class GrammarType
     {
         SINGLE_DECLARATION,
         MULTI_DECLARATION,
     };
 
-    RecordDelcaration(GrammarType gt)
+    RecordDeclaration(GrammarType gt)
         : grammar_type(gt){};
     GrammarType GetGrammarType()
     {
@@ -325,7 +328,7 @@ class TypeNode: public AstNode
     TypeNode(VarType vt)
         : var_type(vt)
     {}
-    TypeNode(VarType vt, std::string &tn)
+    TypeNode(VarType vt, std::string tn)
         : var_type(vt), type_name(tn)
     {}
     VarType GetVarType() { return var_type; }
@@ -343,11 +346,11 @@ class ArrayTypeNode: public AstNode
     // 子节点为 PeriodsNode 与 TypeNode
   public:
     ArrayTypeNode() {}
-    ArrayTypeNode(std::string &type)
+    ArrayTypeNode(std::string type)
         : type_name(type)
     {}
 
-    void set_type(std::string &type) { type_name = type; }
+    void set_type(std::string type) { type_name = type; }
     void set_info(ArrayType *at) { array_info = at; }
     void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
     std::string type() { return type_name; }
@@ -374,7 +377,7 @@ class PeriodsNode: public AstNode
       MULTI
     } ;
     PeriodsNode(PeriodType pt) : period_type(pt) {};
-    void set_dm(std::vector<ArrayType::Dimension> &low_dm){
+    void set_dm(std::vector<ArrayType::Dimension> low_dm){
       dm = low_dm;
     }
     std::vector<ArrayType::Dimension> get_dm(){
@@ -457,7 +460,7 @@ class SubprogramHead: public AstNode
     {}
     void accept(Visitor *visitor, FILE *fs) override;
     SubprogramType get_type() { return subprogram_type; }
-    void set_id(std::string &id) { subprogram_id = id; }
+    void set_id(std::string id) { subprogram_id = id; }
     std::string get_id() { return subprogram_id; }
 
   private:
@@ -519,7 +522,7 @@ class ValueParam: public AstNode
 {
     // 子节点为IdList和TypeNode
     // ValueParam -> idlist : basic_type
-    
+  public:  
     ValueParam();
     bool is_ref() { return isVar; }
     void set_ref() { isVar = true; }
@@ -598,7 +601,7 @@ class ProcedureCall: public AstNode
         VAR_LIST,      // procedure_call -> id ( variable_list )
     };
 
-    ProcedureCall(ProcedureType pt, std::string &id)
+    ProcedureCall(ProcedureType pt, std::string id)
         : procedure_type(pt), procedure_id(id)
     {}
     std::string get_id() { return procedure_id; }
@@ -628,6 +631,8 @@ class LoopStatement: public AstNode
     //                 | for id assignop expression downto expression do statement
     //                 | while expression do statement
     //                 | repeat statement until expression
+    LoopStatement(LoopType lt): loop_type(lt){};
+
  void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     LoopType loop_type;
@@ -681,7 +686,8 @@ class Variable: public AstNode
     // 子节点为 ID叶子节点 与 IDVarParts节点
     // variable -> id id_varparts
   public:
-    Variable(std::string &vn): var_type(vn){}
+    Variable() {}
+    Variable(std::string vn): var_type(vn){}
     std::string get_vn() { return var_type; }
 
   private:
@@ -723,7 +729,7 @@ class IDVarPart: public AstNode
     {}
     GrammarType get_type() { return grammar_type; }
     void set_array_lb(int lb) { array_lb_ = lb; }
-    void set_part_name(std::string &pn) { part_name = pn; }
+    void set_part_name(std::string pn) { part_name = pn; }
     std::string get_part_name() { return part_name; }
 
   private:
@@ -768,7 +774,7 @@ class Expression: public AstNode
         SINGLE,          // simple_expression
         DOUBLE,             // simple_expression relop simple_expression
     };
-    Expression(GrammarType gt, std::string& st, std::string &et)
+    Expression(GrammarType gt, std::string st, std::string et)
         : grammar_type(gt), symbol_type(st), expression_type(et)
     {}
     GrammarType GetGraType() { return grammar_type; }  // 返回语法类型
@@ -794,7 +800,7 @@ class SimpleExpression: public AstNode
         OR,
         SINGLE
     };
-    SimpleExpression(SymbolType st, std::string &et)
+    SimpleExpression(SymbolType st, std::string et)
         : symbol_type(st)
         , expression_type(et)
     {}
@@ -819,14 +825,14 @@ class Term: public AstNode
         AND,
         SINGLE
     };
-    Term(SymbolType st, std::string &et)
+    Term(SymbolType st, std::string et)
         : symbol_type(st)
         , term_type(et){};
     Term(){};
     void SetSymType(SymbolType st){
       symbol_type = st;
     }
-    void SetTerType(std::string  &tt){
+    void SetTerType(std::string tt){
       term_type = tt;
     }
     SymbolType GetSymType() { return symbol_type; }
@@ -859,7 +865,7 @@ class Factor: public AstNode
     {}
     std::string GetFacType(){ return factor_type; }
     bool GetNot() {return is_uminus; }
-    void SetFacType(std::string &ft){ factor_type = ft; }
+    void SetFacType(std::string ft){ factor_type = ft; }
     void SetUminus(){ is_uminus = true; }
 
 

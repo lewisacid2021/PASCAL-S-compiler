@@ -98,7 +98,7 @@ STRING_                 (\'([^\\\'\n]|(\\.)){2,}\')
 /* 分隔符 */
 SEP                     (";"|"."|","|":")
 SUBCATALOG              ".."
-  
+ 
 %% 
 "\t"                    { write_cache(); char_count += 4; }
 "\n"                    { wrap(); new_line_flag = true;}

@@ -57,7 +57,7 @@ public:
     ~ArrayType() {}
 
     // getter and setter
-    void SetDimension(std::vector<Dimension> &dim) { dimensions = dim; }
+    void SetDimension(std::vector<Dimension> dim) { dimensions = dim; }
     BaseType *GetBasetype() { return base_type; }
     size_t GetDimsum() { return dimensions.size(); }               // get dimensions
     std::vector<Dimension> GetDimensions() { return dimensions; }  // get bounds
@@ -116,7 +116,36 @@ public:
     };
     ConstValue() {}
     ~ConstValue() {}
-    
+    // 拷贝构造函数
+    ConstValue(ConstValue &cv){
+        switch(cv.type()){
+            case ConstvalueType::INTEGER:
+                value_type = cv.type();
+                C_INT = cv.get<int>();
+                Is_Uminus = cv.Is_Uminus;
+                break;
+            case ConstvalueType::REAL:
+                value_type = cv.type();
+                C_REAL = cv.get<float>();
+                Is_Uminus = cv.Is_Uminus;
+                break;
+            case ConstvalueType::BOOLEAN:
+                value_type = cv.type();
+                C_BOOLEAN = cv.get<bool>();
+                Is_Uminus = cv.Is_Uminus;
+                break;
+            case ConstvalueType::CHAR:
+                value_type = cv.type();
+                C_CHAR = cv.get<char>();
+                Is_Uminus = cv.Is_Uminus;
+                break;
+            case ConstvalueType::STRING:
+                value_type = cv.type();
+                C_STRING = cv.get<std::string>();
+                Is_Uminus = cv.Is_Uminus;
+                break;
+        }
+    }
     ConstValue(float v) { 
         value_type =  ConstvalueType::REAL;
         C_REAL = v;
@@ -157,21 +186,57 @@ public:
                                 " not supported");
         }
     }
-    
-    ConstvalueType type() { return value_type; }
-    ConstValue(ConstValue &cv){
-        if (std::is_same(cv.type(), int))
-        return *(T *)(&C_INT);
-        else if (std::is_same<T, char>::value)
-        return *(T *)(&C_CHAR);
-        else if (std::is_same<T, float>::value)
-        return *(T *)(&C_REAL);
-        else if (std::is_same<T, bool>::value)
-        return *(T *)(&C_BOOLEAN);
-        else if (std::is_same<T, std::string>::value)
-        return *((T *)(&C_STRING));
+    void set(int v) {
+        value_type =  ConstvalueType::INTEGER;
+        C_INT = v;
     }
-    ConstValue &operator=(const ConstValue &other);
+    void set(float v) {
+        value_type =  ConstvalueType::REAL;
+        C_REAL = v;
+    }
+    void set(bool v) {
+        value_type =  ConstvalueType::BOOLEAN;
+        C_BOOLEAN = v;
+    }
+    void set(char v) {
+        value_type =  ConstvalueType::CHAR;
+        C_CHAR = v;
+    }
+    void set(std::string v) {
+        value_type =  ConstvalueType::STRING;
+        C_STRING = v; 
+    }
+    ConstvalueType type() { return value_type; }
+    ConstValue &operator= (ConstValue &cv){
+        switch(cv.type()){
+            case ConstvalueType::INTEGER:
+                value_type = cv.type();
+                C_INT = cv.get<int>();
+                Is_Uminus = cv.Is_Uminus;
+                break;
+            case ConstvalueType::REAL:
+                value_type = cv.type();
+                C_REAL = cv.get<float>();
+                Is_Uminus = cv.Is_Uminus;
+                break;
+            case ConstvalueType::BOOLEAN:
+                value_type = cv.type();
+                C_BOOLEAN = cv.get<bool>();
+                Is_Uminus = cv.Is_Uminus;
+                break;
+            case ConstvalueType::CHAR:
+                value_type = cv.type();
+                C_CHAR = cv.get<char>();
+                Is_Uminus = cv.Is_Uminus;
+                break;
+            case ConstvalueType::STRING:
+                value_type = cv.type();
+                C_STRING = cv.get<std::string>();
+                Is_Uminus = cv.Is_Uminus;
+                break;
+        }
+        return *this;
+    }
     void set_uminus(){ Is_Uminus = true; }
 
 private:
