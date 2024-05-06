@@ -87,6 +87,13 @@ class LeafNode: public AstNode
     LeafNode(ConstValue val, LeafType lt)
         : value_(val), leaf_type(lt)
     {}
+
+    // id_ref()返回变量名或者引用的变量名
+    const std::string id_ref() {
+    return is_ref ? "(*" + value_.get<std::string>() + ")"
+                   : value_.get<std::string>();
+    }
+
     // getter and setter
     void set_value(ConstValue value) { value_ = value; }
     void set_ref(bool ref) { is_ref = ref; }
@@ -425,6 +432,7 @@ class SubprogramDeclarations: public AstNode
 class SubprogramDeclaration: public AstNode
 {
     //subprogram -> subprogram_head ; subprogram_body
+    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
 };
 
 class SubprogramBody: public AstNode
@@ -447,6 +455,7 @@ class SubprogramHead: public AstNode
     SubprogramHead(SubprogramType st)
         : subprogram_type(st)
     {}
+    void accept(Visitor *visitor, FILE *fs) override;
     SubprogramType get_type() { return subprogram_type; }
     void set_id(std::string &id) { subprogram_id = id; }
     std::string get_id() { return subprogram_id; }
@@ -476,6 +485,7 @@ class ParamLists: public AstNode
         : grammar_type(gt)
     {}
     GrammarType get_type() { return grammar_type;}
+    void accept(Visitor *visitor, FILE *fs) override;
 
   private:
     GrammarType grammar_type;
@@ -509,6 +519,7 @@ class ValueParam: public AstNode
 {
     // 子节点为IdList和TypeNode
     // ValueParam -> idlist : basic_type
+    void accept(Visitor *visitor, FILE *fs) override;
 };
 
 /**************************************************
@@ -842,6 +853,10 @@ class Visitor
     virtual void visit(StringTypeNode *stringtypenode, FILE *fs) = 0;
     virtual void visit(VarDeclaration *vardeclaration, FILE *fs) = 0;
     virtual void visit(PeriodsNode *periodsnode, FILE *fs) = 0;
+    virtual void visit(SubprogramDeclaration *subprogramdeclaration, FILE *fs) = 0;
+    virtual void visit(SubprogramHead *subprogramhead, FILE *fs) = 0;
+    virtual void visit(ParamLists *paramlists, FILE *fs) = 0;
+    virtual void visit(ValueParam *valueparam, FILE *fs) = 0;
 };
 
 class GenerationVisitor: public Visitor
@@ -856,6 +871,10 @@ class GenerationVisitor: public Visitor
     void visit(StringTypeNode *stringtypenode, FILE *fs) override;
     void visit(VarDeclaration *vardeclaration, FILE *fs) override;
     void visit(PeriodsNode *periodsnode, FILE *fs) override;
+    void visit(SubprogramDeclaration *subprogramdeclaration, FILE *fs) override;
+    void visit(SubprogramHead *subprogramhead, FILE *fs) override;
+    void visit(ParamLists *paramlists, FILE *fs) override;
+    void visit(ValueParam *valueparam, FILE *fs) override;
 };
 
 }  // namespace ast

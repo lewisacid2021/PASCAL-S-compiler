@@ -1,5 +1,6 @@
 #include "ast.h"
 #include "type.h"
+#include <cstddef>
 #include <cstdio>
 #include <iostream>
 #include <sys/types.h>
@@ -108,9 +109,9 @@ void GenerationVisitor::visit(TypeNode *typenode, FILE *fs)
             fprintf(fs, "struct ");
         case TypeNode::VarType::ID_TYPE:
         case TypeNode::VarType::ARRAY_TYPE:
-            fprintf(fs,"%s", typenode->get_type_name().c_str());
+            fprintf(fs, "%s", typenode->get_type_name().c_str());
             break;
-        case TypeNode::VarType::STRING_TYPE:  
+        case TypeNode::VarType::STRING_TYPE:
             typenode->get(0)->accept(this, fs);
             break;
     }
@@ -118,7 +119,7 @@ void GenerationVisitor::visit(TypeNode *typenode, FILE *fs)
 
 void GenerationVisitor::visit(StringTypeNode *stringtypenode, FILE *fs)
 {
-    auto type=stringtypenode->type();
+    auto type = stringtypenode->type();
     switch (type->GetGrammarType())
     {
         case StringType::GrammarType::LIMIT:
@@ -135,7 +136,7 @@ void GenerationVisitor::visit(StringTypeNode *stringtypenode, FILE *fs)
 void GenerationVisitor::visit(VarDeclaration *vardeclaration, FILE *fs)
 {
     //check if it is a array type
-    auto type_node = vardeclaration->get(-1)->DynamicCast<TypeNode>();
+    auto type_node    = vardeclaration->get(-1)->DynamicCast<TypeNode>();
     auto grammar_type = vardeclaration->GetGrammarType();
 
     if (grammar_type == VarDeclaration::GrammarType::MULTIPLE_DECL)
@@ -145,37 +146,95 @@ void GenerationVisitor::visit(VarDeclaration *vardeclaration, FILE *fs)
     vardeclaration->get(-1)->accept(this, fs);
     fprintf(fs, " ");
 
-    if(type_node->GetVarType() == TypeNode::VarType::ARRAY_TYPE)
+    if (type_node->GetVarType() == TypeNode::VarType::ARRAY_TYPE)
     {
-    
-        auto ArrayType=type_node->get(0)->DynamicCast<ArrayTypeNode>();
-        
-        auto id_list=vardeclaration->get(-2)->getCnodeList();
-        for(uint i=0;i<id_list.size();i++)
+        auto ArrayType = type_node->get(0)->DynamicCast<ArrayTypeNode>();
+
+        auto id_list   = vardeclaration->get(-2)->getCnodeList();
+        for (uint i = 0; i < id_list.size(); i++)
         {
             id_list[i]->accept(this, fs);
-            ArrayType->get(0)->accept(this,fs);  //periods
-            if(i!=id_list.size()-1)
+            ArrayType->get(0)->accept(this, fs);  //periods
+            if (i != id_list.size() - 1)
                 fprintf(fs, ",");
             else
                 fprintf(fs, ";\n");
         }
-    }
-    else {
+    } else {
         //idlist
         vardeclaration->get(-2)->accept(this, fs);
-        fprintf(fs, ";\n");   
+        fprintf(fs, ";\n");
     }
 }
 
 void GenerationVisitor::visit(PeriodsNode *periodsnode, FILE *fs)
 {
-    for(auto& dm:periodsnode->get_dm())
+    for (auto &dm : periodsnode->get_dm())
     {
-        fprintf(fs, "[%d]",  dm.upbound-dm.lowbound+1);
+        fprintf(fs, "[%d]", dm.upbound - dm.lowbound + 1);
     }
 }
 
+void GenerationVisitor::visit(SubprogramDeclaration *subprogramdeclaration, FILE *fs)
+{
+    auto headnode = subprogramdeclaration->get(0)->DynamicCast<SubprogramHead>();
+    bool isFunc   = (headnode->get_type() == SubprogramHead::SubprogramType::FUNCTION);
+
+    string id;
+    TypeNode *type;
+    if (isFunc)  //判断是函数还是过程 过程类型为void 无返回值
+    {
+        id   = headnode->get_id();
+        id   = "__" + id + "__";
+        type = subprogramdeclaration->get(2)->DynamicCast<TypeNode>();
+    }
+
+    headnode->accept(this, fs);  //subprogramhead
+
+    fprintf(fs, "{\n");
+
+    if (isFunc)  //声明函数的返回值 pascal用函数名表示返回值 转换成C时需要额外声明一个变量
+    {
+        type->accept(this, fs);
+        fprintf(fs, " %s;\n", id.c_str());
+    }
+
+    subprogramdeclaration->get(1)->accept(this, fs);
+
+    if (isFunc)  //函数返回值
+        fprintf(fs, "return %s;\n", id.c_str());
+
+    fprintf(fs, "}\n");
+}
+
+void GenerationVisitor::visit(SubprogramHead *subprogramhead, FILE *fs)
+{
+    if (subprogramhead->get_type() == SubprogramHead::SubprogramType::PROCEDURE)
+        fprintf(fs, "void ");
+    else
+    {
+        subprogramhead->get(2)->accept(this, fs);  //type
+        fprintf(fs, " ");
+    };
+
+    subprogramhead->get(0)->accept(this, fs);  //id
+
+    fprintf(fs, "(");
+    subprogramhead->get(1)->accept(this, fs);  //formal_param
+    fprintf(fs, ")\n");
+}
+
+void GenerationVisitor::visit(ParamLists *paramlists, FILE *fs)
+{
+    auto child_list = paramlists->getCnodeList();
+    size_t n = child_list.size();
+    for (size_t i = 0; i < n; i++)
+    {
+        child_list[i]->accept(this, fs);
+        if (i < n - 1)
+            fprintf(fs, ",");
+    }
+}
 
 void AST::accept(Visitor *visitor, FILE *fs)
 {
@@ -210,7 +269,7 @@ void TypeNode::accept(Visitor *visitor, FILE *fs)
 void ArrayTypeNode::accept(Visitor *visitor, FILE *fs)
 {
     visitor->visit(this, fs);
-}   
+}
 
 void StringTypeNode::accept(Visitor *visitor, FILE *fs)
 {
@@ -218,6 +277,26 @@ void StringTypeNode::accept(Visitor *visitor, FILE *fs)
 }
 
 void VarDeclaration::accept(Visitor *visitor, FILE *fs)
+{
+    visitor->visit(this, fs);
+}
+
+void SubprogramDeclaration::accept(Visitor *visitor, FILE *fs)
+{
+    visitor->visit(this, fs);
+}
+
+void SubprogramHead::accept(Visitor *visitor, FILE *fs)
+{
+    visitor->visit(this, fs);
+}
+
+void ParamLists::accept(Visitor *visitor, FILE *fs)
+{
+    visitor->visit(this, fs);
+}
+
+void ValueParam::accept(Visitor *visitor, FILE *fs)
 {
     visitor->visit(this, fs);
 }
