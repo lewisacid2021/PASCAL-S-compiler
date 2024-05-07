@@ -895,22 +895,6 @@ class Visitor
     virtual void visit(SubprogramHead *subprogramhead, FILE *fs) = 0;
     virtual void visit(ParamLists *paramlists, FILE *fs) = 0;
     virtual void visit(ValueParam *valueparam, FILE *fs) = 0;
-
-    virtual void visit(LeafNode *leafnode, FILE *fs, TableSet *ts, FunctionSymbol *fn) = 0;
-    virtual void visit(Statement *statement, FILE *fs) = 0;
-    virtual void visit(VariableDeclarationNode *node, FILE *fs) = 0;
-    virtual void visit(TypeDeclarationNode *node, FILE *fs) = 0;
-    virtual void visit(TypeNode *node, FILE *fs) = 0;
-    virtual void visit(AssignopStatement *assignopStatement, FILE *fs) = 0;
-    virtual void visit(ProcedureCallNode *procedureCallNode, FILE *fs) = 0;
-    virtual void visit(ElsePart *elseNode, FILE *fs) = 0;
-    virtual void visit(LoopStatement *loopStatement, FILE *fs) = 0;
-    virtual void visit(Term *term, FILE *fs) = 0;
-    virtual void visit(Factor *factor, FILE *fs) = 0;
-    virtual void visit(SimpleExpression *simpleExpression, FILE *fs) = 0;
-    virtual void visit(Expression *expression, FILE *fs) = 0;
-    virtual void visit(IDVarPartNode *idVarPartNode, FILE *fs) = 0;
-    virtual void visit(VariableListNode *variableListNode, FILE *fs) = 0;
 };
 
 class GenerationVisitor: public Visitor
@@ -930,21 +914,5 @@ class GenerationVisitor: public Visitor
     void visit(ParamLists *paramlists, FILE *fs) override;
     void visit(ValueParam *valueparam, FILE *fs) override;
 
-    void visit(Statement *statement, FILE *fs) override;
-    void visit(VariableDeclarationNode *node, FILE *fs) override;
-    void visit(TypeDeclarationNode *node, FILE *fs) override;
-    void visit(TypeNode *node, FILE *fs) override;
-    void visit(AssignopStatement *assignopStatement, FILE *fs) override;
-    void visit(ProcedureCallNode *procedureCallNode, FILE *fs) override;
-    void visit(ElsePart *elseNode, FILE *fs) override;
-    void visit(LoopStatement *loopStatement, FILE *fs) override;
-    void visit(Term *term, FILE *fs) override;
-    void visit(Factor *factor, FILE *fs) override;
-    void visit(SimpleExpression *simpleExpression, FILE *fs) override;
-    void visit(Expression *expression, FILE *fs) override;
-    void visit(IDVarPartNode *idVarPartNode, FILE *fs) override;
-    void visit(VariableListNode *variableListNode, FILE *fs) override;
-    void visit(ExpressionListNode *expressionListNode, FILE *fs) override;   
-};
-
-}  // namespace ast
+}; // namespace ast
+}
