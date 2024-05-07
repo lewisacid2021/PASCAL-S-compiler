@@ -27,7 +27,7 @@ class AstNode
       return dynamic_cast<T *>(this);
     }
 
-    virtual void accept(Visitor *visitor, FILE *fs){};  //访问者接口
+    virtual void accept(Visitor *visitor, FILE *fs);  //访问者接口
     //添加父节点及查看父节点的方法
     void set_parent(AstNode *parent)
     {
@@ -150,6 +150,7 @@ class IdList: public AstNode
         : grammar_type_(gt)
     {}
 
+    std::vector<LeafNode *> Lists();
     void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
 
     GrammarType GetGrammarType()

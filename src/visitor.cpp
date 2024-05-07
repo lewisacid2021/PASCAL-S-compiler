@@ -178,7 +178,7 @@ void GenerationVisitor::visit(PeriodsNode *periodsnode, FILE *fs)
 void GenerationVisitor::visit(SubprogramDeclaration *subprogramdeclaration, FILE *fs)
 {
     auto headnode = subprogramdeclaration->get(0)->DynamicCast<SubprogramHead>();
-    bool isFunc   = (headnode->get_type() == SubprogramHead::SubprogramType::FUNCTION);
+    bool isFunc   = (headnode->get_type() == SubprogramHead::SubprogramType::FUNC);
 
     string id;
     TypeNode *type;
@@ -209,7 +209,7 @@ void GenerationVisitor::visit(SubprogramDeclaration *subprogramdeclaration, FILE
 
 void GenerationVisitor::visit(SubprogramHead *subprogramhead, FILE *fs)
 {
-    if (subprogramhead->get_type() == SubprogramHead::SubprogramType::PROCEDURE)
+    if (subprogramhead->get_type() == SubprogramHead::SubprogramType::PROC)
         fprintf(fs, "void ");
     else
     {

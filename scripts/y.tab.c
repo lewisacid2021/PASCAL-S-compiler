@@ -74,7 +74,7 @@ using namespace ast;
 using std::string;
 extern "C"			
 {					
-    //void yyerror(const char *s);
+    void yyerror(const char *s);
     extern int yylex(void);
     extern int line_count;
     extern bool new_line_flag;
@@ -86,8 +86,12 @@ extern std::string last_line_info;
 extern int lex_error_flag;
 int semantic_error_flag = 0;
 
+int error_flag=0;
 
-#line 91 "y.tab.c"
+void yyerror(AST* Ast,const char *msg);
+
+
+#line 95 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -709,17 +713,17 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   135,   135,   145,   151,   154,   159,   169,   176,   183,
-     187,   194,   207,   219,   225,   231,   236,   241,   247,   252,
-     268,   275,   278,   285,   294,   304,   308,   315,   323,   331,
-     339,   344,   350,   356,   407,   422,   435,   443,   448,   455,
-     459,   467,   474,   483,   493,   504,   508,   515,   522,   529,
-     535,   542,   549,   557,   564,   571,   578,   584,   590,   596,
-     602,   609,   614,   622,   627,   631,   637,   644,   654,   658,
-     665,   673,   680,   690,   700,   706,   714,   725,   731,   742,
-     749,   758,   768,   778,   785,   792,   799,   805,   811,   817,
-     824,   831,   838,   844,   874,   882,   890,   916,   924,   931,
-     940,   947,   956
+       0,   139,   139,   149,   155,   158,   163,   173,   180,   187,
+     191,   198,   211,   223,   229,   235,   240,   245,   251,   256,
+     272,   279,   282,   289,   298,   308,   312,   319,   327,   335,
+     343,   348,   354,   360,   411,   426,   439,   447,   452,   459,
+     463,   471,   478,   487,   497,   508,   512,   519,   526,   533,
+     539,   546,   553,   561,   568,   575,   582,   588,   594,   600,
+     606,   613,   618,   626,   631,   635,   641,   648,   658,   662,
+     669,   677,   684,   694,   704,   710,   718,   729,   735,   746,
+     753,   762,   772,   782,   789,   796,   803,   809,   815,   821,
+     828,   835,   842,   848,   878,   886,   894,   920,   928,   935,
+     944,   951,   960
 };
 #endif
 
@@ -1433,7 +1437,7 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: program_head program_body '.'  */
-#line 136 "parser.y"
+#line 140 "parser.y"
     {   
         // prgram -> program_head program_body '.'
 	    ProgramStruct* headnode = new ProgramStruct();
@@ -1442,11 +1446,11 @@ yyreduce:
 
         Ast->set_root(headnode);
     }
-#line 1446 "y.tab.c"
+#line 1450 "y.tab.c"
     break;
 
   case 3: /* program_head: PROGRAM ID '(' id_list ')' ';'  */
-#line 145 "parser.y"
+#line 149 "parser.y"
                                               {
         // program_head -> PROGRAM ID '(' id_list ')' ';'
         (yyval.program_head_node) = new ProgramHead();
@@ -1454,29 +1458,29 @@ yyreduce:
         (yyval.program_head_node)->append_child((yyvsp[-2].idlist_node));
         (yyval.program_head_node)->append_child(leaf_node);
     }
-#line 1458 "y.tab.c"
+#line 1462 "y.tab.c"
     break;
 
   case 4: /* program_head: PROGRAM ID '(' ')' ';'  */
-#line 151 "parser.y"
+#line 155 "parser.y"
                                 {
         // program_head -> PROGRAM ID '('  ')' ';'
         (yyval.program_head_node) = new ProgramHead();
     }
-#line 1467 "y.tab.c"
+#line 1471 "y.tab.c"
     break;
 
   case 5: /* program_head: PROGRAM ID ';'  */
-#line 154 "parser.y"
+#line 158 "parser.y"
                        {
         // program_head -> PROGRAM ID ';'
         (yyval.program_head_node) = new ProgramHead();
     }
-#line 1476 "y.tab.c"
+#line 1480 "y.tab.c"
     break;
 
   case 6: /* program_body: const_declarations record_declarations var_declarations subprogram_declarations compound_statement  */
-#line 159 "parser.y"
+#line 163 "parser.y"
                                                                                                                   {
         // program_body -> const_declarations type_declarations var_declarations subprogram_declarations compound_statement
         (yyval.program_body_node) = new ProgramBody();
@@ -1486,11 +1490,11 @@ yyreduce:
         (yyval.program_body_node)->append_child((yyvsp[-1].subprogram_declarations_node));
         (yyval.program_body_node)->append_child((yyvsp[0].compound_statement_node));
     }
-#line 1490 "y.tab.c"
+#line 1494 "y.tab.c"
     break;
 
   case 7: /* id_list: id_list ',' ID  */
-#line 169 "parser.y"
+#line 173 "parser.y"
                          { 
         // id_list -> id_list ',' ID
         // 插入idlist node以及叶子节点
@@ -1499,41 +1503,41 @@ yyreduce:
         (yyval.idlist_node)->append_child((yyvsp[-2].idlist_node));
         (yyval.idlist_node)->append_child(leaf_node);
     }
-#line 1503 "y.tab.c"
+#line 1507 "y.tab.c"
     break;
 
   case 8: /* id_list: ID  */
-#line 176 "parser.y"
+#line 180 "parser.y"
            {
         // id_list -> ID
         (yyval.idlist_node) = new IdList(IdList::GrammarType::SINGLE_ID);
         LeafNode* leaf_node = new LeafNode((yyvsp[0].token_info).value, LeafNode::LeafType::NAME);
         (yyval.idlist_node)->append_child(leaf_node);
     }
-#line 1514 "y.tab.c"
+#line 1518 "y.tab.c"
     break;
 
   case 9: /* const_declarations: %empty  */
-#line 183 "parser.y"
+#line 187 "parser.y"
                     {
         // const_declarations -> ε
         (yyval.const_declarations_node) = new ConstDeclarations(ConstDeclarations::GrammarType::EPSILON);
     }
-#line 1523 "y.tab.c"
+#line 1527 "y.tab.c"
     break;
 
   case 10: /* const_declarations: CONST const_declaration ';'  */
-#line 188 "parser.y"
+#line 192 "parser.y"
     {   
         // const_declarations -> CONST const_declaration ';'
         (yyval.const_declarations_node) = new ConstDeclarations(ConstDeclarations::GrammarType::DECLARATION); 
         (yyval.const_declarations_node)->append_child((yyvsp[-1].const_declaration_node));
     }
-#line 1533 "y.tab.c"
+#line 1537 "y.tab.c"
     break;
 
   case 11: /* const_declaration: const_declaration ';' ID '=' const_value  */
-#line 195 "parser.y"
+#line 199 "parser.y"
     {
         // const_declaration -> const_declaration ';' ID '=' const_value
         (yyval.const_declaration_node) = new ConstDeclaration(ConstDeclaration::GrammarType::MULTIPLE_ID, (yyvsp[0].const_value_node)->type());
@@ -1546,11 +1550,11 @@ yyreduce:
         (yyval.const_declaration_node)->append_child(leaf_node);
         
     }
-#line 1550 "y.tab.c"
+#line 1554 "y.tab.c"
     break;
 
   case 12: /* const_declaration: ID '=' const_value  */
-#line 208 "parser.y"
+#line 212 "parser.y"
     {   
         // const_declaration -> ID '=' const_value
         (yyval.const_declaration_node) = new ConstDeclaration(ConstDeclaration::GrammarType::SINGLE_ID, (yyvsp[0].const_value_node)->type());
@@ -1561,67 +1565,67 @@ yyreduce:
         leaf_node = new LeafNode(*(yyvsp[0].const_value_node), LeafNode::LeafType::NAME);
         (yyval.const_declaration_node)->append_child(leaf_node);
     }
-#line 1565 "y.tab.c"
+#line 1569 "y.tab.c"
     break;
 
   case 13: /* const_value: PLUS INT_NUM  */
-#line 221 "parser.y"
+#line 225 "parser.y"
     {
         // const_value -> + INT_NUM
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
     }
-#line 1574 "y.tab.c"
+#line 1578 "y.tab.c"
     break;
 
   case 14: /* const_value: UMINUS INT_NUM  */
-#line 226 "parser.y"
+#line 230 "parser.y"
     {
         // const_value -> - INT_NUM
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
         (yyval.const_value_node)->set_uminus();
     }
-#line 1584 "y.tab.c"
+#line 1588 "y.tab.c"
     break;
 
   case 15: /* const_value: INT_NUM  */
-#line 232 "parser.y"
+#line 236 "parser.y"
     {
         // const_value -> INT_NUM
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
     }
-#line 1593 "y.tab.c"
+#line 1597 "y.tab.c"
     break;
 
   case 16: /* const_value: PLUS REAL_NUM  */
-#line 237 "parser.y"
+#line 241 "parser.y"
     {   
         // const_value -> REAL_NUM
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
     }
-#line 1602 "y.tab.c"
+#line 1606 "y.tab.c"
     break;
 
   case 17: /* const_value: UMINUS REAL_NUM  */
-#line 242 "parser.y"
+#line 246 "parser.y"
     {   
         // const_value -> REAL_NUM
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
         (yyval.const_value_node)->set_uminus();
     }
-#line 1612 "y.tab.c"
+#line 1616 "y.tab.c"
     break;
 
   case 18: /* const_value: REAL_NUM  */
-#line 248 "parser.y"
+#line 252 "parser.y"
     {   
         // const_value -> REAL_NUM
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
     }
-#line 1621 "y.tab.c"
+#line 1625 "y.tab.c"
     break;
 
   case 19: /* const_value: STRING_  */
-#line 253 "parser.y"
+#line 257 "parser.y"
     {
         // const_variable -> string
         if((yyvsp[0].token_info).value.get<string>() == "TRUE"){
@@ -1637,38 +1641,38 @@ yyreduce:
             (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
         }
     }
-#line 1641 "y.tab.c"
+#line 1645 "y.tab.c"
     break;
 
   case 20: /* const_value: CHAR  */
-#line 269 "parser.y"
+#line 273 "parser.y"
     {
         // const_variable -> CHAR | TRUE | FALSE
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
     }
-#line 1650 "y.tab.c"
+#line 1654 "y.tab.c"
     break;
 
   case 21: /* record_declarations: %empty  */
-#line 275 "parser.y"
+#line 279 "parser.y"
     {
         (yyval.record_declarations_node) = new RecordDeclarations(RecordDeclarations::GrammarType::EPSILON);
     }
-#line 1658 "y.tab.c"
+#line 1662 "y.tab.c"
     break;
 
   case 22: /* record_declarations: record_declaration  */
-#line 279 "parser.y"
+#line 283 "parser.y"
     {
         // record_declarations -> ε | record_declaration
         (yyval.record_declarations_node) = new RecordDeclarations(RecordDeclarations::GrammarType::DECLARATION);
         (yyval.record_declarations_node)->append_child((yyvsp[0].record_declaration_node));
     }
-#line 1668 "y.tab.c"
+#line 1672 "y.tab.c"
     break;
 
   case 23: /* record_declaration: TYPE CHAR CONSTASSIGNOP RECORD var_declaration END ';'  */
-#line 286 "parser.y"
+#line 290 "parser.y"
     {
         // record_declaration -> def-record | record_declaration def-record
         (yyval.record_declaration_node) = new RecordDeclaration(RecordDeclaration::GrammarType::SINGLE_DECLARATION);
@@ -1677,11 +1681,11 @@ yyreduce:
         (yyval.record_declaration_node)->append_child((yyvsp[-2].var_declaration_node));
 
     }
-#line 1681 "y.tab.c"
+#line 1685 "y.tab.c"
     break;
 
   case 24: /* record_declaration: record_declaration TYPE CHAR CONSTASSIGNOP RECORD var_declaration END ';'  */
-#line 295 "parser.y"
+#line 299 "parser.y"
     {
         (yyval.record_declaration_node) = new RecordDeclaration(RecordDeclaration::GrammarType::MULTI_DECLARATION);
         (yyval.record_declaration_node)->append_child((yyvsp[-7].record_declaration_node));
@@ -1689,30 +1693,30 @@ yyreduce:
         (yyval.record_declaration_node)->append_child(leaf_node);
         (yyval.record_declaration_node)->append_child((yyvsp[-2].var_declaration_node));
     }
-#line 1693 "y.tab.c"
+#line 1697 "y.tab.c"
     break;
 
   case 25: /* var_declarations: %empty  */
-#line 304 "parser.y"
+#line 308 "parser.y"
     {
         // var_declarations -> ε
         (yyval.var_declarations_node) = new VarDeclarations(VarDeclarations::GrammarType::EPSILON);
     }
-#line 1702 "y.tab.c"
+#line 1706 "y.tab.c"
     break;
 
   case 26: /* var_declarations: VAR var_declaration ';'  */
-#line 309 "parser.y"
+#line 313 "parser.y"
     {
         // var_declarations -> VAR var_declaration ';'
         (yyval.var_declarations_node) = new VarDeclarations(VarDeclarations::GrammarType::DECLARATION);
         (yyval.var_declarations_node)->append_child((yyvsp[-1].var_declaration_node));
     }
-#line 1712 "y.tab.c"
+#line 1716 "y.tab.c"
     break;
 
   case 27: /* var_declaration: var_declaration ';' id_list ':' type  */
-#line 316 "parser.y"
+#line 320 "parser.y"
     {
         // var_declaration -> var_declaration ';' id_list ':' type
         (yyval.var_declaration_node) = new VarDeclaration(VarDeclaration::GrammarType::MULTIPLE_DECL);
@@ -1720,22 +1724,22 @@ yyreduce:
         (yyval.var_declaration_node)->append_child((yyvsp[-2].idlist_node));
         (yyval.var_declaration_node)->append_child((yyvsp[0].type_node));
     }
-#line 1724 "y.tab.c"
+#line 1728 "y.tab.c"
     break;
 
   case 28: /* var_declaration: id_list ':' type  */
-#line 324 "parser.y"
+#line 328 "parser.y"
     {
         // var_declaration -> id_list ':' type
         (yyval.var_declaration_node) = new VarDeclaration(VarDeclaration::GrammarType::SINGLE_DECL);
         (yyval.var_declaration_node)->append_child((yyvsp[-2].idlist_node));
         (yyval.var_declaration_node)->append_child((yyvsp[0].type_node));
     }
-#line 1735 "y.tab.c"
+#line 1739 "y.tab.c"
     break;
 
   case 29: /* type: ID  */
-#line 332 "parser.y"
+#line 336 "parser.y"
     {
         // type -> ID
         // 由于我们将integer等都设为保留字，都识别为ID（integer char boolean string real）
@@ -1743,39 +1747,39 @@ yyreduce:
         //IdTypeNode* idnode = new IdTypeNode($1.value.get());
         //$$->append_child(idnode);
     }
-#line 1747 "y.tab.c"
+#line 1751 "y.tab.c"
     break;
 
   case 30: /* type: array_type  */
-#line 340 "parser.y"
+#line 344 "parser.y"
     {
         (yyval.type_node) = new TypeNode(TypeNode::VarType::ARRAY_TYPE, "array");
         (yyval.type_node)->append_child((yyvsp[0].array_node));
     }
-#line 1756 "y.tab.c"
+#line 1760 "y.tab.c"
     break;
 
   case 31: /* type: RECORD var_declaration END ';'  */
-#line 345 "parser.y"
+#line 349 "parser.y"
     {
         // recordtype -> record var_declaration end;
         (yyval.type_node) = new TypeNode(TypeNode::VarType::RECORD_TYPE, "record");
         (yyval.type_node)->append_child((yyvsp[-2].var_declaration_node));
     }
-#line 1766 "y.tab.c"
+#line 1770 "y.tab.c"
     break;
 
   case 32: /* type: string_type  */
-#line 351 "parser.y"
+#line 355 "parser.y"
     {
         (yyval.type_node) = new TypeNode(TypeNode::VarType::STRING_TYPE, "string");
         (yyval.type_node)->append_child((yyvsp[0].string_node));
     }
-#line 1775 "y.tab.c"
+#line 1779 "y.tab.c"
     break;
 
   case 33: /* array_type: ARRAY '[' periods ']' OF type  */
-#line 357 "parser.y"
+#line 361 "parser.y"
     {   
         (yyval.array_node) = new ArrayTypeNode();
         if ((yyvsp[0].type_node)->GetVarType() == TypeNode::VarType::STRING_TYPE || (yyvsp[0].type_node)->GetVarType() == TypeNode::VarType::RECORD_TYPE){
@@ -1797,11 +1801,11 @@ yyreduce:
         (yyval.array_node)->append_child((yyvsp[-3].periods_node));
         (yyval.array_node)->append_child((yyvsp[0].type_node));
     }
-#line 1801 "y.tab.c"
+#line 1805 "y.tab.c"
     break;
 
   case 34: /* periods: periods ',' period  */
-#line 408 "parser.y"
+#line 412 "parser.y"
     {
         // periods -> periods ',' period
         (yyval.periods_node) = new PeriodsNode(PeriodsNode::PeriodType::MULTI);
@@ -1816,11 +1820,11 @@ yyreduce:
         (yyval.periods_node)->append_child((yyvsp[-2].periods_node));
         (yyval.periods_node)->append_child((yyvsp[0].period_node));
     }
-#line 1820 "y.tab.c"
+#line 1824 "y.tab.c"
     break;
 
   case 35: /* periods: period  */
-#line 423 "parser.y"
+#line 427 "parser.y"
     {
         // periods -> period
         (yyval.periods_node) = new PeriodsNode(PeriodsNode::PeriodType::SINGLE);
@@ -1832,71 +1836,71 @@ yyreduce:
         (yyval.periods_node)->set_dm(dim);
         (yyval.periods_node)->append_child((yyvsp[0].period_node));
     }
-#line 1836 "y.tab.c"
+#line 1840 "y.tab.c"
     break;
 
   case 36: /* period: INT_NUM SUBCATALOG INT_NUM  */
-#line 436 "parser.y"
+#line 440 "parser.y"
     {     
         // period -> INT_NUM SUBCATALOG INT_NUMe
         (yyval.period_node) = new PeriodNode((yyvsp[-2].token_info).value.get<int>(), (yyvsp[0].token_info).value.get<int>());
         (yyval.period_node)->append_child(new LeafNode((yyvsp[-2].token_info).value.get<int>(), LeafNode::LeafType::VALUE));
         (yyval.period_node)->append_child(new LeafNode((yyvsp[0].token_info).value.get<int>(), LeafNode::LeafType::VALUE));
     }
-#line 1847 "y.tab.c"
+#line 1851 "y.tab.c"
     break;
 
   case 37: /* string_type: STRING '[' INT_NUM ']'  */
-#line 444 "parser.y"
+#line 448 "parser.y"
     {
         StringType* string_info = new StringType(StringType::GrammarType::LIMIT, (yyvsp[-1].token_info).value.get<int>());
         (yyval.string_node) = new StringTypeNode(string_info);
     }
-#line 1856 "y.tab.c"
+#line 1860 "y.tab.c"
     break;
 
   case 38: /* string_type: STRING  */
-#line 449 "parser.y"
+#line 453 "parser.y"
     {
         StringType* string_info = new StringType(StringType::GrammarType::NOLIMIT, 0);
         (yyval.string_node) = new StringTypeNode(string_info);
     }
-#line 1865 "y.tab.c"
+#line 1869 "y.tab.c"
     break;
 
   case 39: /* subprogram_declarations: %empty  */
-#line 455 "parser.y"
+#line 459 "parser.y"
     {
         // subprogram_declarations -> ε
         (yyval.subprogram_declarations_node) = new SubprogramDeclarations();
     }
-#line 1874 "y.tab.c"
+#line 1878 "y.tab.c"
     break;
 
   case 40: /* subprogram_declarations: subprogram_declarations subprogram_declaration ';'  */
-#line 460 "parser.y"
+#line 464 "parser.y"
     {
         // subprogram_declarations -> subprogram_declarations subprogram_declaration ';'
         (yyval.subprogram_declarations_node) = new SubprogramDeclarations();
         (yyval.subprogram_declarations_node)->append_child((yyvsp[-2].subprogram_declarations_node));
         (yyval.subprogram_declarations_node)->append_child((yyvsp[-1].subprogram_declaration_node));
     }
-#line 1885 "y.tab.c"
+#line 1889 "y.tab.c"
     break;
 
   case 41: /* subprogram_declaration: subprogram_head subprogram_body  */
-#line 468 "parser.y"
+#line 472 "parser.y"
     {
         // subprogram_declaration -> subprogram_head subprogram_body
         (yyval.subprogram_declaration_node) = new SubprogramDeclaration();
         (yyval.subprogram_declaration_node)->append_child((yyvsp[-1].subprogram_head_node));
         (yyval.subprogram_declaration_node)->append_child((yyvsp[0].subprogram_body_node));
     }
-#line 1896 "y.tab.c"
+#line 1900 "y.tab.c"
     break;
 
   case 42: /* subprogram_body: const_declarations var_declarations compound_statement  */
-#line 475 "parser.y"
+#line 479 "parser.y"
     {
         // subprogram_body -> const_declarations var_declarations compound_statement
         (yyval.subprogram_body_node) = new SubprogramBody();
@@ -1904,257 +1908,257 @@ yyreduce:
         (yyval.subprogram_body_node)->append_child((yyvsp[-1].var_declarations_node));
         (yyval.subprogram_body_node)->append_child((yyvsp[0].compound_statement_node));
     }
-#line 1908 "y.tab.c"
+#line 1912 "y.tab.c"
     break;
 
   case 43: /* subprogram_head: FUNCTION ID formal_parameter ':' type ';'  */
-#line 484 "parser.y"
+#line 488 "parser.y"
     {
         // subprogram_head -> FUNCTION ID formal_parameter ':' standrad_type ';'
-        (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::FUNCTION);
+        (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         (yyval.subprogram_head_node)->set_id((yyvsp[-4].token_info).value.get<string>());
         LeafNode *leaf_node = new LeafNode((yyvsp[-4].token_info).value, LeafNode::LeafType::NAME);
         (yyval.subprogram_head_node)->append_child(leaf_node);
         (yyval.subprogram_head_node)->append_child((yyvsp[-3].formal_param_node));
         (yyval.subprogram_head_node)->append_child((yyvsp[-1].type_node));
     }
-#line 1922 "y.tab.c"
+#line 1926 "y.tab.c"
     break;
 
   case 44: /* subprogram_head: PROCEDURE ID formal_parameter ';'  */
-#line 494 "parser.y"
+#line 498 "parser.y"
     {
         // subprogram_head -> PROCEDURE ID formal_parameter ';'
-        (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::PROCEDURE);
+        (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::PROC);
         LeafNode *leaf_node = new LeafNode((yyvsp[-2].token_info).value, LeafNode::LeafType::NAME);
         (yyval.subprogram_head_node)->set_id((yyvsp[-2].token_info).value.get<string>());
         (yyval.subprogram_head_node)->append_child(leaf_node);
         (yyval.subprogram_head_node)->append_child((yyvsp[-1].formal_param_node));
     }
-#line 1935 "y.tab.c"
+#line 1939 "y.tab.c"
     break;
 
   case 45: /* formal_parameter: %empty  */
-#line 504 "parser.y"
+#line 508 "parser.y"
     {   
         // formal_parameter -> ε
         (yyval.formal_param_node) = new FormalParam();
     }
-#line 1944 "y.tab.c"
+#line 1948 "y.tab.c"
     break;
 
   case 46: /* formal_parameter: '(' parameter_lists ')'  */
-#line 509 "parser.y"
+#line 513 "parser.y"
     {
         // formal_parameter -> '(' parameter_lists ')'
         (yyval.formal_param_node) = new FormalParam();
         (yyval.formal_param_node)->append_child((yyvsp[-1].paramlists_node));
     }
-#line 1954 "y.tab.c"
+#line 1958 "y.tab.c"
     break;
 
   case 47: /* parameter_lists: parameter_lists ';' parameter_list  */
-#line 516 "parser.y"
+#line 520 "parser.y"
     {   
         // parameter_lists -> parameter_lists ';' parameter_list
         (yyval.paramlists_node) = new ParamLists(ParamLists::GrammarType::MULTIPLE_PARAM_LIST);
         (yyval.paramlists_node)->append_child((yyvsp[-2].paramlists_node));
         (yyval.paramlists_node)->append_child((yyvsp[0].paramlist_node));
     }
-#line 1965 "y.tab.c"
+#line 1969 "y.tab.c"
     break;
 
   case 48: /* parameter_lists: parameter_list  */
-#line 523 "parser.y"
+#line 527 "parser.y"
     {  
         // parameter_lists -> parameter_list
         (yyval.paramlists_node) = new ParamLists(ParamLists::GrammarType::SINGLE_PARAM_LIST);
         (yyval.paramlists_node)->append_child((yyvsp[0].paramlist_node));
     }
-#line 1975 "y.tab.c"
+#line 1979 "y.tab.c"
     break;
 
   case 49: /* parameter_list: var_parameter  */
-#line 530 "parser.y"
+#line 534 "parser.y"
     {   
         // parameter_list -> var_parameter
         (yyval.paramlist_node) = new ParamList(ParamList::ParamType::VarParam);
         (yyval.paramlist_node)->append_child((yyvsp[0].var_param_node));
     }
-#line 1985 "y.tab.c"
+#line 1989 "y.tab.c"
     break;
 
   case 50: /* parameter_list: value_parameter  */
-#line 536 "parser.y"
+#line 540 "parser.y"
     {   
         // parameter_list -> value_parameter
         (yyval.paramlist_node) = new ParamList(ParamList::ParamType::ValueParam);
         (yyval.paramlist_node)->append_child((yyvsp[0].value_param_node));
     }
-#line 1995 "y.tab.c"
+#line 1999 "y.tab.c"
     break;
 
   case 51: /* var_parameter: VAR value_parameter  */
-#line 543 "parser.y"
+#line 547 "parser.y"
     {   
         // var_parameter -> VAR value_parameter
         (yyval.var_param_node) = new VarParam();
         (yyval.var_param_node)->append_child((yyvsp[0].value_param_node));
     }
-#line 2005 "y.tab.c"
+#line 2009 "y.tab.c"
     break;
 
   case 52: /* value_parameter: id_list ':' type  */
-#line 550 "parser.y"
+#line 554 "parser.y"
     {   
         // value_parameter -> id_list ':' standrad_type
         (yyval.value_param_node) = new ValueParam();
         (yyval.value_param_node)->append_child((yyvsp[-2].idlist_node));
         (yyval.value_param_node)->append_child((yyvsp[0].type_node));
     }
-#line 2016 "y.tab.c"
+#line 2020 "y.tab.c"
     break;
 
   case 53: /* compound_statement: BEGIN_ statement_list END  */
-#line 558 "parser.y"
+#line 562 "parser.y"
     {
         // compound_statement -> Begin statement_list end
         (yyval.compound_statement_node) = new CompoundStatement();
         (yyval.compound_statement_node)->append_child((yyvsp[-1].statement_list_node));
     }
-#line 2026 "y.tab.c"
+#line 2030 "y.tab.c"
     break;
 
   case 54: /* statement_list: statement_list ';' statement  */
-#line 565 "parser.y"
+#line 569 "parser.y"
     {
         // statement_list -> statement_list ';' statement
         (yyval.statement_list_node) = new StatementList();
         (yyval.statement_list_node)->append_child((yyvsp[-2].statement_list_node));
         (yyval.statement_list_node)->append_child((yyvsp[0].statement_node));
     }
-#line 2037 "y.tab.c"
+#line 2041 "y.tab.c"
     break;
 
   case 55: /* statement_list: statement  */
-#line 572 "parser.y"
+#line 576 "parser.y"
     {
         // statement_list -> statement
         (yyval.statement_list_node) = new StatementList();
         (yyval.statement_list_node)->append_child((yyvsp[0].statement_node));
     }
-#line 2047 "y.tab.c"
+#line 2051 "y.tab.c"
     break;
 
   case 56: /* statement: assignop_statement  */
-#line 579 "parser.y"
+#line 583 "parser.y"
     {   
         //statement -> AssignopStatement
         (yyval.statement_node) = new Statement(Statement::StatementType::ASSIGN_OP_STATEMENT);
         (yyval.statement_node)->append_child((yyvsp[0].assignop_statement_node));
     }
-#line 2057 "y.tab.c"
+#line 2061 "y.tab.c"
     break;
 
   case 57: /* statement: procedure_call  */
-#line 585 "parser.y"
+#line 589 "parser.y"
     {
         // statement -> call_procedure_statement
         (yyval.statement_node) = new Statement(Statement::StatementType::PROCEDURE_CALL);
         (yyval.statement_node)->append_child((yyvsp[0].procedure_call_node));
     }
-#line 2067 "y.tab.c"
+#line 2071 "y.tab.c"
     break;
 
   case 58: /* statement: compound_statement  */
-#line 591 "parser.y"
+#line 595 "parser.y"
     {
         // statement -> compound_statement
         (yyval.statement_node) = new Statement(Statement::StatementType::COMPOUND_STATEMENT);
         (yyval.statement_node)->append_child((yyvsp[0].compound_statement_node));
     }
-#line 2077 "y.tab.c"
+#line 2081 "y.tab.c"
     break;
 
   case 59: /* statement: ifstatement  */
-#line 597 "parser.y"
+#line 601 "parser.y"
     {   
         // statement -> IF expression THEN statement else_part
         (yyval.statement_node) = new Statement(Statement::StatementType::IF_STATEMENT);
         (yyval.statement_node)->append_child((yyvsp[0].ifstatement_node));
     }
-#line 2087 "y.tab.c"
+#line 2091 "y.tab.c"
     break;
 
   case 60: /* statement: loopstatement  */
-#line 603 "parser.y"
+#line 607 "parser.y"
     {
         // statement -> CASE expression OF case_body END
         (yyval.statement_node) = new Statement(Statement::StatementType::LOOP_STATEMENT);
         (yyval.statement_node)->append_child((yyvsp[0].loopstatement_node));
     }
-#line 2097 "y.tab.c"
+#line 2101 "y.tab.c"
     break;
 
   case 61: /* statement: %empty  */
-#line 609 "parser.y"
+#line 613 "parser.y"
     {
         // statement -> ε
         (yyval.statement_node) = new Statement(Statement::StatementType::EPSILON);
     }
-#line 2106 "y.tab.c"
+#line 2110 "y.tab.c"
     break;
 
   case 62: /* assignop_statement: variable ASSIGNOP expression  */
-#line 615 "parser.y"
+#line 619 "parser.y"
     {
         // assignop_statement -> variable ASSIGNOP expression
         (yyval.assignop_statement_node) = new AssignopStatement(AssignopStatement::LeftType::VARIABLE);
         (yyval.assignop_statement_node)->append_child((yyvsp[-2].variable_node));
         (yyval.assignop_statement_node)->append_child((yyvsp[0].expression_node));
     }
-#line 2117 "y.tab.c"
+#line 2121 "y.tab.c"
     break;
 
   case 63: /* procedure_call: ID  */
-#line 623 "parser.y"
+#line 627 "parser.y"
     {
         // procedure_call -> id
         (yyval.procedure_call_node) = new ProcedureCall(ProcedureCall::ProcedureType::NO_LIST, (yyvsp[0].token_info).value.get<string>());
     }
-#line 2126 "y.tab.c"
+#line 2130 "y.tab.c"
     break;
 
   case 64: /* procedure_call: ID '(' ')'  */
-#line 628 "parser.y"
+#line 632 "parser.y"
     {
         (yyval.procedure_call_node) = new ProcedureCall(ProcedureCall::ProcedureType::NO_LIST, (yyvsp[-2].token_info).value.get<string>());
     }
-#line 2134 "y.tab.c"
+#line 2138 "y.tab.c"
     break;
 
   case 65: /* procedure_call: ID '(' expression_list ')'  */
-#line 632 "parser.y"
+#line 636 "parser.y"
     {
         // procedure_call -> id ( expression_list )
         (yyval.procedure_call_node) = new ProcedureCall(ProcedureCall::ProcedureType::EXP_LIST, (yyvsp[-3].token_info).value.get<string>());
         (yyval.procedure_call_node)->append_child((yyvsp[-1].expression_list_node));
     }
-#line 2144 "y.tab.c"
+#line 2148 "y.tab.c"
     break;
 
   case 66: /* procedure_call: ID '(' variable_list ')'  */
-#line 638 "parser.y"
+#line 642 "parser.y"
     {
         // procedure_call -> id ( expression_list )
         (yyval.procedure_call_node) = new ProcedureCall(ProcedureCall::ProcedureType::VAR_LIST, (yyvsp[-3].token_info).value.get<string>());
         (yyval.procedure_call_node)->append_child((yyvsp[-1].variablelist_node));
     }
-#line 2154 "y.tab.c"
+#line 2158 "y.tab.c"
     break;
 
   case 67: /* ifstatement: IF expression THEN statement else_part  */
-#line 645 "parser.y"
+#line 649 "parser.y"
     {
         // if_statement -> if expression then statement else_part
         (yyval.ifstatement_node) = new IfStatement();
@@ -2162,53 +2166,53 @@ yyreduce:
         (yyval.ifstatement_node)->append_child((yyvsp[-1].statement_node));
         (yyval.ifstatement_node)->append_child((yyvsp[0].elsepart_node));
     }
-#line 2166 "y.tab.c"
+#line 2170 "y.tab.c"
     break;
 
   case 68: /* else_part: %empty  */
-#line 654 "parser.y"
+#line 658 "parser.y"
     {
         // else_part -> ε | else statement
         (yyval.elsepart_node) = new ElsePart(ElsePart::ELSEType::EPSILON);
     }
-#line 2175 "y.tab.c"
+#line 2179 "y.tab.c"
     break;
 
   case 69: /* else_part: ELSE statement  */
-#line 659 "parser.y"
+#line 663 "parser.y"
     {   
         // else_part -> else statement
         (yyval.elsepart_node) = new ElsePart(ElsePart::ELSEType::ELSE_STATEMENT);
         (yyval.elsepart_node)->append_child((yyvsp[0].statement_node));
     }
-#line 2185 "y.tab.c"
+#line 2189 "y.tab.c"
     break;
 
   case 70: /* loopstatement: WHILE expression DO statement  */
-#line 666 "parser.y"
+#line 670 "parser.y"
     {
         // statement -> WHILE expression DO statement
-        (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::WHILE);
+        (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::WHILE_);
         (yyval.loopstatement_node)->append_child((yyvsp[-2].expression_node));
         (yyval.loopstatement_node)->append_child((yyvsp[0].statement_node));
 
     }
-#line 2197 "y.tab.c"
+#line 2201 "y.tab.c"
     break;
 
   case 71: /* loopstatement: REPEAT statement_list UNTIL expression  */
-#line 674 "parser.y"
+#line 678 "parser.y"
     {
         // statement -> repeat statement until expression
-        (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::REAPT);
+        (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::REPEAT_);
         (yyval.loopstatement_node)->append_child((yyvsp[-2].statement_list_node));
         (yyval.loopstatement_node)->append_child((yyvsp[0].expression_node));
     }
-#line 2208 "y.tab.c"
+#line 2212 "y.tab.c"
     break;
 
   case 72: /* loopstatement: FOR ID ASSIGNOP expression DOWNTO expression DO statement  */
-#line 681 "parser.y"
+#line 685 "parser.y"
     {
         // statement -> FOR ID ASSIGNOP expression downto expression DO statement
         (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::FORDOWN);
@@ -2218,11 +2222,11 @@ yyreduce:
         (yyval.loopstatement_node)->append_child((yyvsp[-2].expression_node));
         (yyval.loopstatement_node)->append_child((yyvsp[0].statement_node));
     }
-#line 2222 "y.tab.c"
+#line 2226 "y.tab.c"
     break;
 
   case 73: /* loopstatement: FOR ID ASSIGNOP expression TO expression DO statement  */
-#line 691 "parser.y"
+#line 695 "parser.y"
     {
         (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::FORUP);
         LeafNode *leaf_node = new LeafNode((yyvsp[-6].token_info).value, LeafNode::LeafType::NAME); 
@@ -2231,32 +2235,32 @@ yyreduce:
         (yyval.loopstatement_node)->append_child((yyvsp[-2].expression_node));
         (yyval.loopstatement_node)->append_child((yyvsp[0].statement_node));
     }
-#line 2235 "y.tab.c"
+#line 2239 "y.tab.c"
     break;
 
   case 74: /* variable_list: variable  */
-#line 701 "parser.y"
+#line 705 "parser.y"
     { 
         // variable_list -> variable
-        (yyval.variablelist_node) = new VariableList(VariableList::GrammarType::VAR);
+        (yyval.variablelist_node) = new VariableList(VariableList::GrammarType::VAR_);
         (yyval.variablelist_node)->append_child((yyvsp[0].variable_node));
     }
-#line 2245 "y.tab.c"
+#line 2249 "y.tab.c"
     break;
 
   case 75: /* variable_list: variable_list ',' variable  */
-#line 707 "parser.y"
+#line 711 "parser.y"
     {
         // variable_list -> variable_list ',' variable
         (yyval.variablelist_node) = new VariableList(VariableList::GrammarType::VAR_LIST_VAR);
         (yyval.variablelist_node)->append_child((yyvsp[-2].variablelist_node));
         (yyval.variablelist_node)->append_child((yyvsp[0].variable_node));
     }
-#line 2256 "y.tab.c"
+#line 2260 "y.tab.c"
     break;
 
   case 76: /* variable: ID id_varparts  */
-#line 715 "parser.y"
+#line 719 "parser.y"
     {
         // variable -> ID id_varparts
         (yyval.variable_node) = new Variable();
@@ -2265,22 +2269,22 @@ yyreduce:
         (yyval.variable_node)->append_child(leaf_node);
         (yyval.variable_node)->append_child((yyvsp[0].idvarparts_node));
     }
-#line 2269 "y.tab.c"
+#line 2273 "y.tab.c"
     break;
 
   case 77: /* id_varparts: %empty  */
-#line 725 "parser.y"
+#line 729 "parser.y"
     {
         // id_varparts -> ε.
         (yyval.idvarparts_node) = new IDVarParts();
         std::vector<std::string> *name_list = new std::vector<std::string>;
         (yyval.idvarparts_node)->set_pointer(name_list);
     }
-#line 2280 "y.tab.c"
+#line 2284 "y.tab.c"
     break;
 
   case 78: /* id_varparts: id_varparts id_varpart  */
-#line 732 "parser.y"
+#line 736 "parser.y"
     {
         // id_varparts -> id_varparts id_varpart.
         (yyval.idvarparts_node) = new IDVarParts();
@@ -2290,22 +2294,22 @@ yyreduce:
         (yyval.idvarparts_node)->append_child((yyvsp[-1].idvarparts_node));
         (yyval.idvarparts_node)->append_child((yyvsp[0].idvarpart_node));
     }
-#line 2294 "y.tab.c"
+#line 2298 "y.tab.c"
     break;
 
   case 79: /* id_varpart: '[' expression_list ']'  */
-#line 743 "parser.y"
+#line 747 "parser.y"
     {   
         // id_varpart -> [expression_list].
         (yyval.idvarpart_node) = new IDVarPart(IDVarPart::GrammarType::EXP_LIST);
         
         (yyval.idvarpart_node)->append_child((yyvsp[-1].expression_list_node));
     }
-#line 2305 "y.tab.c"
+#line 2309 "y.tab.c"
     break;
 
   case 80: /* id_varpart: '.' ID  */
-#line 750 "parser.y"
+#line 754 "parser.y"
     {
         // id_varpart -> .id.
         (yyval.idvarpart_node) = new IDVarPart(IDVarPart::GrammarType::_ID);
@@ -2313,11 +2317,11 @@ yyreduce:
         (yyval.idvarpart_node)->set_part_name((yyvsp[0].token_info).value.get<string>());
         (yyval.idvarpart_node)->append_child(leaf_node);
     }
-#line 2317 "y.tab.c"
+#line 2321 "y.tab.c"
     break;
 
   case 81: /* expression_list: expression_list ',' expression  */
-#line 759 "parser.y"
+#line 763 "parser.y"
     {
         // expression_list -> expression_list ',' expression
         
@@ -2327,11 +2331,11 @@ yyreduce:
         (yyval.expression_list_node)->append_child((yyvsp[-2].expression_list_node));
         (yyval.expression_list_node)->append_child((yyvsp[0].expression_node));
     }
-#line 2331 "y.tab.c"
+#line 2335 "y.tab.c"
     break;
 
   case 82: /* expression_list: expression  */
-#line 769 "parser.y"
+#line 773 "parser.y"
     {
         // expression_list -> expression
         std::string type = (yyvsp[0].expression_node)->GetExpType();
@@ -2340,115 +2344,115 @@ yyreduce:
         (yyval.expression_list_node) = new ExpressionList(ExpressionList::ExpressionType::SINGLE, type_list);
         (yyval.expression_list_node)->append_child((yyvsp[0].expression_node));
     }
-#line 2344 "y.tab.c"
+#line 2348 "y.tab.c"
     break;
 
   case 83: /* expression: simple_expression RELOP simple_expression  */
-#line 779 "parser.y"
+#line 783 "parser.y"
     {
         // expression -> simple_expression RELOP simple_expression.
         (yyval.expression_node) = new Expression(Expression::GrammarType::DOUBLE, (yyvsp[-1].token_info).value.get<string>(), "bool");
         (yyval.expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.expression_node)->append_child((yyvsp[0].simple_expression_node));
     }
-#line 2355 "y.tab.c"
+#line 2359 "y.tab.c"
     break;
 
   case 84: /* expression: simple_expression CONSTASSIGNOP simple_expression  */
-#line 786 "parser.y"
+#line 790 "parser.y"
     {
         // expression -> simple_expression '=' simple_expression.
         (yyval.expression_node) = new Expression(Expression::GrammarType::DOUBLE, "=", "bool");
         (yyval.expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.expression_node)->append_child((yyvsp[0].simple_expression_node));
     }
-#line 2366 "y.tab.c"
+#line 2370 "y.tab.c"
     break;
 
   case 85: /* expression: simple_expression  */
-#line 793 "parser.y"
+#line 797 "parser.y"
     {
         // expression -> simple_expression.
         (yyval.expression_node) = new Expression(Expression::GrammarType::SINGLE, " ", (yyvsp[0].simple_expression_node)->GetExpType());
         (yyval.expression_node)->append_child((yyvsp[0].simple_expression_node));
     }
-#line 2376 "y.tab.c"
+#line 2380 "y.tab.c"
     break;
 
   case 86: /* simple_expression: term  */
-#line 800 "parser.y"
+#line 804 "parser.y"
     {   
         // simple_expression -> term.
         (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::SINGLE, (yyvsp[0].term_node)->GetTerType());
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
     }
-#line 2386 "y.tab.c"
+#line 2390 "y.tab.c"
     break;
 
   case 87: /* simple_expression: PLUS term  */
-#line 806 "parser.y"
+#line 810 "parser.y"
     {
         // simple_expression -> + term.
-        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::PLUS, (yyvsp[0].term_node)->GetTerType());
+        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::PLUS_, (yyvsp[0].term_node)->GetTerType());
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
     }
-#line 2396 "y.tab.c"
+#line 2400 "y.tab.c"
     break;
 
   case 88: /* simple_expression: UMINUS term  */
-#line 812 "parser.y"
+#line 816 "parser.y"
     {
         // simple_expression -> - term.
-        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::UMINUS, (yyvsp[0].term_node)->GetTerType());
+        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::MINUS_, (yyvsp[0].term_node)->GetTerType());
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
     }
-#line 2406 "y.tab.c"
+#line 2410 "y.tab.c"
     break;
 
   case 89: /* simple_expression: simple_expression ADDOP term  */
-#line 818 "parser.y"
+#line 822 "parser.y"
     {
         // simple_expression -> simple_expression or term.、
-        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::OR, "bool");
+        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::OR_, "bool");
         (yyval.simple_expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
     }
-#line 2417 "y.tab.c"
+#line 2421 "y.tab.c"
     break;
 
   case 90: /* simple_expression: simple_expression PLUS term  */
-#line 825 "parser.y"
+#line 829 "parser.y"
     { 
         // simple_expression -> simple_expression + term.
-        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::PLUS, (yyvsp[0].term_node)->GetTerType());
+        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::PLUS_, (yyvsp[0].term_node)->GetTerType());
         (yyval.simple_expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
     }
-#line 2428 "y.tab.c"
+#line 2432 "y.tab.c"
     break;
 
   case 91: /* simple_expression: simple_expression UMINUS term  */
-#line 832 "parser.y"
+#line 836 "parser.y"
     {
-        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::UMINUS, (yyvsp[0].term_node)->GetTerType());
+        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::MINUS_, (yyvsp[0].term_node)->GetTerType());
         (yyval.simple_expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
     }
-#line 2438 "y.tab.c"
+#line 2442 "y.tab.c"
     break;
 
   case 92: /* term: factor  */
-#line 839 "parser.y"
+#line 843 "parser.y"
     {   
         // term -> factor.
         (yyval.term_node) = new Term(Term::SymbolType::SINGLE, (yyvsp[0].factor_node)->GetFacType());
         (yyval.term_node)->append_child((yyvsp[0].factor_node));
     }
-#line 2448 "y.tab.c"
+#line 2452 "y.tab.c"
     break;
 
   case 93: /* term: term MULOP factor  */
-#line 845 "parser.y"
+#line 849 "parser.y"
     {  
         // term -> term mulop factor. 
         (yyval.term_node) = new Term;
@@ -2476,11 +2480,11 @@ yyreduce:
         (yyval.term_node)->append_child((yyvsp[-2].term_node));
         (yyval.term_node)->append_child((yyvsp[0].factor_node));
     }
-#line 2480 "y.tab.c"
+#line 2484 "y.tab.c"
     break;
 
   case 94: /* factor: INT_NUM  */
-#line 875 "parser.y"
+#line 879 "parser.y"
     {
         // factor -> num
         (yyval.factor_node) = new Factor(Factor::GrammerType::NUM);
@@ -2488,11 +2492,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType("INT");
         (yyval.factor_node)->append_child(leaf_node);
     }
-#line 2492 "y.tab.c"
+#line 2496 "y.tab.c"
     break;
 
   case 95: /* factor: REAL_NUM  */
-#line 883 "parser.y"
+#line 887 "parser.y"
     {   
         // factor -> num
         (yyval.factor_node) = new Factor(Factor::GrammerType::NUM);
@@ -2500,11 +2504,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType("INT");
         (yyval.factor_node)->append_child(leaf_node);
     }
-#line 2504 "y.tab.c"
+#line 2508 "y.tab.c"
     break;
 
   case 96: /* factor: STRING_  */
-#line 891 "parser.y"
+#line 895 "parser.y"
     {
         // factor -> STRING
         if((yyvsp[0].token_info).value.get<string>() == "TRUE"){
@@ -2523,41 +2527,41 @@ yyreduce:
         }
         else {
             //字符
-            (yyval.factor_node) = new Factor(Factor::GrammerType::STRING);
+            (yyval.factor_node) = new Factor(Factor::GrammerType::STR);
             LeafNode *leaf_node = new LeafNode((yyvsp[0].token_info).value, LeafNode::LeafType::VALUE);
             (yyval.factor_node)->SetFacType("STRING");
             (yyval.factor_node)->append_child(leaf_node);
         }
         
     }
-#line 2534 "y.tab.c"
+#line 2538 "y.tab.c"
     break;
 
   case 97: /* factor: CHAR  */
-#line 917 "parser.y"
+#line 921 "parser.y"
     {
         // factor -> char
-        (yyval.factor_node) = new Factor(Factor::GrammerType::CHAR);
+        (yyval.factor_node) = new Factor(Factor::GrammerType::CHAR_);
         LeafNode *leaf_node = new LeafNode((yyvsp[0].token_info).value, LeafNode::LeafType::VALUE);
         (yyval.factor_node)->SetFacType("CHAR");
         (yyval.factor_node)->append_child(leaf_node);
     }
-#line 2546 "y.tab.c"
+#line 2550 "y.tab.c"
     break;
 
   case 98: /* factor: variable  */
-#line 925 "parser.y"
+#line 929 "parser.y"
     {   
         // factor -> variable.
         (yyval.factor_node) = new Factor(Factor::GrammerType::VARIABLE);
         // $$->SetFacType("STRING");
         (yyval.factor_node)->append_child((yyvsp[0].variable_node));
     }
-#line 2557 "y.tab.c"
+#line 2561 "y.tab.c"
     break;
 
   case 99: /* factor: ID '(' expression_list ')'  */
-#line 932 "parser.y"
+#line 936 "parser.y"
     {
         (yyval.factor_node) = new Factor(Factor::GrammerType::ID_EXP_LIST);
         LeafNode *leaf_node = new LeafNode((yyvsp[-3].token_info).value, LeafNode::LeafType::NAME);
@@ -2566,48 +2570,48 @@ yyreduce:
         (yyval.factor_node)->append_child(leaf_node);
         (yyval.factor_node)->append_child((yyvsp[-1].expression_list_node));
     }
-#line 2570 "y.tab.c"
+#line 2574 "y.tab.c"
     break;
 
   case 100: /* factor: '(' expression ')'  */
-#line 941 "parser.y"
+#line 945 "parser.y"
     {
         // factor -> (expression).
         (yyval.factor_node) = new Factor(Factor::GrammerType::EXP);
         (yyval.factor_node)->SetFacType((yyvsp[-1].expression_node)->GetExpType());
         (yyval.factor_node)->append_child((yyvsp[-1].expression_node));
     }
-#line 2581 "y.tab.c"
+#line 2585 "y.tab.c"
     break;
 
   case 101: /* factor: NOT factor  */
-#line 948 "parser.y"
+#line 952 "parser.y"
     {   
         // factor -> not factor.
         // 类型检查
-        (yyval.factor_node) = new Factor(Factor::GrammerType::NOT);
+        (yyval.factor_node) = new Factor(Factor::GrammerType::NOT_);
         (yyval.factor_node)->SetUminus();
         (yyval.factor_node)->SetFacType((yyvsp[0].factor_node)->GetFacType());
         (yyval.factor_node)->append_child((yyvsp[0].factor_node));
     }
-#line 2594 "y.tab.c"
+#line 2598 "y.tab.c"
     break;
 
   case 102: /* factor: UMINUS factor  */
-#line 957 "parser.y"
+#line 961 "parser.y"
     {   
         // factor -> not factor.
         // 类型检查
-        (yyval.factor_node) = new Factor(Factor::GrammerType::UMINUS);
+        (yyval.factor_node) = new Factor(Factor::GrammerType::UMINUS_);
         (yyval.factor_node)->SetUminus();
         (yyval.factor_node)->SetFacType((yyvsp[0].factor_node)->GetFacType());
         (yyval.factor_node)->append_child((yyvsp[0].factor_node));
     }
-#line 2607 "y.tab.c"
+#line 2611 "y.tab.c"
     break;
 
 
-#line 2611 "y.tab.c"
+#line 2615 "y.tab.c"
 
       default: break;
     }
@@ -2800,16 +2804,17 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 971 "parser.y"
+#line 975 "parser.y"
 
  
 
-/* void yyerror(ast::AST* real_ast,const char *msg){
-    if(yydebug || strcmp(msg,"syntax error")!=0)   // 当非debug模式且传入的是默认报错时不输出 
+void yyerror(ast::AST* Ast,const char *msg){
+    if(strcmp(msg,"syntax error")!=0)   // 当非debug模式且传入的是默认报错时不输出 
         fprintf(stderr,"%d,%ld:\033[01;31m \terror\033[0m : %s\n", line_count,cur_line_info.size(),msg);   
     error_flag = 1;
-    real_ast->set_root(nullptr);
-} */
+     Ast->set_root(nullptr);
+    
+}
 
 /*void yynote(std::string msg ,int line){
     fprintf(stderr,"%d:\033[01;32m \tnote\033[0m : previous definition of \"%s\" was here\n", line, msg.c_str());
