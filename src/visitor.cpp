@@ -313,6 +313,11 @@ void VarDeclaration::accept(Visitor *visitor, FILE *fs)
     visitor->visit(this, fs);
 }
 
+void PeriodsNode::accept(Visitor *visitor, FILE *fs)
+{
+    visitor->visit(this, fs);
+}
+
 void SubprogramDeclaration::accept(Visitor *visitor, FILE *fs)
 {
     visitor->visit(this, fs);

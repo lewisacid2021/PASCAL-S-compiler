@@ -584,7 +584,7 @@ class AssignopStatement: public AstNode
     AssignopStatement(LeftType lt)
         : left_type(lt)
     {}
- void accept(Visitor *visitor, FILE *fs);  //访问者接口
+  void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     LeftType left_type;
     //std::string varname;
@@ -606,7 +606,7 @@ class ProcedureCall: public AstNode
     {}
     std::string get_id() { return procedure_id; }
 
- void accept(Visitor *visitor, FILE *fs);  //访问者接口
+  void accept(Visitor *visitor, FILE *fs);  //访问者接口
   private:
     ProcedureType procedure_type;
     std::string procedure_id;
