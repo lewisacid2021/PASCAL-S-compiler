@@ -227,11 +227,27 @@ void GenerationVisitor::visit(SubprogramHead *subprogramhead, FILE *fs)
 void GenerationVisitor::visit(ParamLists *paramlists, FILE *fs)
 {
     auto child_list = paramlists->getCnodeList();
-    size_t n = child_list.size();
+    size_t n        = child_list.size();
     for (size_t i = 0; i < n; i++)
     {
         child_list[i]->accept(this, fs);
         if (i < n - 1)
+            fprintf(fs, ",");
+    }
+}
+
+void GenerationVisitor::visit(ValueParam *valueparam, FILE *fs)
+{
+    auto id_list = valueparam->get(0)->DynamicCast<IdList>();
+    auto type    = valueparam->get(1)->DynamicCast<TypeNode>();
+
+    vector<LeafNode *> list = id_list->Lists();
+    size_t n=list.size();
+    for(size_t i=0;i<n;i++)
+    {
+        type->accept(this, fs);
+        fprintf(fs, " %s",list[i]->id_ref().c_str());
+        if(i<n-1)
             fprintf(fs, ",");
     }
 }
@@ -254,6 +270,27 @@ void LeafNode::accept(Visitor *visitor, FILE *fs)
 void IdList::accept(Visitor *visitor, FILE *fs)
 {
     visitor->visit(this, fs);
+}
+
+std::vector<LeafNode *> IdList::Lists()
+{
+    std::vector<LeafNode *> lists;
+    auto *cur_node    = this;
+    GrammarType gtype = grammar_type_;
+
+    while (gtype == GrammarType::MULTIPLE_ID) //如果多层 进入循环
+    {
+        LeafNode *ln = cur_node->cnode_list[1]->DynamicCast<LeafNode>();
+        lists.insert(lists.begin(), ln);
+        
+        cur_node = cur_node->cnode_list[0]->DynamicCast<IdList>();
+        gtype    = cur_node->grammar_type_;
+    }
+
+    // 插入最后一个节点
+    LeafNode *ln = (*cur_node->cnode_list.rbegin())->DynamicCast<LeafNode>();
+    lists.insert(lists.begin(), ln);
+    return lists;
 }
 
 void ConstDeclaration::accept(Visitor *visitor, FILE *fs)

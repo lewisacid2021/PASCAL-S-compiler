@@ -150,6 +150,7 @@ class IdList: public AstNode
         : grammar_type_(gt)
     {}
 
+    std::vector<LeafNode *> Lists();   // 返回idlist中的所有id 即将多层嵌套转化为一层
     void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
 
     GrammarType GetGrammarType()
