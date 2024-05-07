@@ -1,7 +1,7 @@
 %option case-insensitive 
 %{   
 #include "parser.h"
-#include "log.h"
+//#include "log.h"
 #include "parser.tab.h"
     
 int line_count = 1;             // 当前行 号
@@ -98,7 +98,7 @@ STRING_                 (\'([^\\\'\n]|(\\.)){2,}\')
 /* 分隔符 */
 SEP                     (";"|"."|","|":")
 SUBCATALOG              ".."
-  
+
 %% 
 "\t"                            { write_cache(); char_count += 4; }
 "\n"                            { wrap(); new_line_flag = true;}
@@ -179,7 +179,7 @@ SUBCATALOG              ".."
 ('[^'\n][^']*(\n)[^']*')        { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
 ('[^']*(\n)[^']*[^'\n]')        { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
               
-(\{|\(\*)[^\{\}(\(\*)(\*\))]*)  { write_cache(); print_lex_error("unclosed comment"); skip_error_token(); }
+(\{|(\(\*)[^\{\}(\(\*)(\*\))]*)  { write_cache(); print_lex_error("unclosed comment"); skip_error_token(); }
 ('[^']*)                        { write_cache(); print_lex_error("unclosed string constant"); skip_error_token(); }
 
 .                               { write_cache(); print_lex_error("illegal character"); char_count++; }
@@ -208,7 +208,7 @@ void skip_error_token()
 
 void skip_anno()
 {
-    log_debug("ANNO\t\t%s\t\t\t%d\t\t%d", yytext, line_count, char_count);
+    //log_debug("ANNO\t\t%s\t\t\t%d\t\t%d", yytext, line_count, char_count);
     for(i = 0; i < strlen(yytext); i++)
     {
         if(yytext[i] == '\n') wrap();
