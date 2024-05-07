@@ -1003,9 +1003,3 @@ void location_pointer_refresh(){
 int yywrap(){
     return 1;
 } 
-
-int main(){
-    ast::AST Ast;
-    yyparse(&Ast);
-    return 0;
-}

@@ -303,11 +303,6 @@ void TypeNode::accept(Visitor *visitor, FILE *fs)
     visitor->visit(this, fs);
 }
 
-void ArrayTypeNode::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
 void StringTypeNode::accept(Visitor *visitor, FILE *fs)
 {
     visitor->visit(this, fs);

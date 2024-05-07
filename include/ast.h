@@ -353,7 +353,6 @@ class ArrayTypeNode: public AstNode
 
     void set_type(std::string type) { type_name = type; }
     void set_info(ArrayType *at) { array_info = at; }
-    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
     std::string type() { return type_name; }
     ArrayType *info() { return array_info; }
 
@@ -887,11 +886,10 @@ class Visitor
     virtual void visit(IdList *idlist, FILE *fs)                     = 0;
     virtual void visit(ConstDeclaration *constdeclaration, FILE *fs) = 0;
     virtual void visit(TypeNode *typenode, FILE *fs) = 0;
-    virtual void visit(ArrayTypeNode *arraytypenode, FILE *fs) = 0;
     virtual void visit(StringTypeNode *stringtypenode, FILE *fs) = 0;
     virtual void visit(VarDeclaration *vardeclaration, FILE *fs) = 0;
     virtual void visit(PeriodsNode *periodsnode, FILE *fs) = 0;
-    virtual void visit(SubprogramDeclaration *subprogramdeclaration, FILE *fs) = 0;
+    virtual void visit(SubprogramDeclaration *suFbprogramdeclaration, FILE *fs) = 0;
     virtual void visit(SubprogramHead *subprogramhead, FILE *fs) = 0;
     virtual void visit(ParamLists *paramlists, FILE *fs) = 0;
     virtual void visit(ValueParam *valueparam, FILE *fs) = 0;
