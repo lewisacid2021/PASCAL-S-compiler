@@ -1,6 +1,7 @@
 #pragma once
 
 #include "type.h"
+#include "symbolTable.h"
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -28,6 +29,7 @@ class AstNode
     }
 
     virtual void accept(Visitor *visitor, FILE *fs);  //访问者接口
+    virtual void accept(Visitor *visitor, SymbolTable* SymbolTable);
     //添加父节点及查看父节点的方法
     void set_parent(AstNode *parent)
     {
@@ -53,9 +55,17 @@ class AstNode
         return cnode_list;
     }
 
+    void set_rownum(int rn)
+    {
+      row_num = rn;
+    }
+
+    int get_rownum(){return row_num;}
+
   protected:
     AstNode *pnode;
     std::vector<AstNode *> cnode_list;
+    int row_num;
 };
 
 class AST
@@ -71,6 +81,7 @@ class AST
     AstNode *getRoot() { return astroot; }
 
     void accept(Visitor *visitor, FILE *fs);  //访问者接口
+    void accept(Visitor *visitor, SymbolTable* SymbolTable);
 
   private:
     AstNode *astroot = nullptr;
@@ -459,6 +470,8 @@ class SubprogramHead: public AstNode
         : subprogram_type(st)
     {}
     void accept(Visitor *visitor, FILE *fs) override;
+    void accept(Visitor *visitor, SymbolTable* SymbolTable) override;
+
     SubprogramType get_type() { return subprogram_type; }
     void set_id(std::string id) { subprogram_id = id; }
     std::string get_id() { return subprogram_id; }
@@ -473,25 +486,6 @@ class FormalParam: public AstNode
     // 子节点为ParamLists
     // formal_parameter -> EPSILON
     //                  | ( parameter_lists )
-};
-
-class ParamLists: public AstNode
-{
-  public:
-    enum class GrammarType
-    {
-        SINGLE_PARAM_LIST,    // param_lists -> param_list
-        MULTIPLE_PARAM_LIST,  // param_lists -> param_lists ; param_list
-    };
-
-    ParamLists(GrammarType gt)
-        : grammar_type(gt)
-    {}
-    GrammarType get_type() { return grammar_type;}
-    void accept(Visitor *visitor, FILE *fs) override;
-
-  private:
-    GrammarType grammar_type;
 };
 
 class ParamList: public AstNode
@@ -510,6 +504,26 @@ class ParamList: public AstNode
 
   private:
     ParamType param_type;
+};
+
+class ParamLists: public AstNode
+{
+  public:
+    enum class GrammarType
+    {
+        SINGLE_PARAM_LIST,    // param_lists -> param_list
+        MULTIPLE_PARAM_LIST,  // param_lists -> param_lists ; param_list
+    };
+
+    ParamLists(GrammarType gt)
+        : grammar_type(gt)
+    {}
+    GrammarType get_type() { return grammar_type;}
+    void accept(Visitor *visitor, FILE *fs) override;
+    std::vector<ParamList*> Lists();
+
+  private:
+    GrammarType grammar_type;
 };
 
 class VarParam: public AstNode
@@ -889,10 +903,24 @@ class Visitor
     virtual void visit(StringTypeNode *stringtypenode, FILE *fs) = 0;
     virtual void visit(VarDeclaration *vardeclaration, FILE *fs) = 0;
     virtual void visit(PeriodsNode *periodsnode, FILE *fs) = 0;
-    virtual void visit(SubprogramDeclaration *suFbprogramdeclaration, FILE *fs) = 0;
+    virtual void visit(SubprogramDeclaration *subprogramdeclaration, FILE *fs) = 0;
     virtual void visit(SubprogramHead *subprogramhead, FILE *fs) = 0;
     virtual void visit(ParamLists *paramlists, FILE *fs) = 0;
     virtual void visit(ValueParam *valueparam, FILE *fs) = 0;
+
+    virtual void visit(AST *AST, SymbolTable* SymbolTable) = 0;
+    virtual void visit(AstNode *astnode, SymbolTable* SymbolTable) = 0;
+    virtual void visit(LeafNode *leafnode, SymbolTable* SymbolTable) = 0;
+    virtual void visit(IdList *idlist, SymbolTable* SymbolTable) = 0;
+    virtual void visit(ConstDeclaration *constdeclaration, SymbolTable* SymbolTable) = 0;
+    virtual void visit(TypeNode *typenode, SymbolTable* SymbolTable) = 0;
+    virtual void visit(StringTypeNode *stringtypenode, SymbolTable* SymbolTable) = 0;
+    virtual void visit(VarDeclaration *vardeclaration, SymbolTable* SymbolTable) = 0;
+    virtual void visit(PeriodsNode *periodsnode, SymbolTable* SymbolTable) = 0;
+    virtual void visit(SubprogramDeclaration *subprogramdeclaration, SymbolTable* SymbolTable) = 0;
+    virtual void visit(SubprogramHead *subprogramhead, SymbolTable* SymbolTable) = 0;
+    virtual void visit(ParamLists *paramlists, SymbolTable* SymbolTable) = 0;
+    virtual void visit(ValueParam *valueparam, SymbolTable* SymbolTable) = 0;
 };
 
 class GenerationVisitor: public Visitor
@@ -912,5 +940,18 @@ class GenerationVisitor: public Visitor
     void visit(ParamLists *paramlists, FILE *fs) override;
     void visit(ValueParam *valueparam, FILE *fs) override;
 };
+
+class SemanticVisitor: public Visitor
+{
+  public:
+    void visit(AST *AST, SymbolTable* SymbolTable) override;
+    void visit(AstNode *astnode, SymbolTable* SymbolTable) override;
+    void visit(ConstDeclaration *constdeclaration, SymbolTable* SymbolTable) override;
+    void visit(VarDeclaration *vardeclaration, SymbolTable* SymbolTable) override;
+    void visit(SubprogramHead *subprogramhead, SymbolTable* SymbolTable) override;
+    void visit(ParamLists *paramlists, SymbolTable* SymbolTable) override;
+    void visit(ValueParam *valueparam, SymbolTable* SymbolTable) override;
+};
+
 
 }  // namespace ast
