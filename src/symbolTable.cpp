@@ -4,6 +4,8 @@
 
 using namespace std;
 
+SymbolTable *mainSymbolTable;  //主符号表
+
 //添加传值参数
 void SymbolTable::addPara(string id, int rowNumber, string type)
 {
@@ -221,4 +223,20 @@ void TableRecord::setVoidPara(string id_para, int rowNumber_para)
     flag            = "parameter of program";
     this->id        = id_para;
     this->rowNumber = rowNumber_para;
+}
+
+//找出标识符在符号表中的位置
+TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode)
+{
+    if (currentSymbolTable->idLoc.count(id)) {
+        size_t loc = static_cast<size_t>(currentSymbolTable->idLoc[id]);
+        return currentSymbolTable->records[loc];
+    }
+    if (mode != 0)
+        return NULL;
+    if (currentSymbolTable->tableType == "subTable" && mainSymbolTable->idLoc.count(id)) {
+        size_t loc = static_cast<size_t>(mainSymbolTable->idLoc[id]);
+        return mainSymbolTable->records[loc];
+    }
+    return NULL;
 }
