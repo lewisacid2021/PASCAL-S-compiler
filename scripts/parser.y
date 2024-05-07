@@ -16,6 +16,10 @@ extern std::string last_line_info;
 extern int lex_error_flag;
 int semantic_error_flag = 0;
 
+int error_flag=0;
+
+void yyerror(AST* Ast,const char *msg);
+
 %}
 
 /* %union {
@@ -483,7 +487,7 @@ subprogram_body : const_declarations var_declarations compound_statement
 subprogram_head : FUNCTION ID formal_parameter ':' type ';'
     {
         // subprogram_head -> FUNCTION ID formal_parameter ':' standrad_type ';'
-        $$ = new SubprogramHead(SubprogramHead::SubprogramType::FUNCTION);
+        $$ = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         $$->set_id($2.value.get<string>());
         LeafNode *leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
@@ -493,7 +497,7 @@ subprogram_head : FUNCTION ID formal_parameter ':' type ';'
     | PROCEDURE ID formal_parameter ';'
     {
         // subprogram_head -> PROCEDURE ID formal_parameter ';'
-        $$ = new SubprogramHead(SubprogramHead::SubprogramType::PROCEDURE);
+        $$ = new SubprogramHead(SubprogramHead::SubprogramType::PROC);
         LeafNode *leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
         $$->set_id($2.value.get<string>());
         $$->append_child(leaf_node);
@@ -665,7 +669,7 @@ else_part :
 loopstatement : WHILE expression DO statement
     {
         // statement -> WHILE expression DO statement
-        $$ = new LoopStatement(LoopStatement::LoopType::WHILE);
+        $$ = new LoopStatement(LoopStatement::LoopType::WHILE_);
         $$->append_child($2);
         $$->append_child($4);
 
@@ -673,7 +677,7 @@ loopstatement : WHILE expression DO statement
     | REPEAT statement_list UNTIL expression
     {
         // statement -> repeat statement until expression
-        $$ = new LoopStatement(LoopStatement::LoopType::REAPT);
+        $$ = new LoopStatement(LoopStatement::LoopType::REPEAT_);
         $$->append_child($2);
         $$->append_child($4);
     }
@@ -700,7 +704,7 @@ loopstatement : WHILE expression DO statement
 variable_list : variable
     { 
         // variable_list -> variable
-        $$ = new VariableList(VariableList::GrammarType::VAR);
+        $$ = new VariableList(VariableList::GrammarType::VAR_);
         $$->append_child($1);
     } 
     | variable_list ',' variable
@@ -805,32 +809,32 @@ simple_expression : term
     | PLUS term
     {
         // simple_expression -> + term.
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::PLUS, $2->GetTerType());
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::PLUS_, $2->GetTerType());
         $$->append_child($2);
     }
     | UMINUS term
     {
         // simple_expression -> - term.
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::UMINUS, $2->GetTerType());
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::MINUS_, $2->GetTerType());
         $$->append_child($2);
     }
     | simple_expression ADDOP term
     {
         // simple_expression -> simple_expression or term.、
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::OR, "bool");
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::OR_, "bool");
         $$->append_child($1);
         $$->append_child($3);
     }
     | simple_expression PLUS term
     { 
         // simple_expression -> simple_expression + term.
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::PLUS, $3->GetTerType());
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::PLUS_, $3->GetTerType());
         $$->append_child($1);
         $$->append_child($3);
     }
     | simple_expression UMINUS term
     {
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::UMINUS, $3->GetTerType());
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::MINUS_, $3->GetTerType());
         $$->append_child($1);
         $$->append_child($3);
     };
@@ -906,7 +910,7 @@ factor : INT_NUM
         }
         else {
             //字符
-            $$ = new Factor(Factor::GrammerType::STRING);
+            $$ = new Factor(Factor::GrammerType::STR);
             LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
             $$->SetFacType("STRING");
             $$->append_child(leaf_node);
@@ -916,7 +920,7 @@ factor : INT_NUM
     | CHAR
     {
         // factor -> char
-        $$ = new Factor(Factor::GrammerType::CHAR);
+        $$ = new Factor(Factor::GrammerType::CHAR_);
         LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
         $$->SetFacType("CHAR");
         $$->append_child(leaf_node);
@@ -948,7 +952,7 @@ factor : INT_NUM
     {   
         // factor -> not factor.
         // 类型检查
-        $$ = new Factor(Factor::GrammerType::NOT);
+        $$ = new Factor(Factor::GrammerType::NOT_);
         $$->SetUminus();
         $$->SetFacType($2->GetFacType());
         $$->append_child($2);
@@ -957,7 +961,7 @@ factor : INT_NUM
     {   
         // factor -> not factor.
         // 类型检查
-        $$ = new Factor(Factor::GrammerType::UMINUS);
+        $$ = new Factor(Factor::GrammerType::UMINUS_);
         $$->SetUminus();
         $$->SetFacType($2->GetFacType());
         $$->append_child($2);
@@ -971,12 +975,13 @@ factor : INT_NUM
 %%
  
 
-/* void yyerror(ast::AST* real_ast,const char *msg){
-    if(yydebug || strcmp(msg,"syntax error")!=0)   // 当非debug模式且传入的是默认报错时不输出 
+void yyerror(ast::AST* Ast,const char *msg){
+    if(strcmp(msg,"syntax error")!=0)   // 当非debug模式且传入的是默认报错时不输出 
         fprintf(stderr,"%d,%ld:\033[01;31m \terror\033[0m : %s\n", line_count,cur_line_info.size(),msg);   
     error_flag = 1;
-    real_ast->set_root(nullptr);
-} */
+     Ast->set_root(nullptr);
+    
+}
 
 /*void yynote(std::string msg ,int line){
     fprintf(stderr,"%d:\033[01;32m \tnote\033[0m : previous definition of \"%s\" was here\n", line, msg.c_str());

@@ -27,7 +27,7 @@ class AstNode
       return dynamic_cast<T *>(this);
     }
 
-    virtual void accept(Visitor *visitor, FILE *fs);  //访问者接口
+    virtual void accept(Visitor *visitor, FILE *fs){};  //访问者接口
     //添加父节点及查看父节点的方法
     void set_parent(AstNode *parent)
     {
@@ -83,7 +83,7 @@ class LeafNode: public AstNode
       VALUE,
       NAME,
     };
-    LeafNode() {}
+    LeafNode(){}
     LeafNode(ConstValue val, LeafType lt)
         : value_(val), leaf_type(lt)
     {}
@@ -150,7 +150,6 @@ class IdList: public AstNode
         : grammar_type_(gt)
     {}
 
-    std::vector<LeafNode *> Lists();   // 返回idlist中的所有id 即将多层嵌套转化为一层
     void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
 
     GrammarType GetGrammarType()
@@ -452,8 +451,8 @@ class SubprogramHead: public AstNode
   public:
     enum class SubprogramType
     {
-        PROCEDURE,  // subprogram_head -> procedure id formal_parameter
-        FUNCTION    // subprogram_head -> function id formal_parameter : basic_type
+        PROC,  // subprogram_head -> procedure id formal_parameter
+        FUNC    // subprogram_head -> function id formal_parameter : basic_type
     };
 
     SubprogramHead(SubprogramType st)
@@ -524,7 +523,7 @@ class ValueParam: public AstNode
     // 子节点为IdList和TypeNode
     // ValueParam -> idlist : basic_type
   public:  
-    ValueParam();
+    ValueParam(){};
     bool is_ref() { return isVar; }
     void set_ref() { isVar = true; }
     
@@ -625,8 +624,8 @@ class LoopStatement: public AstNode
     {
         FORUP,
         FORDOWN,
-        WHILE,
-        REAPT,
+        WHILE_,
+        REPEAT_,
     };
     // loop-statement -> for id assignop(:=) expression to expression do statement
     //                 | for id assignop expression downto expression do statement
@@ -666,7 +665,7 @@ class VariableList: public AstNode
   public:
     enum class GrammarType
     {
-        VAR,                // variable_list -> variable
+        VAR_,                // variable_list -> variable
         VAR_LIST_VAR,       // variable_list -> variable_list , variable
     };
 
@@ -796,9 +795,9 @@ class SimpleExpression: public AstNode
   public:
     enum class SymbolType
     {
-        PLUS,
-        UMINUS,
-        OR,
+        PLUS_,
+        MINUS_,
+        OR_,
         SINGLE
     };
     SimpleExpression(SymbolType st, std::string et)
@@ -854,11 +853,11 @@ class Factor: public AstNode
         VARIABLE,     // factor -> variable 子节点为Variable节点
         EXP,          // factor -> ( expression ) 子节点为Expression节点
         ID_EXP_LIST,  // factor -> id ( expression_list ) 子节点为叶子节点和 expression_list节点
-        NOT,          // factor -> not factor 子节点为factor节点
-        UMINUS,       // factor -> - factor 子节点为factor节点
-        CHAR,         // factor -> ′ letter ′ 子节点为叶子节点
-        STRING,       //子节点为叶子节点
-        BOOL          //子节点为叶子节点
+        NOT_,          // factor -> not factor 子节点为factor节点
+        UMINUS_,       // factor -> - factor 子节点为factor节点
+        CHAR_,         // factor -> ′ letter ′ 子节点为叶子节点
+        STR,       // 子节点为叶子节点
+        BOOL          // 子节点为叶子节点
     };
 
     Factor(GrammerType gt)
@@ -913,6 +912,6 @@ class GenerationVisitor: public Visitor
     void visit(SubprogramHead *subprogramhead, FILE *fs) override;
     void visit(ParamLists *paramlists, FILE *fs) override;
     void visit(ValueParam *valueparam, FILE *fs) override;
+};
 
-}; // namespace ast
-}
+}  // namespace ast
