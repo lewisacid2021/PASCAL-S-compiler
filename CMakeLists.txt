@@ -4,19 +4,19 @@ project(PascalToC VERSION 0.1.0 LANGUAGES C CXX)
 include(CTest)
 enable_testing()
 
-# 设置 Flex 和 Bison 的目录
-set(SCRIPTS_DIR ${PROJECT_SOURCE_DIR}/scripts)
-
-# 使用 Flex 和 Bison 生成词法和语法分析器
-find_package(FLEX REQUIRED)
-find_package(BISON REQUIRED)
-
-flex_target(Lexer ${SCRIPTS_DIR}/lex.l ${SCRIPTS_DIR}/lex.yy.c)
-bison_target(Parser ${SCRIPTS_DIR}/parser.y ${SCRIPTS_DIR}/y.tab.c)
-
-add_flex_bison_dependency(Lexer Parser)
-
 message(STATUS "PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
+
+find_package(FLEX)
+find_package(BISON)
+
+if(FLEX_FOUND AND BISON_FOUND)
+  BISON_TARGET(Parser ${PROJECT_SOURCE_DIR}/scripts/parser.y  ${PROJECT_SOURCE_DIR}/scripts/parser.tab.cpp  DEFINES_FILE  ${PROJECT_SOURCE_DIR}/include/parser.tab.h COMPILE_FLAGS "-t")
+  FLEX_TARGET(Lexer  ${PROJECT_SOURCE_DIR}/scripts/lex.l  ${PROJECT_SOURCE_DIR}/scripts/lex.yy.cpp)
+  ADD_FLEX_BISON_DEPENDENCY(Lexer Parser)
+endif()
+
+ADD_FLEX_BISON_DEPENDENCY(Lexer Parser)
+
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/scripts)
 add_subdirectory(thirdparty)

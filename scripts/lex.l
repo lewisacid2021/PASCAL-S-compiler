@@ -1,8 +1,8 @@
 %option case-insensitive 
 %{   
-#include "../include/parser.h"
+#include "parser.h"
 //#include "log.h"
-#include "y.tab.h"
+#include "parser.tab.h"
     
 int line_count = 1;             // 当前行 号
 int char_count = 1;             // 当前列 号

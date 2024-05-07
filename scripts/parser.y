@@ -1,5 +1,5 @@
 %{
-#include "../include/parser.h"
+#include "parser.h"
 using namespace ast;
 using std::string;
 extern "C"			

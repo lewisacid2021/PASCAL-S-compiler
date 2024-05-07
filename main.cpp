@@ -3,7 +3,7 @@
 #include "ast.h"
 #include "type.h"
 #include "parser.h"
-#include "y.tab.h"
+#include "parser.tab.h"
 
 extern FILE *yyin; 
 
