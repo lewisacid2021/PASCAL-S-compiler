@@ -28,8 +28,7 @@ class AstNode
       return dynamic_cast<T *>(this);
     }
 
-    virtual void accept(Visitor *visitor, FILE *fs);  //访问者接口
-    virtual void accept(Visitor *visitor, SymbolTable* SymbolTable);
+    virtual void accept(Visitor *visitor);  //访问者接口
     //添加父节点及查看父节点的方法
     void set_parent(AstNode *parent)
     {
@@ -80,8 +79,7 @@ class AST
     void set_root(AstNode *root) { astroot = root; }
     AstNode *getRoot() { return astroot; }
 
-    void accept(Visitor *visitor, FILE *fs);  //访问者接口
-    void accept(Visitor *visitor, SymbolTable* SymbolTable);
+    void accept(Visitor *visitor);  //访问者接口
 
   private:
     AstNode *astroot = nullptr;
@@ -116,7 +114,7 @@ class LeafNode: public AstNode
     }
     ConstValue::ConstvalueType get_type() { return value_.type(); }
     LeafType getLeafType() { return leaf_type; }
-    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
+    void accept(Visitor *visitor) override;  //访问者接口
 
     // Analyze reference
     //bool AnalyzeReference(TableSet *ts, FunctionSymbol *fn);
@@ -162,7 +160,7 @@ class IdList: public AstNode
     {}
 
     std::vector<LeafNode *> Lists();
-    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
+    void accept(Visitor *visitor) override;  //访问者接口
 
     GrammarType GetGrammarType()
     {
@@ -208,9 +206,9 @@ class ConstDeclaration: public AstNode
     ConstDeclaration(GrammarType gt, ConstValue::ConstvalueType bt)
         : grammar_type(gt)
         , type(bt){};
-    void print_type(FILE *fs);
+    void print_type();
 
-    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
+    void accept(Visitor *visitor) override;  //访问者接口
 
     GrammarType GetGrammarType()
     {
@@ -307,7 +305,7 @@ class VarDeclaration: public AstNode
         : grammar_type(gt)
     {}
 
-    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
+    void accept(Visitor *visitor) override;  //访问者接口
 
     GrammarType GetGrammarType()
     {
@@ -346,7 +344,7 @@ class TypeNode: public AstNode
     VarType GetVarType() { return var_type; }
     std::string get_type_name() { return type_name; }
     
-    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
+    void accept(Visitor *visitor) override;  //访问者接口
 
   private:
     VarType var_type;
@@ -397,7 +395,7 @@ class PeriodsNode: public AstNode
     PeriodsNode get_type(){
       return period_type;
     }
-    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
+    void accept(Visitor *visitor) override;  //访问者接口
 
   private:
     PeriodType period_type; // 语法类型
@@ -428,7 +426,7 @@ public:
     StringTypeNode(StringType *type) : string_info(type) {}
 
     void set_type(StringType *type) { string_info = type; }
-    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
+    void accept(Visitor *visitor) override;  //访问者接口
     StringType *type() { return string_info; }
 
 private:
@@ -446,7 +444,7 @@ class SubprogramDeclarations: public AstNode
 class SubprogramDeclaration: public AstNode
 {
     //subprogram -> subprogram_head ; subprogram_body
-    void accept(Visitor *visitor, FILE *fs) override;  //访问者接口
+    void accept(Visitor *visitor) override;  //访问者接口
 };
 
 class SubprogramBody: public AstNode
@@ -469,8 +467,7 @@ class SubprogramHead: public AstNode
     SubprogramHead(SubprogramType st)
         : subprogram_type(st)
     {}
-    void accept(Visitor *visitor, FILE *fs) override;
-    void accept(Visitor *visitor, SymbolTable* SymbolTable) override;
+    void accept(Visitor *visitor) override;
 
     SubprogramType get_type() { return subprogram_type; }
     void set_id(std::string id) { subprogram_id = id; }
@@ -519,7 +516,7 @@ class ParamLists: public AstNode
         : grammar_type(gt)
     {}
     GrammarType get_type() { return grammar_type;}
-    void accept(Visitor *visitor, FILE *fs) override;
+    void accept(Visitor *visitor) override;
     std::vector<ParamList*> Lists();
 
   private:
@@ -541,7 +538,7 @@ class ValueParam: public AstNode
     bool is_ref() { return isVar; }
     void set_ref() { isVar = true; }
     
-    void accept(Visitor *visitor, FILE *fs) override;
+    void accept(Visitor *visitor) override;
   private:
     bool isVar = false;
 };
@@ -581,7 +578,7 @@ class Statement: public AstNode
     Statement(StatementType st)
         : statement_type(st)
     {}
-    void accept(Visitor *visitor, FILE *fs);  //访问者接口
+    void accept(Visitor *visitor);  //访问者接口
   private:
     StatementType statement_type;
 };
@@ -598,7 +595,7 @@ class AssignopStatement: public AstNode
     AssignopStatement(LeftType lt)
         : left_type(lt)
     {}
-  void accept(Visitor *visitor, FILE *fs);  //访问者接口
+  void accept(Visitor *visitor);  //访问者接口
   private:
     LeftType left_type;
     //std::string varname;
@@ -620,7 +617,7 @@ class ProcedureCall: public AstNode
     {}
     std::string get_id() { return procedure_id; }
 
-  void accept(Visitor *visitor, FILE *fs);  //访问者接口
+  void accept(Visitor *visitor);  //访问者接口
   private:
     ProcedureType procedure_type;
     std::string procedure_id;
@@ -647,7 +644,7 @@ class LoopStatement: public AstNode
     //                 | repeat statement until expression
     LoopStatement(LoopType lt): loop_type(lt){};
 
- void accept(Visitor *visitor, FILE *fs);  //访问者接口
+ void accept(Visitor *visitor);  //访问者接口
   private:
     LoopType loop_type;
 };
@@ -667,7 +664,7 @@ class ElsePart: public AstNode
     // Statement *GetStatement() {
     //     return cnode_list[0]->DynamicCast<StatementNode>();
     // }
- void accept(Visitor *visitor, FILE *fs);  //访问者接口
+ void accept(Visitor *visitor);  //访问者接口
   private:
     ELSEType grammar_type_;
 };
@@ -689,7 +686,7 @@ class VariableList: public AstNode
     std::string FormatString();
     bool set_types(std::vector<BaseType *> *type_list);
   
-  void accept(Visitor *visitor, FILE *fs);  //访问者接口
+  void accept(Visitor *visitor);  //访问者接口
   private:
     std::vector<std::string> *variable_type_list;
     GrammarType grammar_type;
@@ -795,7 +792,7 @@ class Expression: public AstNode
     std::string GetSymType() { return symbol_type; }   // 返回符号类型
     std::string GetExpType() { return expression_type;}  // 返回表达式类型
 
- void accept(Visitor *visitor, FILE *fs);  // 访问者接口
+ void accept(Visitor *visitor);  // 访问者接口
   private:
     GrammarType grammar_type;
     std::string symbol_type;
@@ -820,7 +817,7 @@ class SimpleExpression: public AstNode
     {}
     SymbolType GetSymType() { return symbol_type; } // 返回符号类型
     std::string GetExpType() { return expression_type; }  // 返回表达式类型
- void accept(Visitor *visitor, FILE *fs);  // 访问者接口
+ void accept(Visitor *visitor);  // 访问者接口
   private:
     SymbolType symbol_type;
     std::string expression_type;
@@ -852,7 +849,7 @@ class Term: public AstNode
     SymbolType GetSymType() { return symbol_type; }
     std::string GetTerType() { return term_type; }
 
- void accept(Visitor *visitor, FILE *fs);  //访问者接口
+ void accept(Visitor *visitor);  //访问者接口
   private:
     SymbolType symbol_type;
     std::string term_type;
@@ -883,7 +880,7 @@ class Factor: public AstNode
     void SetUminus(){ is_uminus = true; }
 
 
- void accept(Visitor *visitor, FILE *fs);  //访问者接口
+ void accept(Visitor *visitor);  //访问者接口
   private:
     GrammerType grammer_type;
     bool is_uminus = false; // 若为not factor与- factor则为true
@@ -894,63 +891,55 @@ class Factor: public AstNode
 class Visitor
 {
   public:
-    virtual void visit(AST *AST, FILE *fs)                           = 0;
-    virtual void visit(AstNode *astnode, FILE *fs)                   = 0;
-    virtual void visit(LeafNode *leafnode, FILE *fs)                 = 0;
-    virtual void visit(IdList *idlist, FILE *fs)                     = 0;
-    virtual void visit(ConstDeclaration *constdeclaration, FILE *fs) = 0;
-    virtual void visit(TypeNode *typenode, FILE *fs) = 0;
-    virtual void visit(StringTypeNode *stringtypenode, FILE *fs) = 0;
-    virtual void visit(VarDeclaration *vardeclaration, FILE *fs) = 0;
-    virtual void visit(PeriodsNode *periodsnode, FILE *fs) = 0;
-    virtual void visit(SubprogramDeclaration *subprogramdeclaration, FILE *fs) = 0;
-    virtual void visit(SubprogramHead *subprogramhead, FILE *fs) = 0;
-    virtual void visit(ParamLists *paramlists, FILE *fs) = 0;
-    virtual void visit(ValueParam *valueparam, FILE *fs) = 0;
-
-    virtual void visit(AST *AST, SymbolTable* SymbolTable) = 0;
-    virtual void visit(AstNode *astnode, SymbolTable* SymbolTable) = 0;
-    virtual void visit(LeafNode *leafnode, SymbolTable* SymbolTable) = 0;
-    virtual void visit(IdList *idlist, SymbolTable* SymbolTable) = 0;
-    virtual void visit(ConstDeclaration *constdeclaration, SymbolTable* SymbolTable) = 0;
-    virtual void visit(TypeNode *typenode, SymbolTable* SymbolTable) = 0;
-    virtual void visit(StringTypeNode *stringtypenode, SymbolTable* SymbolTable) = 0;
-    virtual void visit(VarDeclaration *vardeclaration, SymbolTable* SymbolTable) = 0;
-    virtual void visit(PeriodsNode *periodsnode, SymbolTable* SymbolTable) = 0;
-    virtual void visit(SubprogramDeclaration *subprogramdeclaration, SymbolTable* SymbolTable) = 0;
-    virtual void visit(SubprogramHead *subprogramhead, SymbolTable* SymbolTable) = 0;
-    virtual void visit(ParamLists *paramlists, SymbolTable* SymbolTable) = 0;
-    virtual void visit(ValueParam *valueparam, SymbolTable* SymbolTable) = 0;
+    virtual void visit(AST *AST)                           = 0;
+    virtual void visit(AstNode *astnode)                   = 0;
+    virtual void visit(LeafNode *leafnode)                 = 0;
+    virtual void visit(IdList *idlist)                     = 0;
+    virtual void visit(ConstDeclaration *constdeclaration) = 0;
+    virtual void visit(TypeNode *typenode) = 0;
+    virtual void visit(StringTypeNode *stringtypenode) = 0;
+    virtual void visit(VarDeclaration *vardeclaration) = 0;
+    virtual void visit(PeriodsNode *periodsnode) = 0;
+    virtual void visit(SubprogramDeclaration *subprogramdeclaration) = 0;
+    virtual void visit(SubprogramHead *subprogramhead) = 0;
+    virtual void visit(ParamLists *paramlists) = 0;
+    virtual void visit(ValueParam *valueparam) = 0;
 };
 
 class GenerationVisitor: public Visitor
 {
   public:
-    void visit(AST *AST, FILE *fs) override;
-    void visit(AstNode *astnode, FILE *fs) override;
-    void visit(LeafNode *leafnode, FILE *fs) override;
-    void visit(IdList *idlist, FILE *fs) override;
-    void visit(ConstDeclaration *constdeclaration, FILE *fs) override;
-    void visit(TypeNode *typenode, FILE *fs) override;
-    void visit(StringTypeNode *stringtypenode, FILE *fs) override;
-    void visit(VarDeclaration *vardeclaration, FILE *fs) override;
-    void visit(PeriodsNode *periodsnode, FILE *fs) override;
-    void visit(SubprogramDeclaration *subprogramdeclaration, FILE *fs) override;
-    void visit(SubprogramHead *subprogramhead, FILE *fs) override;
-    void visit(ParamLists *paramlists, FILE *fs) override;
-    void visit(ValueParam *valueparam, FILE *fs) override;
+    void visit(AST *AST) override;
+    void visit(AstNode *astnode) override;
+    void visit(LeafNode *leafnode) override;
+    void visit(IdList *idlist) override;
+    void visit(ConstDeclaration *constdeclaration) override;
+    void visit(TypeNode *typenode) override;
+    void visit(StringTypeNode *stringtypenode) override;
+    void visit(VarDeclaration *vardeclaration) override;
+    void visit(PeriodsNode *periodsnode) override;
+    void visit(SubprogramDeclaration *subprogramdeclaration) override;
+    void visit(SubprogramHead *subprogramhead) override;
+    void visit(ParamLists *paramlists) override;
+    void visit(ValueParam *valueparam) override;
 };
 
 class SemanticVisitor: public Visitor
 {
   public:
-    void visit(AST *AST, SymbolTable* SymbolTable) override;
-    void visit(AstNode *astnode, SymbolTable* SymbolTable) override;
-    void visit(ConstDeclaration *constdeclaration, SymbolTable* SymbolTable) override;
-    void visit(VarDeclaration *vardeclaration, SymbolTable* SymbolTable) override;
-    void visit(SubprogramHead *subprogramhead, SymbolTable* SymbolTable) override;
-    void visit(ParamLists *paramlists, SymbolTable* SymbolTable) override;
-    void visit(ValueParam *valueparam, SymbolTable* SymbolTable) override;
+    void visit(AST *AST) override;
+    void visit(AstNode *astnode) override;
+    void visit(LeafNode *leafnode) override {};
+    void visit(IdList *idlist) override { idlist->DynamicCast<AstNode>()->accept(this);};
+    void visit(ConstDeclaration *constdeclaration) override;
+    void visit(TypeNode *typenode) override {};
+    void visit(StringTypeNode *stringtypenode) override {};
+    void visit(VarDeclaration *vardeclaration) override;
+    void visit(PeriodsNode *periodsnode) override { periodsnode->DynamicCast<AstNode>()->accept(this);};
+    void visit(SubprogramDeclaration *subprogramdeclaration) override { subprogramdeclaration->DynamicCast<AstNode>()->accept(this);};
+    void visit(SubprogramHead *subprogramhead) override;
+    void visit(ParamLists *paramlists) override { paramlists->DynamicCast<AstNode>()->accept(this);};
+    void visit(ValueParam *valueparam) override { valueparam->DynamicCast<AstNode>()->accept(this);};
 };
 
 

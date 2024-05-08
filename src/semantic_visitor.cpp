@@ -9,30 +9,32 @@
 using std::string;
 using std::vector;
 
+extern SymbolTable* MainTable;
+
 namespace ast{
-void SemanticVisitor::visit(AST *AST, SymbolTable* SymbolTable)
+void SemanticVisitor::visit(AST *AST)
 {
-    AST->getRoot()->accept(this, SymbolTable);
+    AST->getRoot()->accept(this);
 }
 
-void SemanticVisitor::visit(AstNode *astnode, SymbolTable* SymbolTable)
+void SemanticVisitor::visit(AstNode *astnode)
 {
     for (auto child : astnode->getCnodeList())
-        child->accept(this, SymbolTable);
+        child->accept(this);
 }
 
 
-void SemanticVisitor::visit(ConstDeclaration *constdeclaration, SymbolTable* SymbolTable)
+void SemanticVisitor::visit(ConstDeclaration *constdeclaration)
 {
 
 }
 
-void SemanticVisitor::visit(SubprogramHead *subprogramhead, SymbolTable* SymbolTable)
+void SemanticVisitor::visit(SubprogramHead *subprogramhead)
 {
     auto type = subprogramhead->get_type();
     int amount = 0;
     auto formal_param = subprogramhead->get(1)->DynamicCast<FormalParam>();
-    class SymbolTable* subTable = new SymbolTable();
+    SymbolTable* subTable = new SymbolTable();
 
     if(formal_param->getCnodeList().size() != 0)
     {
@@ -69,28 +71,13 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead, SymbolTable* SymbolT
 
     if(type == SubprogramHead::SubprogramType::PROC)
     {
-        SymbolTable->addProcedure(subprogramhead->get_id(), subprogramhead->get_rownum(), amount, subTable);
+        MainTable->addProcedure(subprogramhead->get_id(), subprogramhead->get_rownum(), amount, subTable);
     }
     else
     {
         auto ret_type = subprogramhead->get(2)->DynamicCast<TypeNode>()->get_type_name();
-        SymbolTable->addFunction(subprogramhead->get_id(), subprogramhead->get_rownum(),ret_type, amount, subTable);
+        MainTable->addFunction(subprogramhead->get_id(), subprogramhead->get_rownum(),ret_type, amount, subTable);
     }
-}
-    
-void AST::accept(Visitor *visitor, SymbolTable* SymbolTable)
-{
-    visitor->visit(this, SymbolTable);
-}
-
-void AstNode::accept(Visitor *visitor, SymbolTable* SymbolTable)
-{
-    visitor->visit(this, SymbolTable);
-}
-
-void SubprogramHead::accept(Visitor *visitor, SymbolTable* SymbolTable)
-{
-    visitor->visit(this, SymbolTable);
 }
 
 std::vector<ParamList *> ParamLists::Lists()
