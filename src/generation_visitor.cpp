@@ -249,6 +249,14 @@ void GenerationVisitor::visit(ValueParam *valueparam)
     {
         type->accept(this);
         fprintf(fs, " %s",list[i]->id_ref().c_str());
+
+        if(type->GetVarType() == TypeNode::VarType::ARRAY_TYPE)
+        {
+            auto dim = type->get(0)->DynamicCast<ArrayTypeNode>()->info()->GetDimsum();
+            for(size_t i=0;i<dim;i++)
+                fprintf(fs, "[]");
+        }
+
         if(i<n-1)
             fprintf(fs, ",");
     }
