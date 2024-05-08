@@ -262,26 +262,6 @@ void GenerationVisitor::visit(ValueParam *valueparam)
     }
 }
 
-void AST::accept(Visitor *visitor)
-{
-    visitor->visit(this);
-}
-
-void AstNode::accept(Visitor *visitor)
-{
-    visitor->visit(this);
-}
-
-void LeafNode::accept(Visitor *visitor)
-{
-    visitor->visit(this);
-}
-
-void IdList::accept(Visitor *visitor)
-{
-    visitor->visit(this);
-}
-
 std::vector<LeafNode *> IdList::Lists()
 {
     std::vector<LeafNode *> lists;
