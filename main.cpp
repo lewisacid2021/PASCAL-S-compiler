@@ -1,15 +1,19 @@
 #include <cstdio>
 #include <iostream>
 #include "ast.h"
+#include "symbolTable.h"
 #include "type.h"
 #include "parser.h"
 #include "parser.tab.h"
 
 extern FILE *yyin; 
+FILE * fs;
+SymbolTable * MainTable;
 
 int main(int argc, char *argv[]){
     ast::AST *ast = new ast::AST();
     ast::GenerationVisitor* Codegen_Visitor=new ast::GenerationVisitor();
+    MainTable=new SymbolTable();
 
     if (argc < 2){
         std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
@@ -29,7 +33,7 @@ int main(int argc, char *argv[]){
     //lexical and grammar analysis
     yyparse(ast);
 
-    Codegen_Visitor->visit(ast, fs);
+    Codegen_Visitor->visit(ast);
 
     fclose(yyin);
     fclose(fs); 
