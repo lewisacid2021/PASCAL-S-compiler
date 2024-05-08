@@ -338,7 +338,7 @@ void ValueParam::accept(Visitor *visitor, FILE *fs)
     visitor->visit(this, fs);
 }
 
-void visit(Expression *expression, FILE *fs) override{
+void kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkvisit(Expression *expression, FILE *fs) override{
     if (Expression->GetGraType() == SimpleExpression::GrammarType::SINGLE)
     {
         // expression -> simple_expression 的情况
