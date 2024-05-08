@@ -874,7 +874,6 @@ term : factor
         $$->append_child($3);
     };
 
-//从这里开始
 factor : INT_NUM
     {
         // factor -> num
@@ -899,6 +898,7 @@ factor : INT_NUM
             $$ = new Factor(Factor::GrammerType::BOOL);
             LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
             $$->SetFacType("BOOL");
+            $$->append_child(leaf_node);
             
         }
         else if($1.value.get<string>() == "FALSE"){
@@ -915,7 +915,6 @@ factor : INT_NUM
             $$->SetFacType("STRING");
             $$->append_child(leaf_node);
         }
-        
     }
     | CHAR
     {
