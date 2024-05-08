@@ -204,7 +204,7 @@ const_declaration : const_declaration ';' ID '=' const_value
         LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         //初始化 const_value 叶子节点
-        leaf_node = new LeafNode(*$5, LeafNode::LeafType::NAME);
+        leaf_node = new LeafNode(*$5, LeafNode::LeafType::VALUE);
         $$->append_child(leaf_node);
         
     }
@@ -216,7 +216,7 @@ const_declaration : const_declaration ';' ID '=' const_value
         LeafNode* leaf_node = new LeafNode($1.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         //初始化 const_value 叶子节点
-        leaf_node = new LeafNode(*$3, LeafNode::LeafType::NAME);
+        leaf_node = new LeafNode(*$3, LeafNode::LeafType::VALUE);
         $$->append_child(leaf_node);
     };
 

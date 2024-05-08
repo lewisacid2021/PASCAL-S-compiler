@@ -1,6 +1,26 @@
 #include "ast.h"
 
 namespace ast{
+
+void AST::accept(Visitor *visitor)
+{
+    visitor->visit(this);
+}
+
+void AstNode::accept(Visitor *visitor)
+{
+    visitor->visit(this);
+}
+
+void LeafNode::accept(Visitor *visitor)
+{
+    visitor->visit(this);
+}
+
+void IdList::accept(Visitor *visitor)
+{
+    visitor->visit(this);
+}
     
 void ConstDeclaration::accept(Visitor *visitor)
 {
