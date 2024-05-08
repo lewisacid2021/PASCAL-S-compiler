@@ -26,7 +26,7 @@ message(STATUS "SRC_FILES: ${SRC_FILES}")
 
 add_executable(PascalToC 
   main.cpp
-  ${PROJECT_SOURCE_DIR}/src/visitor.cpp 
+  ${SRC_FILES}
   ${PROJECT_SOURCE_DIR}/scripts/parser.tab.cpp
   ${PROJECT_SOURCE_DIR}/scripts/lex.yy.cpp
   )

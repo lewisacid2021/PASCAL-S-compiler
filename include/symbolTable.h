@@ -30,8 +30,10 @@ class TableRecord
     void setVar(string id_para, int rowNumber_para, string type_para);
     void setConst(string id_para, int rowNumber_para, string type_para, bool isMinus_para, string value_para);
     void setArray(string id_para, int rowNumber_para, string type_para, int amount_para, vector<pair<int, int>> arrayRange_para);
-    void setProcedure(string id_para, int rowNumber_para, int amount_para, SymbolTable *subSymbolTable);
-    void setFunction(string id_para, int rowNumber_para, string type_para, int amount_para, SymbolTable *subSymbolTable);
+    void setString(string id_para, int rowNumber_para, string type_para, int amount_para);
+    void setRecord(string id_para, int rowNumber_para, SymbolTable *subSymbolTable_para);
+    void setProcedure(string id_para, int rowNumber_para, int amount_para, SymbolTable *subSymbolTable_para);
+    void setFunction(string id_para, int rowNumber_para, string type_para, int amount_para, SymbolTable *subSymbolTable_para);
     void setProgramName(string id_para, int rowNumber_para, string programInfo_para, int amount_para, string returnType_para);
     void setVoidPara(string id_para, int rowNumber_para);
 
@@ -60,6 +62,8 @@ class SymbolTable
     void addVar(string id, int rowNumber, string type);
     void addConst(string id, int rowNumber, string type, bool isMinus, string value);
     void addArray(string id, int rowNumber, string type, int amount, vector<pair<int, int>> arrayRange);
+    void addString(string id, int rowNumber,string type,int amount);
+    void addRecord(string id, int rowNumber,SymbolTable *subSymbolTable);
     void addProcedure(string id, int rowNumber, int amount, SymbolTable *subSymbolTable);
     void addFunction(string id, int rowNumber, string type, int amount, SymbolTable *subSymbolTable);
     void addSubSymbolTable(string id, SymbolTable *subSymbolTable);

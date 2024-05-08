@@ -65,6 +65,24 @@ void SymbolTable::addArray(string id, int rowNumber, string type, int amount, ve
     this->idLoc[id] = int(records.size() - 1);
 }
 
+//添加字符串
+void SymbolTable::addString(string id, int rowNumber,string type,int amount)
+{
+     TableRecord *temp = new TableRecord;
+    temp->setString(id, rowNumber,type,amount);
+    this->records.push_back(temp);
+    this->idLoc[id] = int(records.size() - 1);
+}
+
+//添加record
+void SymbolTable::addRecord(string id,int rowNumber,SymbolTable *subSymbolTable)
+{
+    TableRecord *temp = new TableRecord;
+    temp->setRecord(id, rowNumber, subSymbolTable);
+    this->records.push_back(temp);
+    this->idLoc[id] = int(records.size() - 1);
+}
+
 //添加过程
 void SymbolTable::addProcedure(string id, int rowNumber, int amount, SymbolTable *subSymbolTable)
 {
@@ -179,42 +197,62 @@ void TableRecord::setConst(string id_para, int rowNumber_para, string type_para,
         this->value += "'";
 }
 
-void TableRecord::setArray(string id_para, int rowNumber_para, string type_para, int amunt_para, vector< pair<int, int> > arrayRange_para)
+void TableRecord::setArray(string id_para, int rowNumber_para, string type_para, int amount_para, vector< pair<int, int> > arrayRange_para)
 {
     flag             = "array";
     this->id         = id_para;
     this->rowNumber  = rowNumber_para;
     this->type       = type_para;
-    this->amount     = amunt_para;
+    this->amount     = amount_para;
     this->arrayRange = arrayRange_para;
 }
 
-void TableRecord::setProcedure(string id_para, int rowNumber_para, int amunt_para, SymbolTable *subSymbolTable_para)
+void TableRecord::setString(string id_para, int rowNumber_para, string type_para, int amount_para)
+{
+    flag             = "string";
+    this->id         = id_para;
+    this->rowNumber  = rowNumber_para;
+    this->type       = type_para;
+    this->amount     = amount_para;
+
+}
+
+void TableRecord::setRecord(string id_para, int rowNumber_para, SymbolTable *subSymbolTable_para)
+{
+    flag             = "record";
+    this->id         = id_para;
+    this->type       = "a";
+    this->rowNumber  = rowNumber_para;
+    this->subSymbolTable = subSymbolTable_para;
+
+}
+
+void TableRecord::setProcedure(string id_para, int rowNumber_para, int amount_para, SymbolTable *subSymbolTable_para)
 {
     flag                 = "procedure";
     this->id             = id_para;
     this->rowNumber      = rowNumber_para;
-    this->amount         = amunt_para;
+    this->amount         = amount_para;
     this->subSymbolTable = subSymbolTable_para;
 }
 
-void TableRecord::setFunction(string id_para, int rowNumber_para, string type_para, int amunt_para, SymbolTable *subSymbolTable_para)
+void TableRecord::setFunction(string id_para, int rowNumber_para, string type_para, int amount_para, SymbolTable *subSymbolTable_para)
 {
     flag                 = "function";
     this->id             = id_para;
     this->rowNumber      = rowNumber_para;
     this->type           = type_para;
-    this->amount         = amunt_para;
+    this->amount         = amount_para;
     this->subSymbolTable = subSymbolTable_para;
 }
 
-void TableRecord::setProgramName(string id_para, int rowNumber_para, string programInfo_para, int amunt_para, string returnType)
+void TableRecord::setProgramName(string id_para, int rowNumber_para, string programInfo_para, int amount_para, string returnType)
 {
     flag              = "(sub)program name";
     this->id          = id_para;
     this->rowNumber   = rowNumber_para;
     this->programInfo = programInfo_para;
-    this->amount      = amunt_para;
+    this->amount      = amount_para;
     this->type        = returnType;
 }
 
