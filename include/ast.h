@@ -114,6 +114,7 @@ class LeafNode: public AstNode
     }
     ConstValue::ConstvalueType get_type() { return value_.type(); }
     LeafType getLeafType() { return leaf_type; }
+    ConstValue * getConstValue(){return &value_;}
     void accept(Visitor *visitor) override;  //访问者接口
 
     // Analyze reference
@@ -207,8 +208,10 @@ class ConstDeclaration: public AstNode
         : grammar_type(gt)
         , type(bt){};
     void print_type();
+    ConstValue::ConstvalueType get_value_type(){return type;}
 
     void accept(Visitor *visitor) override;  //访问者接口
+    std::vector<tuple<int,string,ConstValue *>> Lists();
 
     GrammarType GetGrammarType()
     {
@@ -306,6 +309,7 @@ class VarDeclaration: public AstNode
     {}
 
     void accept(Visitor *visitor) override;  //访问者接口
+    std::vector<tuple<vector<LeafNode *>,AstNode *>> Lists();
 
     GrammarType GetGrammarType()
     {
@@ -894,6 +898,7 @@ class Visitor
     virtual void visit(AST *AST)                           = 0;
     virtual void visit(AstNode *astnode)                   = 0;
     virtual void visit(LeafNode *leafnode)                 = 0;
+    virtual void visit(ProgramHead *programhead)                 = 0;
     virtual void visit(IdList *idlist)                     = 0;
     virtual void visit(ConstDeclaration *constdeclaration) = 0;
     virtual void visit(TypeNode *typenode) = 0;
@@ -929,11 +934,12 @@ class SemanticVisitor: public Visitor
   public:
     void visit(AST *AST) override;
     void visit(AstNode *astnode) override;
-    void visit(LeafNode *leafnode) override {};
+    void visit(LeafNode *leafnode) override {leafnode->DynamicCast<AstNode>()->accept(this);};
     void visit(IdList *idlist) override { idlist->DynamicCast<AstNode>()->accept(this);};
+    void visit(ProgramHead *programhead) override;
     void visit(ConstDeclaration *constdeclaration) override;
-    void visit(TypeNode *typenode) override {};
-    void visit(StringTypeNode *stringtypenode) override {};
+    void visit(TypeNode *typenode) override {typenode->DynamicCast<AstNode>()->accept(this);};
+    void visit(StringTypeNode *stringtypenode) override {stringtypenode->DynamicCast<AstNode>()->accept(this);};
     void visit(VarDeclaration *vardeclaration) override;
     void visit(PeriodsNode *periodsnode) override { periodsnode->DynamicCast<AstNode>()->accept(this);};
     void visit(SubprogramDeclaration *subprogramdeclaration) override { subprogramdeclaration->DynamicCast<AstNode>()->accept(this);};

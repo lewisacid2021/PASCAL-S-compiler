@@ -238,6 +238,7 @@ public:
         return *this;
     }
     void set_uminus(){ Is_Uminus = true; }
+    bool get_uminus(){return Is_Uminus;}
 
 private:
     ConstvalueType value_type;
