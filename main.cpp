@@ -28,7 +28,14 @@ int main(int argc, char *argv[]){
     std::string outfile(argv[1]);   
     outfile=outfile.substr(0,outfile.find_last_of('.'))+".c"; 
 
-    FILE *fs=fopen(outfile.c_str(),"w");
+    fs=fopen(outfile.c_str(),"w");
+
+        if (fs == nullptr){
+        std::cerr << "Cannot create file " << outfile.c_str() << std::endl;
+        return 1;
+    }
+
+
 
     //lexical and grammar analysis
     yyparse(ast);

@@ -14,7 +14,7 @@ void symbolTableInit();
 
 void semanticAnalysis()
 {
-    symbolTableInit();
+    //symbolTableInit();
 }
 
 void SemanticAnalyseProgram(AstNode *astroot)

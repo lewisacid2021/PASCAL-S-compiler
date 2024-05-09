@@ -27,17 +27,17 @@ void SemanticVisitor::visit(AstNode *astnode)
         child->accept(this);
 }
 
-void SemanticVisitor::visit(ProgramHead *programhead)
-{
-    string id = programhead->get(0)->DynamicCast<LeafNode>()->get_value<string>();
-    int rn = programhead->get(0)->DynamicCast<LeafNode>()->get_rownum();
-    if(programhead->getCnodeList().size() == 1)
-    {
-        int amount = 0;
-        string returnType = 
-        CurrentTable->addProgramName(id, rn, "program", amount, returnType)
-    }
-}
+// void SemanticVisitor::visit(ProgramHead *programhead)
+// {
+//     string id = programhead->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+//     int rn = programhead->get(0)->DynamicCast<LeafNode>()->get_rownum();
+//     if(programhead->getCnodeList().size() == 1)
+//     {
+//         int amount = 0;
+//         string returnType = "";
+//         //CurrentTable->addProgramName(id, rn, "program", amount, returnType);
+//     }
+// }
 
 void SemanticVisitor::visit(ConstDeclaration *constdeclaration)
 {

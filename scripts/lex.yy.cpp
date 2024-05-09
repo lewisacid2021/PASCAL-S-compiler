@@ -1,6 +1,6 @@
-#line 2 "/root/works/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
+#line 2 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
 
-#line 4 "/root/works/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
+#line 4 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -588,8 +588,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
-#line 3 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 1 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 3 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 #include "parser.h"
 //#include "log.h"
 #include "parser.tab.h"
@@ -625,7 +625,7 @@ extern "C"
     void yyerror(const char *s);
 }
 
-#line 629 "/root/works/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
+#line 629 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
 /* 保留字 */
 /* 运算符 */
 /* 常数 */
@@ -634,7 +634,7 @@ extern "C"
 /* 字符 */
 /*字符串*/
 /* 分隔符 */
-#line 638 "/root/works/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
+#line 638 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
 
 #define INITIAL 0
 
@@ -851,9 +851,9 @@ YY_DECL
 		}
 
 	{
-#line 102 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 102 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 
-#line 857 "/root/works/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
+#line 857 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -912,224 +912,224 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 103 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 103 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); char_count += 4; }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 104 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 104 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { wrap(); new_line_flag = true;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 105 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 105 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); char_count += yyleng; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 107 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 107 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return PROGRAM; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 108 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 108 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return CONST; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 109 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 109 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return TYPE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 111 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 111 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return ARRAY; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 112 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 112 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return RECORD;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 113 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 113 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return OF; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 114 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 114 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return VAR; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 115 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 115 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return FUNCTION; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 116 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 116 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return PROCEDURE; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 117 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 117 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return BEGIN_; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 118 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 118 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return END; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 119 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 119 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return IF; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 120 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 120 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return THEN; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 121 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 121 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return ELSE; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 122 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 122 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return CASE; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 123 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 123 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return WHILE; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 124 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 124 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return REPEAT; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 125 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 125 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return UNTIL; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 126 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 126 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return FOR; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 127 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 127 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return TO; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 128 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 128 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return DOWNTO; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 129 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 129 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return DO; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 131 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 131 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return NOT; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 132 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 132 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return PLUS; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 133 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 133 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return UMINUS; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 135 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 135 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_int(); return INT_NUM; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 136 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 136 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_float(); return REAL_NUM; }
 	YY_BREAK
 case 31:
 /* rule 31 can match eol */
 YY_RULE_SETUP
-#line 138 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 138 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { skip_anno(); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 140 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 140 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_char(); return CHAR; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 141 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 141 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str_case_sensitive(); return STRING_; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 143 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 143 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return RELOP; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 144 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 144 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return ADDOP; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 145 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 145 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return MULOP; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 146 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 146 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return ASSIGNOP; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 148 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 148 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return ID; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 150 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 150 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return yytext[0]; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 151 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 151 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return yytext[0]; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 152 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 152 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return SUBCATALOG; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 154 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 154 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); left_Mbrackets_num++;return yytext[0];}    
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 155 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 155 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); left_brackets_num++;return yytext[0];}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 156 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 156 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { 
                                     write_cache(); to_str(); 
                                     left_Mbrackets_num--;
@@ -1142,7 +1142,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 165 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 165 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { 
                                     write_cache(); to_str(); 
                                     left_brackets_num--;
@@ -1155,55 +1155,55 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 175 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 175 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); print_lex_error("illegal character constant"); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 176 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 176 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); print_lex_error("illegal character constant"); }
 	YY_BREAK
 case 48:
 /* rule 48 can match eol */
 YY_RULE_SETUP
-#line 177 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 177 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); print_lex_error("illegal character constant"); skip_error_token(); }
 	YY_BREAK
 case 49:
 /* rule 49 can match eol */
 YY_RULE_SETUP
-#line 179 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 179 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
 	YY_BREAK
 case 50:
 /* rule 50 can match eol */
 YY_RULE_SETUP
-#line 180 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 180 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
 	YY_BREAK
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 182 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 182 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); print_lex_error("unclosed comment"); skip_error_token(); }
 	YY_BREAK
 case 52:
 /* rule 52 can match eol */
 YY_RULE_SETUP
-#line 183 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 183 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); print_lex_error("unclosed string constant"); skip_error_token(); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 185 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 185 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); print_lex_error("illegal character"); char_count++; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 187 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 187 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 ECHO;
 	YY_BREAK
-#line 1207 "/root/works/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
+#line 1207 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2208,7 +2208,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 187 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 187 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
 
 void wrap()
 {
