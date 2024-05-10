@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <iostream>
+#include <set>
 #include <sys/types.h>
 #include <tuple>
 #include <utility>
@@ -13,6 +14,8 @@ using std::vector;
 
 extern SymbolTable* MainTable;
 SymbolTable* CurrentTable = MainTable;
+
+void addDuplicateNameError();
 
 namespace ast{
 void SemanticVisitor::visit(AST *AST)
@@ -30,6 +33,18 @@ void SemanticVisitor::visit(ProgramHead *programhead)
 {
     string id = programhead->get(0)->DynamicCast<LeafNode>()->get_value<string>();
     int rn = programhead->get(0)->DynamicCast<LeafNode>()->get_rownum();
+
+    set<string> lib;
+    lib.insert("read");
+    lib.insert("write");
+    lib.insert("writeln");
+    lib.insert("exit");
+    //检查主程序是否与库函数重名
+    if(lib.count(id))
+    {
+        addDuplicateNameError();
+    }
+
     if(programhead->getCnodeList().size() == 1)
     {
         int amount = 0;
@@ -44,6 +59,17 @@ void SemanticVisitor::visit(ProgramHead *programhead)
         {
             string para_id = p->get_value<string>();
             int para_rn = p->get_rownum();
+
+            //检查参数是否与主程序。库函数同名
+            if(para_id == id)
+            {
+                addDuplicateNameError();
+            }
+            else if(lib.count(para_id))
+            {
+                addDuplicateNameError();
+            }
+
             MainTable->addVoidPara(para_id, para_rn);
         }
     }
@@ -254,13 +280,13 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
 
     if(type == SubprogramHead::SubprogramType::PROC)
     {
-        MainTable->addProcedure(subprogramhead->get_id(), subprogramhead->get_rownum(), amount, subTable);
+        MainTable->addProcedure(subprogramhead->get_id(), subprogramhead->get_rownum(), amount, CurrentTable);
         CurrentTable->addProgramName(subprogramhead->get_id(), subprogramhead->get_rownum(), "procedure", amount, "");
     }
     else
     {
         auto ret_type = subprogramhead->get(2)->DynamicCast<TypeNode>()->get_type_name();
-        MainTable->addFunction(subprogramhead->get_id(), subprogramhead->get_rownum(),ret_type, amount, subTable);
+        MainTable->addFunction(subprogramhead->get_id(), subprogramhead->get_rownum(),ret_type, amount, CurrentTable);
         CurrentTable->addProgramName(subprogramhead->get_id(), subprogramhead->get_rownum(), "procedure", amount, ret_type);
     }
 }

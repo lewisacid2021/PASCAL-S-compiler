@@ -907,7 +907,7 @@ class Visitor
     virtual void visit(AST *AST)                           = 0;
     virtual void visit(AstNode *astnode)                   = 0;
     virtual void visit(LeafNode *leafnode)                 = 0;
-    //virtual void visit(ProgramHead *programhead)                 = 0;
+    virtual void visit(ProgramHead *programhead)                 = 0;
     virtual void visit(IdList *idlist)                     = 0;
     virtual void visit(ConstDeclaration *constdeclaration) = 0;
     virtual void visit(RecordDeclaration *recorddeclaration)           = 0;
@@ -982,7 +982,7 @@ class SemanticVisitor: public Visitor
     void visit(AstNode *astnode) override;
     void visit(LeafNode *leafnode) override {leafnode->DynamicCast<AstNode>()->accept(this);};
     void visit(IdList *idlist) override { idlist->DynamicCast<AstNode>()->accept(this);};
-    //void visit(ProgramHead *programhead) override;
+    void visit(ProgramHead *programhead) override;
     void visit(ConstDeclaration *constdeclaration) override;
     void visit(RecordDeclaration *recorddeclaration) override;
     void visit(TypeNode *typenode) override {typenode->DynamicCast<AstNode>()->accept(this);};
