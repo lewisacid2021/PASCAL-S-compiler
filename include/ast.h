@@ -1027,14 +1027,9 @@ class SemanticVisitor: public Visitor
   public:
     void visit(AST *AST) override;
     void visit(AstNode *astnode) override;
-<<<<<<< HEAD
     void visit(LeafNode *leafnode) override { visitchild(leafnode);};
     void visit(IdList *idlist) override { visitchild(idlist);};
     void visit(ProgramBody *programbody) override { visitchild(programbody);};
-=======
-    void visit(LeafNode *leafnode) override {leafnode->DynamicCast<AstNode>()->accept(this);};
-    void visit(IdList *idlist) override { idlist->DynamicCast<AstNode>()->accept(this);};
->>>>>>> 50be2ba3065237682bb8d1963f25a5435994eed7
     void visit(ProgramHead *programhead) override;
     void visit(ConstDeclaration *constdeclaration) override;
     void visit(RecordDeclaration *recorddeclaration) override;
