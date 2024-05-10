@@ -9,12 +9,14 @@
 extern FILE *yyin; 
 FILE * fs;
 SymbolTable * MainTable;
+SymbolTable* CurrentTable;
 
 int main(int argc, char *argv[]){
     ast::AST *ast = new ast::AST();
     ast::GenerationVisitor* Codegen_Visitor=new ast::GenerationVisitor();
+    ast::SemanticVisitor* Semantic_Visitor = new ast::SemanticVisitor();
     MainTable=new SymbolTable();
-
+    CurrentTable = MainTable;
     if (argc < 2){
         std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
         return 1;
@@ -40,6 +42,7 @@ int main(int argc, char *argv[]){
     //lexical and grammar analysis
     yyparse(ast);
 
+    Semantic_Visitor->visit(ast);
     Codegen_Visitor->visit(ast);
 
     fclose(yyin);
