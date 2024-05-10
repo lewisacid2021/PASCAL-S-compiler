@@ -1,12 +1,14 @@
 #include<stdio.h>
 #include<stdbool.h>
-int a, b;
+int a;
+int defn()
+{
+return 4;
+}
 int main() {
 {
-a = 3;
-b = 5;
-a = 5;
-printf("%d",a + b);
+a = defn;
+printf("%d",a);
 }
 return 0;
 }

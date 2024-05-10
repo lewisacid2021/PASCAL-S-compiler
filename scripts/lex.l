@@ -147,7 +147,7 @@ SUBCATALOG              ".."
         
 {ID}                            { write_cache(); to_str(); return ID; }
         
-{CONSTASSIGNOP}                 { write_cache(); to_str(); return yytext[0]; }
+{CONSTASSIGNOP}                 { write_cache(); to_str(); return CONSTASSIGNOP; }
 {SEP}                           { write_cache(); to_str(); return yytext[0]; }
 {SUBCATALOG}                    { write_cache(); to_str(); return SUBCATALOG; }
         

@@ -150,16 +150,20 @@ program_head : PROGRAM ID '(' id_list ')' ';' {
         // program_head -> PROGRAM ID '(' id_list ')' ';'
         $$ = new ProgramHead();
         LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
-        $$->append_child($4);
         $$->append_child(leaf_node);
+        $$->append_child($4);
         $$->set_rownum(line_count);
     } | PROGRAM ID '('  ')' ';' {
         // program_head -> PROGRAM ID '('  ')' ';'
         $$ = new ProgramHead();
+        LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
         $$->set_rownum(line_count);
     } | PROGRAM ID ';' {
         // program_head -> PROGRAM ID ';'
         $$ = new ProgramHead();
+        LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
         $$->set_rownum(line_count);
     }
 
@@ -205,7 +209,7 @@ const_declarations :{
         $$->append_child($2);
     };
 
-const_declaration : const_declaration ';' ID '=' const_value
+const_declaration : const_declaration ';' ID CONSTASSIGNOP const_value
     {
         // const_declaration -> const_declaration ';' ID '=' const_value
         $$ = new ConstDeclaration(ConstDeclaration::GrammarType::MULTIPLE_ID, $5->type());
@@ -219,7 +223,7 @@ const_declaration : const_declaration ';' ID '=' const_value
         $$->append_child(leaf_node);
         
     }
-    | ID '=' const_value
+    | ID CONSTASSIGNOP const_value
     {   
         // const_declaration -> ID '=' const_value
         $$ = new ConstDeclaration(ConstDeclaration::GrammarType::SINGLE_ID, $3->type());
@@ -665,13 +669,13 @@ procedure_call : ID
         $$->set_rownum(line_count);
         $$->append_child($3);
     }
-    | ID '(' variable_list ')'
+    /* | ID '(' variable_list ')'
     {
         // procedure_call -> id ( expression_list )
         $$ = new ProcedureCall(ProcedureCall::ProcedureType::VAR_LIST, $1.value.get<string>());
         $$->set_rownum(line_count);
         $$->append_child($3);
-    };
+    }; */
 
 ifstatement : IF expression THEN statement else_part
     {

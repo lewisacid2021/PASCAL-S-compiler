@@ -138,6 +138,8 @@ class ProgramStruct: public AstNode
 class ProgramHead: public AstNode
 {
     // program_head -> program id ( idlist ) | program id
+  public:
+    void accept(Visitor *visitor) override;  //访问者接口
 };
 
 class ProgramBody: public AstNode
@@ -148,6 +150,8 @@ class ProgramBody: public AstNode
     //                 subprogram_declarations
     //                 compound_statement
     // 共四个子节点
+  public:
+    void accept(Visitor *visitor) override;  //访问者接口
 };
 
 class IdList: public AstNode
@@ -270,6 +274,7 @@ class RecordDeclaration: public AstNode
     {
         return grammar_type;
     };
+    void accept(Visitor *visitor) override;  //访问者接口
 
   private:
     GrammarType grammar_type;
@@ -989,7 +994,7 @@ class GenerationVisitor: public Visitor
     void visit(AST *AST) override;
     void visit(AstNode *astnode) override;
     void visit(LeafNode *leafnode) override;
-    void visit(ProgramHead *programhead) override { visitchild(programhead);};
+    void visit(ProgramHead *programhead) override {return;};
     void visit(IdList *idlist) override;
     void visit(ConstDeclaration *constdeclaration) override;
     void visit(TypeNode *typenode) override;

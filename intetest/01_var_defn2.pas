@@ -1,5 +1,5 @@
 {test domain of global var define and local define}
-program main;
+program man;
 var
   a, b: integer;
 begin

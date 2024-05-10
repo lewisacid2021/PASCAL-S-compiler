@@ -15,7 +15,9 @@ using std::vector;
 extern SymbolTable* MainTable;
 extern SymbolTable* CurrentTable;
 
-void addDuplicateNameError();
+void addDuplicateNameError(){
+    int a;
+};
 
 namespace ast{
 void SemanticVisitor::visit(AST *AST)
@@ -307,6 +309,7 @@ void SemanticVisitor::visit(VariableList* variablelist)
 
 void SemanticVisitor::visit(Variable *variable)
 {
+
     LeafNode* leaf_node = variable->get(0)->DynamicCast<LeafNode>();
     string id = leaf_node->get_value<string>();
     auto record_info = findID(CurrentTable, id, 0);
@@ -405,7 +408,7 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                     }
                     string term_type = sexpression->get(0)->DynamicCast<Term>()->GetTerType();
                     //类型检查
-                    if(term_type == "real" || term_type == "interger"){
+                    if(term_type == "real" || term_type == "integer"){
                         sexpression->SetExpType(term_type);
                     }
                     else{
@@ -422,8 +425,8 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                     }
                     string term_type2 = sexpression->get(1)->DynamicCast<Term>()->GetTerType();
                     //类型检查
-                    if((term_type1 == "real" || term_type1 == "interger")&&(term_type2 == "real" || term_type2 == "interger")){
-                        if(term_type1 == "real" || term_type1 == "real"){
+                    if((term_type1 == "real" || term_type1 == "integer")&&(term_type2 == "real" || term_type2 == "integer")){
+                        if(term_type1 == "real" || term_type2 == "real"){
                             sexpression->SetExpType("real");
                         }
                         else{

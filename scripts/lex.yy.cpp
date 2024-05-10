@@ -1105,7 +1105,7 @@ YY_RULE_SETUP
 case 39:
 YY_RULE_SETUP
 #line 150 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
-{ write_cache(); to_str(); return yytext[0]; }
+{ write_cache(); to_str(); return CONSTASSIGNOP; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP

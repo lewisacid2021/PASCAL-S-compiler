@@ -1,5 +1,6 @@
 #include "ast.h"
 #include "type.h"
+#include "symbolTable.h"
 #include <cstddef>
 #include <cstdio>
 #include <iostream>
@@ -9,6 +10,9 @@ extern FILE *fs;
 
 using std::string;
 using std::vector;
+
+extern SymbolTable* MainTable;
+extern SymbolTable* CurrentTable;
 
 namespace ast {
 
@@ -84,7 +88,7 @@ void ConstDeclaration::print_type()
 }
 
 void GenerationVisitor::visit(ConstDeclaration *constdeclaration)
-{
+{   
     if (constdeclaration->GetGrammarType() == ConstDeclaration::GrammarType::MULTIPLE_ID)
     {
         constdeclaration->get(0)->accept(this);
@@ -111,9 +115,17 @@ void GenerationVisitor::visit(TypeNode *typenode)
     switch (typenode->GetVarType()) {
         case TypeNode::VarType::RECORD_TYPE:
             fprintf(fs, "struct ");
-        case TypeNode::VarType::ARRAY_TYPE:
-            fprintf(fs, "%s", typenode->get_type_name().c_str());
+        case TypeNode::VarType::ARRAY_TYPE:{
+            string type = typenode->get(0)->DynamicCast<ArrayTypeNode>()->type();
+            if(type=="integer"&&true)   //todo 查符号表 预定义标识符是否没被覆盖
+                fprintf(fs, "int");
+            else if(type=="boolean"&&true) 
+                fprintf(fs, "bool");
+            else if(type=="real"&&true) 
+                fprintf(fs, "float");
+            else  fprintf(fs, "%s", type.c_str());
             break;
+        }
         case TypeNode::VarType::ID_TYPE:
         {
             if(typenode->get_type_name()=="integer"&&true)   //todo 查符号表 预定义标识符是否没被覆盖
@@ -122,7 +134,7 @@ void GenerationVisitor::visit(TypeNode *typenode)
                 fprintf(fs, "bool");
             else if(typenode->get_type_name()=="real"&&true) 
                 fprintf(fs, "float");
-            else    fprintf(fs, "%s", typenode->get_type_name().c_str());
+            else  fprintf(fs, "%s", typenode->get_type_name().c_str());
             break;
         }
         case TypeNode::VarType::STRING_TYPE:
@@ -193,11 +205,7 @@ void GenerationVisitor::visit(SubprogramDeclaration *subprogramdeclaration)
 {
     subprogramdeclaration->get(0)->accept(this);  //subprogramhead
 
-    fprintf(fs, "{\n");
-
     subprogramdeclaration->get(1)->accept(this);   //subprogrambody
-
-    fprintf(fs, "}\n");
 }
 
 void GenerationVisitor::visit(SubprogramHead *subprogramhead)
@@ -382,6 +390,7 @@ void GenerationVisitor::visit(ElsePart *elseNode )
 }
 
 void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
+    //fprintf(fs, "here");
     if(procedureCall->get_id()=="writeln"){
             fprintf(fs, "printf(\"\\n\");\n");
             return;}
@@ -390,8 +399,7 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
             return;}
     if(procedureCall->get_id()=="write"){
         fprintf(fs, "printf(");
-        ExpressionList* expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
-
+        auto expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
         std::string formatString = generateFormatString(expressionList);
 
         // 使用 fprintf 打印生成的格式化字符串
@@ -538,6 +546,13 @@ void GenerationVisitor::visit(LoopStatement *loopStatement )
 void GenerationVisitor::visit(Variable *variable )  {
     // 访问第一个子节点
     variable->get(0)-> accept(this);
+    string id = variable->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+    auto record_info = findID(MainTable, id, 0);
+    if(record_info != NULL){
+        if(record_info->flag == "function"){
+            fprintf(fs, "( )");
+        }
+    }
     // 访问第二个子节点
     variable->get(1)-> accept(this);
 }
@@ -617,7 +632,7 @@ void GenerationVisitor::visit(IDVarParts *idVarParts )   {
             fprintf(fs, " / ");
             break;
         case Term::SymbolType::MOD:
-            fprintf(fs, " % ");
+            fprintf(fs, " %% ");
             break;
         case Term::SymbolType::AND:
             fprintf(fs, " && ");
@@ -625,7 +640,7 @@ void GenerationVisitor::visit(IDVarParts *idVarParts )   {
         case Term::SymbolType::SINGLE:
             break;
         }
-        term->get(2)-> accept(this); // 访问右侧 factor 节点
+        term->get(1)-> accept(this); // 访问右侧 factor 节点
     }
 }
 
@@ -680,9 +695,13 @@ void GenerationVisitor::visit(Expression *expression )  {
     {
         // expression -> expression relop simple_expression 的情况
         expression->get(0)-> accept(this); // 访问左侧 expression 节点
-        if(expression->GetSymType() == "+") fprintf(fs, " + ");
-        if(expression->GetSymType() == "-") fprintf(fs, " - ");
-        if(expression->GetSymType() == "or") fprintf(fs, " or ");
+        if(expression->GetSymType() == "<>"){
+            fprintf(fs, " != ");
+        }
+        else{
+            string symbol = " " + expression->GetSymType() + " ";
+            fprintf(fs, "%s", symbol.c_str());
+        }
         expression->get(1)-> accept(this); // 访问右侧 simple_expression 节点
     
     }
