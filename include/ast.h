@@ -1,7 +1,7 @@
 #pragma once
 
-#include "type.h"
 #include "symbolTable.h"
+#include "type.h"
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -23,9 +23,10 @@ class AstNode
         }
     }
 
-    template <typename T>
-    T *DynamicCast() {
-      return dynamic_cast<T *>(this);
+    template<typename T>
+    T *DynamicCast()
+    {
+        return dynamic_cast<T *>(this);
     }
 
     virtual void accept(Visitor *visitor);  //访问者接口
@@ -46,7 +47,7 @@ class AstNode
     }
     AstNode *get(int pos)
     {
-        return cnode_list[pos<0?cnode_list.size()+pos:pos];
+        return cnode_list[pos < 0 ? cnode_list.size() + pos : pos];
     }
 
     std::vector<AstNode *> &getCnodeList()
@@ -56,10 +57,10 @@ class AstNode
 
     void set_rownum(int rn)
     {
-      row_num = rn;
+        row_num = rn;
     }
 
-    int get_rownum(){return row_num;}
+    int get_rownum() { return row_num; }
 
   protected:
     AstNode *pnode;
@@ -88,19 +89,22 @@ class AST
 class LeafNode: public AstNode
 {
   public:
-    enum class LeafType{
-      VALUE,
-      NAME,
+    enum class LeafType
+    {
+        VALUE,
+        NAME,
     };
-    LeafNode(){}
+    LeafNode() {}
     LeafNode(ConstValue val, LeafType lt)
-        : value_(val), leaf_type(lt)
+        : value_(val)
+        , leaf_type(lt)
     {}
 
     // id_ref()返回变量名或者引用的变量名
-    const std::string id_ref() {
-    return is_ref ? "(*" + value_.get<std::string>() + ")"
-                   : value_.get<std::string>();
+    const std::string id_ref()
+    {
+        return is_ref ? "(*" + value_.get<std::string>() + ")"
+                      : value_.get<std::string>();
     }
 
     // getter and setter
@@ -114,10 +118,10 @@ class LeafNode: public AstNode
     }
     ConstValue::ConstvalueType get_type() { return value_.type(); }
     LeafType getLeafType() { return leaf_type; }
-    ConstValue * getConstValue(){return &value_;}
+    ConstValue *getConstValue() { return &value_; }
     void accept(Visitor *visitor) override;  //访问者接口
 
-    // Analyze reference
+                                             // Analyze reference
     //bool AnalyzeReference(TableSet *ts, FunctionSymbol *fn);
 
   private:
@@ -208,10 +212,10 @@ class ConstDeclaration: public AstNode
         : grammar_type(gt)
         , type(bt){};
     void print_type();
-    ConstValue::ConstvalueType get_value_type(){return type;}
+    ConstValue::ConstvalueType get_value_type() { return type; }
 
     void accept(Visitor *visitor) override;  //访问者接口
-    std::vector<tuple<int,string,ConstValue *>> Lists();
+    std::vector<tuple<int, string, ConstValue *>> Lists();
 
     GrammarType GetGrammarType()
     {
@@ -249,7 +253,7 @@ class RecordDeclaration: public AstNode
 {
     // 子节点为RecordDeclaration节点，叶子节点id，以及var_declaration节点。
     // record_declaration -> def-record | record_declaration def-record
-    // def-record -> type 
+    // def-record -> type
     //               record-name = record
     //               var_declaration
     //               end;
@@ -309,7 +313,7 @@ class VarDeclaration: public AstNode
     {}
 
     void accept(Visitor *visitor) override;  //访问者接口
-    std::vector<tuple<vector<LeafNode *>,AstNode *>> Lists();
+    std::vector<tuple<vector<LeafNode *>, AstNode *>> Lists();
 
     GrammarType GetGrammarType()
     {
@@ -343,11 +347,12 @@ class TypeNode: public AstNode
         : var_type(vt)
     {}
     TypeNode(VarType vt, std::string tn)
-        : var_type(vt), type_name(tn)
+        : var_type(vt)
+        , type_name(tn)
     {}
     VarType GetVarType() { return var_type; }
     std::string get_type_name() { return type_name; }
-    
+
     void accept(Visitor *visitor) override;  //访问者接口
 
   private:
@@ -385,25 +390,30 @@ class PeriodsNode: public AstNode
     // period -> digits .. digits 子节点为PeriodNode
     // period -> period ， digits .. digits 子节点为PeriodsNode和PeriodNode
   public:
-    enum class PeriodType{
-      SINGLE,
-      MULTI
-    } ;
-    PeriodsNode(PeriodType pt) : period_type(pt) {};
-    void set_dm(std::vector<ArrayType::Dimension> low_dm){
-      dm = low_dm;
+    enum class PeriodType
+    {
+        SINGLE,
+        MULTI
+    };
+    PeriodsNode(PeriodType pt)
+        : period_type(pt){};
+    void set_dm(std::vector<ArrayType::Dimension> low_dm)
+    {
+        dm = low_dm;
     }
-    std::vector<ArrayType::Dimension> get_dm(){
-      return dm;
+    std::vector<ArrayType::Dimension> get_dm()
+    {
+        return dm;
     }
-    PeriodsNode get_type(){
-      return period_type;
+    PeriodsNode get_type()
+    {
+        return period_type;
     }
     void accept(Visitor *visitor) override;  //访问者接口
 
   private:
-    PeriodType period_type; // 语法类型
-    std::vector<ArrayType::Dimension> dm; // 自底向上累积至当前节点的各维度信息
+    PeriodType period_type;                  // 语法类型
+    std::vector<ArrayType::Dimension> dm;    // 自底向上累积至当前节点的各维度信息
 };
 
 
@@ -411,30 +421,38 @@ class PeriodNode: public AstNode
 {
     // Period → const_var ... const var
   public:
-    PeriodNode(int low, int up): lowb(low), upb(up){}
-    int get_lowb(){
-      return lowb;
+    PeriodNode(int low, int up)
+        : lowb(low)
+        , upb(up)
+    {}
+    int get_lowb()
+    {
+        return lowb;
     }
-    int get_upb(){
-      return upb;
+    int get_upb()
+    {
+        return upb;
     }
 
   private:
     int lowb = 0;
-    int upb = 0;
+    int upb  = 0;
 };
 
-class StringTypeNode : public AstNode {
-public:
+class StringTypeNode: public AstNode
+{
+  public:
     StringTypeNode() {}
-    StringTypeNode(StringType *type) : string_info(type) {}
+    StringTypeNode(StringType *type)
+        : string_info(type)
+    {}
 
     void set_type(StringType *type) { string_info = type; }
     void accept(Visitor *visitor) override;  //访问者接口
     StringType *type() { return string_info; }
 
-private:
-    StringType* string_info;
+  private:
+    StringType *string_info;
 };
 
 /**************************************************
@@ -460,12 +478,12 @@ class SubprogramBody: public AstNode
 
 class SubprogramHead: public AstNode
 {
-  //子节点为叶子节点id、FormalParam节点以及可能的type节点
+    //子节点为叶子节点id、FormalParam节点以及可能的type节点
   public:
     enum class SubprogramType
     {
         PROC,  // subprogram_head -> procedure id formal_parameter
-        FUNC    // subprogram_head -> function id formal_parameter : basic_type
+        FUNC   // subprogram_head -> function id formal_parameter : basic_type
     };
 
     SubprogramHead(SubprogramType st)
@@ -501,7 +519,7 @@ class ParamList: public AstNode
     ParamList(ParamType pt)
         : param_type(pt)
     {}
-    ParamType get_type() { return param_type;}
+    ParamType get_type() { return param_type; }
 
   private:
     ParamType param_type;
@@ -519,9 +537,9 @@ class ParamLists: public AstNode
     ParamLists(GrammarType gt)
         : grammar_type(gt)
     {}
-    GrammarType get_type() { return grammar_type;}
+    GrammarType get_type() { return grammar_type; }
     void accept(Visitor *visitor) override;
-    std::vector<ParamList*> Lists();
+    std::vector<ParamList *> Lists();
 
   private:
     GrammarType grammar_type;
@@ -537,12 +555,13 @@ class ValueParam: public AstNode
 {
     // 子节点为IdList和TypeNode
     // ValueParam -> idlist : basic_type
-  public:  
+  public:
     ValueParam(){};
     bool is_ref() { return isVar; }
     void set_ref() { isVar = true; }
-    
+
     void accept(Visitor *visitor) override;
+
   private:
     bool isVar = false;
 };
@@ -566,28 +585,29 @@ class StatementList: public AstNode
 
 class Statement: public AstNode
 {
-  // 子节点为各种statement节点
+    // 子节点为各种statement节点
   public:
     enum class StatementType
     {
-        EPSILON,             // statement -> EPSILON
-        ASSIGN_OP_STATEMENT, // 子节点为AssignopStatement
+        EPSILON,              // statement -> EPSILON
+        ASSIGN_OP_STATEMENT,  // 子节点为AssignopStatement
 
-        PROCEDURE_CALL,      // statement -> procedure_call
-                             // 子节点为ProcedureCall
-        COMPOUND_STATEMENT,  // statement -> compound_statement
-                             // 子节点为CompoundStatement
-        IF_STATEMENT,        // statement -> if-statement
-                             // 子节点为IfStatement
-        LOOP_STATEMENT,      // statement -> loop-statement
-                             // 子节点为LoopStatement
+        PROCEDURE_CALL,       // statement -> procedure_call
+                              // 子节点为ProcedureCall
+        COMPOUND_STATEMENT,   // statement -> compound_statement
+                              // 子节点为CompoundStatement
+        IF_STATEMENT,         // statement -> if-statement
+                              // 子节点为IfStatement
+        LOOP_STATEMENT,       // statement -> loop-statement
+                              // 子节点为LoopStatement
     };
 
     Statement(StatementType st)
         : statement_type(st)
     {}
     void accept(Visitor *visitor);  //访问者接口
-    StatementType get_type(){ return statement_type;}
+    StatementType get_type() { return statement_type; }
+
   private:
     StatementType statement_type;
 };
@@ -599,14 +619,14 @@ class AssignopStatement: public AstNode
     enum class LeftType
     {
         VARIABLE,  // statement -> variable assignop expression
-        FUNCID,      // statement -> func_id assignop expression
+        FUNCID,    // statement -> func_id assignop expression
     };
     AssignopStatement(LeftType lt)
         : left_type(lt)
     {}
-    LeftType get_type() { return left_type;}
-    void set_type(LeftType lt) { left_type = lt;}
-  void accept(Visitor *visitor);  //访问者接口
+    LeftType get_type() { return left_type; }
+    void set_type(LeftType lt) { left_type = lt; }
+    void accept(Visitor *visitor);  //访问者接口
   private:
     LeftType left_type;
     //std::string varname;
@@ -614,22 +634,23 @@ class AssignopStatement: public AstNode
 
 class ProcedureCall: public AstNode
 {
-  // 其子节点为 id 叶子节点和可能存在的 ExpressionList 节点
+    // 其子节点为 id 叶子节点和可能存在的 ExpressionList 节点
   public:
     enum class ProcedureType
     {
-        NO_LIST,          // procedure_call -> id
-        EXP_LIST,      // procedure_call -> id ( expression_list )
-        VAR_LIST,      // procedure_call -> id ( variable_list )
+        NO_LIST,   // procedure_call -> id
+        EXP_LIST,  // procedure_call -> id ( expression_list )
+        VAR_LIST,  // procedure_call -> id ( variable_list )
     };
 
     ProcedureCall(ProcedureType pt, std::string id)
-        : procedure_type(pt), procedure_id(id)
+        : procedure_type(pt)
+        , procedure_id(id)
     {}
     std::string get_id() { return procedure_id; }
-    ProcedureType get_type() { return procedure_type;}
+    ProcedureType get_type() { return procedure_type; }
 
-  void accept(Visitor *visitor);  //访问者接口
+    void accept(Visitor *visitor);  //访问者接口
   private:
     ProcedureType procedure_type;
     std::string procedure_id;
@@ -656,10 +677,11 @@ class LoopStatement: public AstNode
     //                 | for id assignop expression downto expression do statement
     //                 | while expression do statement
     //                 | repeat statement until expression
-    LoopStatement(LoopType lt): loop_type(lt){};
+    LoopStatement(LoopType lt)
+        : loop_type(lt){};
     LoopType get_type() { return loop_type; }
 
- void accept(Visitor *visitor);  //访问者接口
+    void accept(Visitor *visitor);  //访问者接口
   private:
     LoopType loop_type;
 };
@@ -680,7 +702,7 @@ class ElsePart: public AstNode
     // Statement *GetStatement() {
     //     return cnode_list[0]->DynamicCast<StatementNode>();
     // }
- void accept(Visitor *visitor);  //访问者接口
+    void accept(Visitor *visitor);  //访问者接口
   private:
     ELSEType grammar_type_;
 };
@@ -692,19 +714,21 @@ class VariableList: public AstNode
   public:
     enum class GrammarType
     {
-        VAR_,                // variable_list -> variable
-        VAR_LIST_VAR,       // variable_list -> variable_list , variable
+        VAR_,          // variable_list -> variable
+        VAR_LIST_VAR,  // variable_list -> variable_list , variable
     };
 
     VariableList(GrammarType gt)
         : grammar_type(gt)
     {}
     std::string FormatString();
-    vector<AstNode* > Lists();
-    bool set_types(std::vector<BaseType *> *type_list);
-    GrammarType get_type() { return grammar_type;}
-  
-  void accept(Visitor *visitor);  //访问者接口
+    vector<AstNode * > Lists();
+    void set_types(std::vector<string> *type_list){
+      variable_type_list = type_list; 
+    }
+    GrammarType get_type() { return grammar_type; }
+
+    void accept(Visitor *visitor);  //访问者接口
   private:
     std::vector<std::string> *variable_type_list;
     GrammarType grammar_type;
@@ -716,21 +740,23 @@ class Variable: public AstNode
     // variable -> id id_varparts
   public:
     Variable() {}
-    Variable(std::string vn): var_type(vn){}
+    Variable(std::string vn)
+        : var_type(vn)
+    {}
     std::string get_vn() { return var_type; }
-    void set_vn(string vn) { var_type = vn;}
+    void set_vn(string vn) { var_type = vn; }
 
     void accept(Visitor *visitor) override;
+
   private:
-    std::string var_type;   // 类型名
+    std::string var_type;  // 类型名
 };
 
 class IDVarParts: public AstNode
 {
   public:
-    
-    void set_pointer(std::vector<std::string> * pn){ parts_name = pn;}
-    std::vector<std::string> *get_pointer(){ return parts_name; }
+    void set_pointer(std::vector<std::string> *pn) { parts_name = pn; }
+    std::vector<std::string> *get_pointer() { return parts_name; }
     void accept(Visitor *visitor) override;
 
   private:
@@ -757,7 +783,7 @@ class IDVarPart: public AstNode
     void accept(Visitor *visitor) override;
 
   private:
-    int array_lb_ = 0;
+    int array_lb_         = 0;
     std::string part_name = "none";
     GrammarType grammar_type;
 };
@@ -776,17 +802,19 @@ class ExpressionList: public AstNode
     };
 
     ExpressionList(ExpressionType et, std::vector<std::string> *tl)
-        : expression_type(et), exp_type(tl)
+        : expression_type(et)
+        , exp_type(tl)
     {}
-    std::vector<std::string> * get_types(){
-      return exp_type;
+    std::vector<std::string> *get_types()
+    {
+        return exp_type;
     };
-    ExpressionType get_type() { return expression_type;}
+    ExpressionType get_type() { return expression_type; }
     std::vector<AstNode *> Lists();
     void accept(Visitor *visitor) override;
 
   private:
-    std::vector<std::string> *exp_type;    // 存储从左到当前expression的类型
+    std::vector<std::string> *exp_type;  // 存储从左到当前expression的类型
     ExpressionType expression_type;
 };
 
@@ -798,18 +826,20 @@ class Expression: public AstNode
   public:
     enum class GrammarType
     {
-        SINGLE,          // simple_expression
-        DOUBLE,             // simple_expression relop simple_expression
+        SINGLE,  // simple_expression
+        DOUBLE,  // simple_expression relop simple_expression
     };
     Expression(GrammarType gt, std::string st, std::string et)
-        : grammar_type(gt), symbol_type(st), expression_type(et)
+        : grammar_type(gt)
+        , symbol_type(st)
+        , expression_type(et)
     {}
-    GrammarType GetGraType() { return grammar_type; }  // 返回语法类型
-    std::string GetSymType() { return symbol_type; }   // 返回符号类型
-    std::string GetExpType() { return expression_type;}  // 返回表达式类型
-    void SetExpType(std::string et) { expression_type = et;}
+    GrammarType GetGraType() { return grammar_type; }     // 返回语法类型
+    std::string GetSymType() { return symbol_type; }      // 返回符号类型
+    std::string GetExpType() { return expression_type; }  // 返回表达式类型
+    void SetExpType(std::string et) { expression_type = et; }
 
- void accept(Visitor *visitor);  // 访问者接口
+    void accept(Visitor *visitor);                        // 访问者接口
   private:
     GrammarType grammar_type;
     std::string symbol_type;
@@ -832,11 +862,11 @@ class SimpleExpression: public AstNode
         : symbol_type(st)
         , expression_type(et)
     {}
-    SymbolType GetSymType() { return symbol_type; } // 返回符号类型
+    SymbolType GetSymType() { return symbol_type; }       // 返回符号类型
     std::string GetExpType() { return expression_type; }  // 返回表达式类型
-    void SetExpType(std::string et) { expression_type = et;}
+    void SetExpType(std::string et) { expression_type = et; }
 
- void accept(Visitor *visitor);  // 访问者接口
+    void accept(Visitor *visitor);                        // 访问者接口
   private:
     SymbolType symbol_type;
     std::string expression_type;
@@ -859,16 +889,18 @@ class Term: public AstNode
         : symbol_type(st)
         , term_type(et){};
     Term(){};
-    void SetSymType(SymbolType st){
-      symbol_type = st;
+    void SetSymType(SymbolType st)
+    {
+        symbol_type = st;
     }
-    void SetTerType(std::string tt){
-      term_type = tt;
+    void SetTerType(std::string tt)
+    {
+        term_type = tt;
     }
     SymbolType GetSymType() { return symbol_type; }
     std::string GetTerType() { return term_type; }
 
- void accept(Visitor *visitor);  //访问者接口
+    void accept(Visitor *visitor);  //访问者接口
   private:
     SymbolType symbol_type;
     std::string term_type;
@@ -883,67 +915,72 @@ class Factor: public AstNode
         VARIABLE,     // factor -> variable 子节点为Variable节点
         EXP,          // factor -> ( expression ) 子节点为Expression节点
         ID_EXP_LIST,  // factor -> id ( expression_list ) 子节点为叶子节点和 expression_list节点
-        NOT_,          // factor -> not factor 子节点为factor节点
-        UMINUS_,       // factor -> - factor 子节点为factor节点
-        CHAR_,         // factor -> ′ letter ′ 子节点为叶子节点
-        STR,       // 子节点为叶子节点
+        NOT_,         // factor -> not factor 子节点为factor节点
+        UMINUS_,      // factor -> - factor 子节点为factor节点
+        CHAR_,        // factor -> ′ letter ′ 子节点为叶子节点
+        STR,          // 子节点为叶子节点
         BOOL          // 子节点为叶子节点
     };
 
     Factor(GrammerType gt)
         : grammer_type(gt)
     {}
-    std::string GetFacType(){ return factor_type; }
-    GrammerType get_type(){ return grammer_type; }
-    bool GetNot() {return is_uminus; }
-    void SetFacType(std::string ft){ factor_type = ft; }
-    void SetUminus(){ is_uminus = true; }
+    std::string GetFacType() { return factor_type; }
+    GrammerType get_type() { return grammer_type; }
+    bool GetNot() { return is_uminus; }
+    void SetFacType(std::string ft) { factor_type = ft; }
+    void SetUminus() { is_uminus = true; }
 
 
- void accept(Visitor *visitor);  //访问者接口
+    void accept(Visitor *visitor);    //访问者接口
   private:
     GrammerType grammer_type;
-    bool is_uminus = false; // 若为not factor与- factor则为true
+    bool is_uminus          = false;  // 若为not factor与- factor则为true
     std::string factor_type = "unknown";
-
 };
 
 class Visitor
 {
   public:
-    virtual void visit(AST *AST)                           = 0;
-    virtual void visit(AstNode *astnode)                   = 0;
-    virtual void visit(LeafNode *leafnode)                 = 0;
-    virtual void visit(ProgramHead *programhead)                 = 0;
-    virtual void visit(IdList *idlist)                     = 0;
-    virtual void visit(ConstDeclaration *constdeclaration) = 0;
-    virtual void visit(RecordDeclaration *recorddeclaration)           = 0;
-    virtual void visit(TypeNode *typenode) = 0;
-    virtual void visit(StringTypeNode *stringtypenode) = 0;
-    virtual void visit(VarDeclaration *vardeclaration) = 0;
-    virtual void visit(PeriodsNode *periodsnode) = 0;
+    void visitchild(AstNode *astnode)
+    {
+        for (auto child : astnode->getCnodeList())
+            child->accept(this);
+    }
+    virtual void visit(AST *AST)                                     = 0;
+    virtual void visit(AstNode *astnode)                             = 0;
+    virtual void visit(LeafNode *leafnode)                           = 0;
+    virtual void visit(ProgramHead *programhead)                     = 0;
+    virtual void visit(ProgramBody *programbody)                     = 0;
+    virtual void visit(IdList *idlist)                               = 0;
+    virtual void visit(ConstDeclaration *constdeclaration)           = 0;
+    virtual void visit(RecordDeclaration *recorddeclaration)         = 0;
+    virtual void visit(TypeNode *typenode)                           = 0;
+    virtual void visit(StringTypeNode *stringtypenode)               = 0;
+    virtual void visit(VarDeclaration *vardeclaration)               = 0;
+    virtual void visit(PeriodsNode *periodsnode)                     = 0;
     virtual void visit(SubprogramDeclaration *subprogramdeclaration) = 0;
-    virtual void visit(SubprogramHead *subprogramhead) = 0;
-    virtual void visit(ParamLists *paramlists) = 0;
-    virtual void visit(ValueParam *valueparam) = 0;
+    virtual void visit(SubprogramHead *subprogramhead)               = 0;
+    virtual void visit(ParamLists *paramlists)                       = 0;
+    virtual void visit(ValueParam *valueparam)                       = 0;
 
-    virtual void visit(StatementList *statementList) = 0;
-    virtual void visit(IfStatement *ifStatement ) = 0;
-    virtual void visit(ElsePart *elseNode )  = 0;
-    virtual void visit(ProcedureCall *procedureCall ) = 0;
-    virtual void visit(AssignopStatement *assignopStatement ) = 0;
-    virtual void visit(LoopStatement *loopStatement ) = 0;
-    virtual void visit(Variable *variable ) = 0;
-    virtual void visit(VariableList *variableList ) = 0;
-    virtual void visit(IDVarPart *idVarPart ) = 0;
-    virtual void visit(IDVarParts *idVarParts ) = 0;
-    virtual void visit(Term *term ) = 0;
-    virtual void visit(Factor *factor ) = 0;
-    virtual void visit(Expression *expression ) = 0;
-    virtual void visit(SimpleExpression *simpleExpression ) = 0;
-    virtual void visit(Statement *statement ) = 0;
-    virtual void visit(CompoundStatement *compoundStatement ) = 0;
-    virtual void visit(ExpressionList *expressionList ) = 0;
+    virtual void visit(StatementList *statementList)                 = 0;
+    virtual void visit(IfStatement *ifStatement)                     = 0;
+    virtual void visit(ElsePart *elseNode)                           = 0;
+    virtual void visit(ProcedureCall *procedureCall)                 = 0;
+    virtual void visit(AssignopStatement *assignopStatement)         = 0;
+    virtual void visit(LoopStatement *loopStatement)                 = 0;
+    virtual void visit(Variable *variable)                           = 0;
+    virtual void visit(VariableList *variableList)                   = 0;
+    virtual void visit(IDVarPart *idVarPart)                         = 0;
+    virtual void visit(IDVarParts *idVarParts)                       = 0;
+    virtual void visit(Term *term)                                   = 0;
+    virtual void visit(Factor *factor)                               = 0;
+    virtual void visit(Expression *expression)                       = 0;
+    virtual void visit(SimpleExpression *simpleExpression)           = 0;
+    virtual void visit(Statement *statement)                         = 0;
+    virtual void visit(CompoundStatement *compoundStatement)         = 0;
+    virtual void visit(ExpressionList *expressionList)               = 0;
 };
 
 class GenerationVisitor: public Visitor
@@ -952,9 +989,11 @@ class GenerationVisitor: public Visitor
     void visit(AST *AST) override;
     void visit(AstNode *astnode) override;
     void visit(LeafNode *leafnode) override;
+    void visit(ProgramHead *programhead) override { visitchild(programhead);};
     void visit(IdList *idlist) override;
     void visit(ConstDeclaration *constdeclaration) override;
     void visit(TypeNode *typenode) override;
+    void visit(RecordDeclaration *recorddeclaration) override { visitchild(recorddeclaration);};
     void visit(StringTypeNode *stringtypenode) override;
     void visit(VarDeclaration *vardeclaration) override;
     void visit(PeriodsNode *periodsnode) override;
@@ -965,22 +1004,22 @@ class GenerationVisitor: public Visitor
     void visit(ValueParam *valueparam) override;
 
     void visit(StatementList *statementList) override;
-    void visit(IfStatement *ifStatement ) override;
-    void visit(ElsePart *elseNode )  override;
-    void visit(ProcedureCall *procedureCall ) override;
-    void visit(AssignopStatement *assignopStatement ) override;
-    void visit(LoopStatement *loopStatement ) override;
-    void visit(Variable *variable ) override;
-    void visit(VariableList *variableList ) override;
-    void visit(IDVarPart *idVarPart ) override;
-    void visit(IDVarParts *idVarParts ) override;
-    void visit(Term *term ) override;
-    void visit(Factor *factor ) override;
-    void visit(Expression *expression ) override;
-    void visit(SimpleExpression *simpleExpression ) override;
-    void visit(Statement *statement ) override;
-    void visit(CompoundStatement *compoundStatement ) override;
-    void visit(ExpressionList *expressionList ) override;
+    void visit(IfStatement *ifStatement) override;
+    void visit(ElsePart *elseNode) override;
+    void visit(ProcedureCall *procedureCall) override;
+    void visit(AssignopStatement *assignopStatement) override;
+    void visit(LoopStatement *loopStatement) override;
+    void visit(Variable *variable) override;
+    void visit(VariableList *variableList) override;
+    void visit(IDVarPart *idVarPart) override;
+    void visit(IDVarParts *idVarParts) override;
+    void visit(Term *term) override;
+    void visit(Factor *factor) override;
+    void visit(Expression *expression) override;
+    void visit(SimpleExpression *simpleExpression) override;
+    void visit(Statement *statement) override;
+    void visit(CompoundStatement *compoundStatement) override;
+    void visit(ExpressionList *expressionList) override;
 };
 
 class SemanticVisitor: public Visitor
@@ -988,37 +1027,38 @@ class SemanticVisitor: public Visitor
   public:
     void visit(AST *AST) override;
     void visit(AstNode *astnode) override;
-    void visit(LeafNode *leafnode) override {leafnode->DynamicCast<AstNode>()->accept(this);};
-    void visit(IdList *idlist) override { idlist->DynamicCast<AstNode>()->accept(this);};
+    void visit(LeafNode *leafnode) override { visitchild(leafnode);};
+    void visit(IdList *idlist) override { visitchild(idlist);};
+    void visit(ProgramBody *programbody) override { visitchild(programbody);};
     void visit(ProgramHead *programhead) override;
     void visit(ConstDeclaration *constdeclaration) override;
     void visit(RecordDeclaration *recorddeclaration) override;
-    void visit(TypeNode *typenode) override {typenode->DynamicCast<AstNode>()->accept(this);};
-    void visit(StringTypeNode *stringtypenode) override {stringtypenode->DynamicCast<AstNode>()->accept(this);};
+    void visit(TypeNode *typenode) override { visitchild(typenode);};
+    void visit(StringTypeNode *stringtypenode) override { visitchild(stringtypenode);};
     void visit(VarDeclaration *vardeclaration) override;
-    void visit(PeriodsNode *periodsnode) override { periodsnode->DynamicCast<AstNode>()->accept(this);};
+    void visit(PeriodsNode *periodsnode) override { visitchild(periodsnode);};
     void visit(SubprogramDeclaration *subprogramdeclaration) override;
     void visit(SubprogramHead *subprogramhead) override;
-    void visit(ParamLists *paramlists) override { paramlists->DynamicCast<AstNode>()->accept(this);};
-    void visit(ValueParam *valueparam) override { valueparam->DynamicCast<AstNode>()->accept(this);};
-    
-    void visit(CompoundStatement *compoundStatement ) override { compoundStatement->DynamicCast<AstNode>()->accept(this);};
-    void visit(StatementList *statementList) override { statementList->DynamicCast<AstNode>()->accept(this);};
-    void visit(Statement *statement ) override { statement->DynamicCast<AstNode>()->accept(this);};
-    void visit(IfStatement *ifStatement ) override { ifStatement->DynamicCast<AstNode>()->accept(this);};
-    void visit(ElsePart *elseNode )  override { elseNode->DynamicCast<AstNode>()->accept(this);};
-    void visit(ProcedureCall *procedureCall ) override { procedureCall->DynamicCast<AstNode>()->accept(this);};
-    void visit(AssignopStatement *assignopStatement ) override ;
-    void visit(LoopStatement *loopStatement ) override { loopStatement->DynamicCast<AstNode>()->accept(this);};
-    void visit(Variable *variable ) override ;
-    void visit(VariableList *variableList ) override ;
-    void visit(IDVarPart *idVarPart ) override { idVarPart->DynamicCast<AstNode>()->accept(this);};
-    void visit(IDVarParts *idVarParts ) override { idVarParts->DynamicCast<AstNode>()->accept(this);};
-    void visit(ExpressionList *expressionList ) override ;
-    void visit(Expression *expression ) override ;
-    void visit(SimpleExpression *simpleExpression ) override ;
-    void visit(Term *term ) override ;
-    void visit(Factor *factor ) override ;
+    void visit(ParamLists *paramlists) override { visitchild(paramlists);};
+    void visit(ValueParam *valueparam) override { visitchild(valueparam);};
+
+    void visit(CompoundStatement *compoundStatement) override { visitchild(compoundStatement);};
+    void visit(StatementList *statementList) override { visitchild(statementList);};
+    void visit(Statement *statement) override { visitchild(statement);};
+    void visit(IfStatement *ifStatement) override { visitchild(ifStatement);};
+    void visit(ElsePart *elseNode) override { visitchild(elseNode);};
+    void visit(ProcedureCall *procedureCall) override { visitchild(procedureCall);};
+    void visit(AssignopStatement *assignopStatement) override;
+    void visit(LoopStatement *loopStatement) override { visitchild(loopStatement);};
+    void visit(Variable *variable) override;
+    void visit(VariableList *variableList) override;
+    void visit(IDVarPart *idVarPart) override { visitchild(idVarPart);};
+    void visit(IDVarParts *idVarParts) override { visitchild(idVarParts);};
+    void visit(ExpressionList *expressionList) override;
+    void visit(Expression *expression) override;
+    void visit(SimpleExpression *simpleExpression) override;
+    void visit(Term *term) override;
+    void visit(Factor *factor) override;
 };
 
 
