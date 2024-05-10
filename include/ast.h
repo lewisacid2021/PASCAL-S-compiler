@@ -917,6 +917,7 @@ class Visitor
     //virtual void visit(ProgramHead *programhead)                 = 0;
     virtual void visit(IdList *idlist)                     = 0;
     virtual void visit(ConstDeclaration *constdeclaration) = 0;
+    virtual void visit(RecordDeclaration *recorddeclaration)           = 0;
     virtual void visit(TypeNode *typenode) = 0;
     virtual void visit(StringTypeNode *stringtypenode) = 0;
     virtual void visit(VarDeclaration *vardeclaration) = 0;
@@ -990,11 +991,12 @@ class SemanticVisitor: public Visitor
     void visit(IdList *idlist) override { idlist->DynamicCast<AstNode>()->accept(this);};
     //void visit(ProgramHead *programhead) override;
     void visit(ConstDeclaration *constdeclaration) override;
+    void visit(RecordDeclaration *recorddeclaration) override;
     void visit(TypeNode *typenode) override {typenode->DynamicCast<AstNode>()->accept(this);};
     void visit(StringTypeNode *stringtypenode) override {stringtypenode->DynamicCast<AstNode>()->accept(this);};
     void visit(VarDeclaration *vardeclaration) override;
     void visit(PeriodsNode *periodsnode) override { periodsnode->DynamicCast<AstNode>()->accept(this);};
-    void visit(SubprogramDeclaration *subprogramdeclaration) override { subprogramdeclaration->DynamicCast<AstNode>()->accept(this);};
+    void visit(SubprogramDeclaration *subprogramdeclaration) override;
     void visit(SubprogramHead *subprogramhead) override;
     void visit(ParamLists *paramlists) override { paramlists->DynamicCast<AstNode>()->accept(this);};
     void visit(ValueParam *valueparam) override { valueparam->DynamicCast<AstNode>()->accept(this);};
