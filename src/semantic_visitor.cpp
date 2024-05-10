@@ -12,7 +12,6 @@ using std::string;
 using std::vector;
 
 extern SymbolTable* MainTable;
-SymbolTable* PreviousTable = MainTable;
 SymbolTable* CurrentTable = MainTable;
 
 namespace ast{
@@ -34,9 +33,28 @@ void SemanticVisitor::visit(ProgramHead *programhead)
     if(programhead->getCnodeList().size() == 1)
     {
         int amount = 0;
-        string returnType = 
-        CurrentTable->addProgramName(id, rn, "program", amount, returnType)
+        MainTable->addProgramName(id, rn, "program", amount, "");
     }
+    else
+    {
+        auto idlist = programhead->get(1)->DynamicCast<IdList>()->Lists();
+        int amount = idlist.size();
+        CurrentTable->addProgramName(id, rn, "program", amount, "");
+        for (auto p : idlist)
+        {
+            string para_id = p->get_value<string>();
+            int para_rn = p->get_rownum();
+            MainTable->addVoidPara(para_id, para_rn);
+        }
+    }
+
+    MainTable->addProcedure("read", -1, -1, NULL);
+    //添加write过程，该过程变参
+    MainTable->addProcedure("write", -1, -1, NULL);
+    //添加writeln过程，该过程变参
+    MainTable->addProcedure("writeln", -1, -1, NULL);
+    //添加exit过程，该过程的参数个数需要分情况讨论，程序里会有特判，这里指定为0没有特殊含义
+    MainTable->addProcedure("exit", -1, 0, NULL);
 }
 
 void SemanticVisitor::visit(ConstDeclaration *constdeclaration)
@@ -54,26 +72,26 @@ void SemanticVisitor::visit(ConstDeclaration *constdeclaration)
 
         switch(const_value_type){
             case ConstValue::ConstvalueType::INTEGER:
-                type = "INTEGER";
+                type = "integer";
                 value = std::to_string(const_value->get<int>());
                 break;
             case ConstValue::ConstvalueType::REAL:
-                type = "REAL";
+                type = "real";
                 value = std::to_string(const_value->get<float>());
                 break;
             case ConstValue::ConstvalueType::BOOLEAN:
-                type = "BOOL";
+                type = "boolean";
                 if(const_value->get<bool>() == true)
                     value = "true";
                 else
                     value = "false";
                 break;
             case ConstValue::ConstvalueType::CHAR:
-                type = "CHAR";
+                type = "char";
                 value.push_back(const_value->get<char>());
                 break;
             case ConstValue::ConstvalueType::STRING:
-                type = "STRING";
+                type = "string";
                 value = const_value->get<string>();
                 break;
         }
@@ -82,10 +100,30 @@ void SemanticVisitor::visit(ConstDeclaration *constdeclaration)
     }
 }
 
+void SemanticVisitor::visit(RecordDeclaration *recorddeclaration)
+{
+    recorddeclaration->get(0)->accept(this);
+
+    string id = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_value<string>();
+    int rn = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_rownum();
+
+    SymbolTable *subTable = new SymbolTable();
+
+    CurrentTable->addRecord(id, rn, subTable);
+
+    SymbolTable *PreviousTable = CurrentTable;
+    CurrentTable               = subTable;
+
+    recorddeclaration->get(2)->accept(this);
+
+    CurrentTable = PreviousTable;
+}
+
 void SemanticVisitor::visit(VarDeclaration *vardeclaration)
 {
     IdList* idlist;
     TypeNode* typenode; 
+
     if(vardeclaration->GetGrammarType() == VarDeclaration::GrammarType::SINGLE_DECL)
     {
         idlist = vardeclaration->get(0)->DynamicCast<IdList>();
@@ -95,10 +133,9 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
     {
         idlist = vardeclaration->get(1)->DynamicCast<IdList>();
         typenode = vardeclaration->get(2)->DynamicCast<TypeNode>();
+        vardeclaration->get(0)->accept(this);
     }
 
-       
-        
     if(typenode->GetVarType() == TypeNode::VarType::ID_TYPE)
     {
         for(auto i:idlist->Lists())
@@ -153,25 +190,34 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
             int rn = i->get_rownum();
             CurrentTable->addRecord(id, rn, subTable);
         }
-        
-        PreviousTable = CurrentTable;
+
+        SymbolTable* PreviousTable = CurrentTable;
         CurrentTable = subTable;
 
+        typenode->get(0)->accept(this);
 
-
+        CurrentTable = PreviousTable;
     }
 
- 
     
+}
+
+void SemanticVisitor::visit(SubprogramDeclaration *subprogramdeclaration)
+{
+    SymbolTable *subTable = new SymbolTable();
+    CurrentTable          = subTable;
+    subprogramdeclaration->get(0)->DynamicCast<SubprogramHead>()->accept(this);
+    subprogramdeclaration->get(1)->DynamicCast<SubprogramBody>()->accept(this);
+    CurrentTable = MainTable;
+
 }
 
 void SemanticVisitor::visit(SubprogramHead *subprogramhead)
 {
     auto type = subprogramhead->get_type();
+    string id = subprogramhead->get_id();
     int amount = 0;
     auto formal_param = subprogramhead->get(1)->DynamicCast<FormalParam>();
-    SymbolTable* subTable = new SymbolTable();
-    CurrentTable = MainTable;
 
     if(formal_param->getCnodeList().size() != 0)
     {
@@ -187,7 +233,7 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
                 idtype = p->get(0)->get(0)->get(1)->DynamicCast<TypeNode>();
                 for(auto id:idlist)
                 {
-                    subTable->addVarPara(id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
+                    CurrentTable->addVarPara(id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
                     id->set_ref(true);
                     amount++;
                 }
@@ -198,7 +244,7 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
                 idtype = p->get(0)->get(1)->DynamicCast<TypeNode>();
                 for(auto id:idlist)
                 {
-                    subTable->addPara(id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
+                    CurrentTable->addPara(id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
                     amount++;
                 }
             }
@@ -208,12 +254,14 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
 
     if(type == SubprogramHead::SubprogramType::PROC)
     {
-        CurrentTable->addProcedure(subprogramhead->get_id(), subprogramhead->get_rownum(), amount, subTable);
+        MainTable->addProcedure(subprogramhead->get_id(), subprogramhead->get_rownum(), amount, subTable);
+        CurrentTable->addProgramName(subprogramhead->get_id(), subprogramhead->get_rownum(), "procedure", amount, "");
     }
     else
     {
         auto ret_type = subprogramhead->get(2)->DynamicCast<TypeNode>()->get_type_name();
-        CurrentTable->addFunction(subprogramhead->get_id(), subprogramhead->get_rownum(),ret_type, amount, subTable);
+        MainTable->addFunction(subprogramhead->get_id(), subprogramhead->get_rownum(),ret_type, amount, subTable);
+        CurrentTable->addProgramName(subprogramhead->get_id(), subprogramhead->get_rownum(), "procedure", amount, ret_type);
     }
 }
 
