@@ -204,8 +204,9 @@ void GenerationVisitor::visit(PeriodsNode *periodsnode)
 void GenerationVisitor::visit(SubprogramDeclaration *subprogramdeclaration)
 {
     subprogramdeclaration->get(0)->accept(this);  //subprogramhead
-
+    fprintf(fs, "{\n");
     subprogramdeclaration->get(1)->accept(this);   //subprogrambody
+    fprintf(fs, "}\n");
 }
 
 void GenerationVisitor::visit(SubprogramHead *subprogramhead)
@@ -554,7 +555,9 @@ void GenerationVisitor::visit(Variable *variable )  {
         }
     }
     // 访问第二个子节点
-    variable->get(1)-> accept(this);
+    if(variable->getCnodeList().size() == 2){
+        variable->get(1)-> accept(this);
+    }
 }
 
 void GenerationVisitor::visit(VariableList *variableList )   {
@@ -697,6 +700,9 @@ void GenerationVisitor::visit(Expression *expression )  {
         expression->get(0)-> accept(this); // 访问左侧 expression 节点
         if(expression->GetSymType() == "<>"){
             fprintf(fs, " != ");
+        }
+        else if(expression->GetSymType() == "="){
+            fprintf(fs, " == ");
         }
         else{
             string symbol = " " + expression->GetSymType() + " ";

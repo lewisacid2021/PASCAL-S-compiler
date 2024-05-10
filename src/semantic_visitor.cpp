@@ -17,9 +17,29 @@ extern SymbolTable* CurrentTable;
 
 void addDuplicateNameError(){
     int a;
-};
-void addDuplicateNameError(); //重名错误
-bool checkDuplicateNameError(string id, int lineNumber); //检查是否与主程序名，主程序参数，库函数重名
+} //重名错误
+//检查是否与主程序名，主程序参数，库函数重名
+bool checkDuplicateNameError(string id, int lineNumber)
+{                                                                          
+    for (int i = 0; i <= MainTable->records[0]->amount + 4; i++) {
+        if (id == MainTable->records[i]->id) {
+            if (i == 0)
+            {
+                //与主程序同名
+            }                                                      
+            else if (i >= 1 && i <= MainTable->records[0]->amount)           
+            {
+                //与主程序参数同名
+            }
+            else                                                            
+            {
+                //与库函数同名
+            }
+            return true;
+        }
+    }
+    return false;
+}
 
 namespace ast{
 void SemanticVisitor::visit(AST *AST)
@@ -840,25 +860,5 @@ std::vector<AstNode *> VariableList::Lists()
     return lists;
 }
 
-bool checkDuplicateNameError(string id, int lineNumber)
-{                                                                          
-    for (int i = 0; i <= MainTable->records[0]->amount + 4; i++) {
-        if (id == MainTable->records[i]->id) {
-            if (i == 0)
-            {
-                //与主程序同名
-            }                                                      
-            else if (i >= 1 && i <= MainTable->records[0]->amount)           
-            {
-                //与主程序参数同名
-            }
-            else                                                            
-            {
-                //与库函数同名
-            }
-            return true;
-        }
-    }
-    return false;
-}
+
 }

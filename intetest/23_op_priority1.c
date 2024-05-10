@@ -1,8 +1,11 @@
 #include<stdio.h>
 #include<stdbool.h>
-int a;
+int a, b, c, d;
 int main() {
 a = 10;
-printf("%d",a % 3);
+b = 4;
+c = 2;
+d = 2;
+printf("%d",c + a * b - d);
 return 0;
 }

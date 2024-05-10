@@ -741,7 +741,7 @@ class VariableList: public AstNode
 
 class Variable: public AstNode
 {
-    // 子节点为 ID叶子节点 与 IDVarParts节点
+    // 子节点为 ID叶子节点 与 IDVarParts节点 或单独 ID叶子节点
     // variable -> id id_varparts
   public:
     Variable() {}

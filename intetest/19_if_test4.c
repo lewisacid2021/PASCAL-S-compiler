@@ -1,9 +1,8 @@
 #include<stdio.h>
 #include<stdbool.h>
-int ififelse()
+int da()
 {
-int a;
-int b;
+int a, b;
 a = 5;
 b = 10;
 if ((a == 5))
@@ -19,6 +18,6 @@ a = a + 15;
 return a;
 }
 int main() {
-printf("%d",ififelse( ));
+printf("%d",da( ));
 return 0;
 }

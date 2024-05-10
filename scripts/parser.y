@@ -765,6 +765,15 @@ variable : ID id_varparts
         // 变量的类型需要符号表来进行判断
         $$->append_child(leaf_node);
         $$->append_child($2);
+    }
+    | ID '(' ')'
+    {
+        // variable -> ID id_varparts
+        $$ = new Variable();
+        $$->set_rownum(line_count);
+        LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::NAME);
+        // 变量的类型需要符号表来进行判断
+        $$->append_child(leaf_node);
     };
 
 id_varparts :
