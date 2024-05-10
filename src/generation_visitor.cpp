@@ -249,11 +249,6 @@ void GenerationVisitor::visit(ValueParam *valueparam)
     {
         type->accept(this);
         fprintf(fs, " %s",list[i]->id_ref().c_str());
-<<<<<<< HEAD
-        
-=======
-
->>>>>>> 6bbd07a48ed5d305a62c53057bdc94321ed78a0b
         if(type->GetVarType() == TypeNode::VarType::ARRAY_TYPE)
         {
             auto dim = type->get(0)->DynamicCast<ArrayTypeNode>()->info()->GetDimsum();
@@ -354,29 +349,84 @@ void GenerationVisitor::visit(ElsePart *elseNode )
         }
     } 
 
- void GenerationVisitor::visit(ProcedureCall *procedureCall )  {
-    fprintf(fs, "%s", procedureCall->get_id().c_str());
-    // 根据调用类型决定是否输出参数列表
-    if (procedureCall->get_type() == ProcedureCall::ProcedureType::NO_LIST)
-    {
-        fprintf(fs, "();\n"); // 输出空参数列表
+ std::string generateFormatString(ExpressionList* expressionList) {
+    std::string formatString = "\"";
+    std::vector<std::string>* types = expressionList->get_types();
+
+    for(const auto& type : *types) {
+        if (type == "string") {
+            formatString += "%s";
+        } else if (type == "char") {
+            formatString += "%c";
+        } else if (type == "integer") {
+            formatString += "%d";
+        } else if (type == "real") {
+            formatString += "%f";
+        } else if (type == "boolean") {
+            formatString += "%d";
+        }
+        // 添加逗号和空格
+        formatString += ", ";
     }
-    else if (procedureCall->get_type() == ProcedureCall::ProcedureType::EXP_LIST)
-    {
-        fprintf(fs, "(");
-        procedureCall->get(0)-> accept(this);//expressionlist
+    formatString.pop_back(); // 去除最后一个逗号和空格
+    formatString.pop_back();
+    formatString += "\",";
+    
+    return formatString;
+}
+
+void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
+    if(procedureCall->get_id()=="writeln"){
+            fprintf(fs, "printf(\"\\n\");\n");
+            return;}
+    if(procedureCall->get_id()=="readln"){
+            fprintf(fs, "while(1){\nchar c = getchar(); if(c == '\\n' || c== EOF) break;\n};\n");
+            return;}
+    if(procedureCall->get_id()=="write"){
+        fprintf(fs, "printf(");
+        ExpressionList* expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
+
+        std::string formatString = generateFormatString(expressionList);
+
+        // 使用 fprintf 打印生成的格式化字符串
+        fprintf(fs, "%s", formatString.c_str());
+        procedureCall->get(0)->accept(this); // expressionlist
         fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
     }
-    else if (procedureCall->get_type() == ProcedureCall::ProcedureType::VAR_LIST)
-    {
-        fprintf(fs, "(");
-        procedureCall->get(0)-> accept(this);//variablelist
+    else if(procedureCall->get_id()=="read"){
+        fprintf(fs, "scanf(");
+        ExpressionList* expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
+        std::string formatString = generateFormatString(expressionList);
+
+        // 使用 fprintf 打印生成的格式化字符串
+        fprintf(fs, "%s", formatString.c_str());
+        procedureCall->get(0)->accept(this);//expressionlist
         fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
     }
- }
+    else{
+        fprintf(fs, "%s", procedureCall->get_id().c_str());
+        // 根据调用类型决定是否输出参数列表
+        if (procedureCall->get_type() == ProcedureCall::ProcedureType::NO_LIST)
+        {
+            fprintf(fs, "();\n"); // 输出空参数列表
+        }
+        else if (procedureCall->get_type() == ProcedureCall::ProcedureType::EXP_LIST)
+        {
+            fprintf(fs, "(");
+            procedureCall->get(0)->accept(this);//expressionlist
+            fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
+        }
+        else if (procedureCall->get_type() == ProcedureCall::ProcedureType::VAR_LIST)
+        {
+            fprintf(fs, "(");
+            procedureCall->get(0)->accept(this);//variablelist
+            fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
+        }
+    }
+}
 
 void GenerationVisitor::visit(AssignopStatement *assignopStatement )  
-    {
+{
         auto assignment_node = dynamic_cast<AssignopStatement *>(assignopStatement->get(0));
  
         // 根据左侧类型决定生成的代码逻辑
@@ -385,7 +435,7 @@ void GenerationVisitor::visit(AssignopStatement *assignopStatement )
         case AssignopStatement::LeftType::VARIABLE:
         
             // 生成函数调用的代码
-            assignopStatement->get(0)-> accept(this);
+            assignopStatement->get(0)->accept(this);
 
             // 输出赋值操作符
             fprintf(fs, " = ");
@@ -641,7 +691,7 @@ void GenerationVisitor::visit(SimpleExpression *simpleExpression )  {
     else if (simpleExpression->GetSymType() == SimpleExpression::SymbolType::PLUS_)
     {
         // simple_expression -> + term / simple_exp + term 的情况
-        if(simpleExpression->getCnodeList().size() == 3){
+        if(simpleExpression->getCnodeList().size() == 2){
             simpleExpression->get(0)-> accept(this); 
             fprintf(fs, " + ");
             simpleExpression->get(1)-> accept(this); // 访问 term 节点
@@ -654,7 +704,7 @@ void GenerationVisitor::visit(SimpleExpression *simpleExpression )  {
     else if (simpleExpression->GetSymType() == SimpleExpression::SymbolType::MINUS_)
     {
         // simple_expression -> - term / simple_exp - term 的情况
-        if(simpleExpression->getCnodeList().size() == 3){
+        if(simpleExpression->getCnodeList().size() == 2){
             simpleExpression->get(0)-> accept(this); 
             fprintf(fs, " - ");
             simpleExpression->get(1)-> accept(this); // 访问 term 节点
