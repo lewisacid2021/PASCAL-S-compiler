@@ -87,7 +87,7 @@ ANNO_MUL                (\{|\(\*)[^\{\}(\(\*)(\*\))]*(\}|\*\))
 ANNO_SIG                (\/\/[^\n]+\n)
 
 /* 标识符 */
-ID                      {letter|_}({letter}|{digit}|_)*
+ID                      ({letter}|_)({letter}|{digit}|_)*
 
 /* 字符 */
 CHAR                    ('[^'\n]')
@@ -136,7 +136,8 @@ SUBCATALOG              ".."
 {INT_NUM}                       { write_cache(); to_int(); return INT_NUM; }
 {REAL_NUM}                      { write_cache(); to_float(); return REAL_NUM; }
         
-{ANNO}                          { skip_anno(); }
+{ANNO_MUL}                      { skip_anno(); }
+{ANNO_SIG}                      { skip_anno(); }    
         
 {CHAR}                          { write_cache(); to_char(); return CHAR; }
 {STRING_}                       { write_cache(); to_str_case_sensitive(); return STRING_; }
