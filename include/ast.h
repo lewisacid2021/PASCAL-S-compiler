@@ -128,7 +128,7 @@ class LeafNode: public AstNode
 
 class ProgramStruct: public AstNode
 {
-    //program_head -> program id ( idlist ) | program id
+    //program_struct -> program_head  program_body
 };
 
 class ProgramHead: public AstNode
@@ -907,7 +907,7 @@ class Visitor
     virtual void visit(AST *AST)                           = 0;
     virtual void visit(AstNode *astnode)                   = 0;
     virtual void visit(LeafNode *leafnode)                 = 0;
-    //virtual void visit(ProgramHead *programhead)                 = 0;
+    virtual void visit(ProgramBody *programbody)                 = 0;
     virtual void visit(IdList *idlist)                     = 0;
     virtual void visit(ConstDeclaration *constdeclaration) = 0;
     virtual void visit(RecordDeclaration *recorddeclaration)           = 0;
@@ -954,6 +954,7 @@ class GenerationVisitor: public Visitor
     void visit(SubprogramDeclaration *subprogramdeclaration) override;
     void visit(SubprogramHead *subprogramhead) override;
     void visit(ParamLists *paramlists) override;
+    void visit(ProgramBody *programbody) override;
     void visit(ValueParam *valueparam) override;
 
     void visit(StatementList *statementList) override;
@@ -982,7 +983,7 @@ class SemanticVisitor: public Visitor
     void visit(AstNode *astnode) override;
     void visit(LeafNode *leafnode) override {leafnode->DynamicCast<AstNode>()->accept(this);};
     void visit(IdList *idlist) override { idlist->DynamicCast<AstNode>()->accept(this);};
-    //void visit(ProgramHead *programhead) override;
+    void visit(ProgramBody *programbody) override { programbody->DynamicCast<AstNode>()->accept(this);};
     void visit(ConstDeclaration *constdeclaration) override;
     void visit(RecordDeclaration *recorddeclaration) override;
     void visit(TypeNode *typenode) override {typenode->DynamicCast<AstNode>()->accept(this);};
