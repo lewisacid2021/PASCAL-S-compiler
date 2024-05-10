@@ -83,10 +83,11 @@ INT_NUM                 {digits}
 REAL_NUM                {digits}{fraction}
 
 /* 注释 */
-ANNO                    (\{|\(\*)[^\{\}(\(\*)(\*\))]*(\}|\*\))
+ANNO_MUL                (\{|\(\*)[^\{\}(\(\*)(\*\))]*(\}|\*\))
+ANNO_SIG                (\/\/[^\n]+\n)
 
 /* 标识符 */
-ID                      {letter}({letter}|{digit})*
+ID                      {letter|_}({letter}|{digit}|_)*
 
 /* 字符 */
 CHAR                    ('[^'\n]')
