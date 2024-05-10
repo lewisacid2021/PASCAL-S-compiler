@@ -16,438 +16,526 @@ extern SymbolTable* MainTable;
 extern SymbolTable* CurrentTable;
 
 void addDuplicateNameError(); //重名错误
+bool checkDuplicateNameError(string id, int lineNumber); //检查是否与主程序名，主程序参数，库函数重名
 
-namespace ast{
-void SemanticVisitor::visit(AST *AST)
+    namespace ast
 {
-    AST->getRoot()->accept(this);
-}
-
-void SemanticVisitor::visit(AstNode *astnode)
-{
-    for (auto child : astnode->getCnodeList())
-        child->accept(this);
-}
-
-void SemanticVisitor::visit(ProgramHead *programhead)
-{
-    string id = programhead->get(0)->DynamicCast<LeafNode>()->get_value<string>();
-    int rn = programhead->get(0)->DynamicCast<LeafNode>()->get_rownum();
-
-    set<string> lib;
-    lib.insert("read");
-    lib.insert("write");
-    lib.insert("writeln");
-    lib.insert("exit");
-    //检查主程序是否与库函数重名
-    if(lib.count(id))
+    void SemanticVisitor::visit(AST * AST)
     {
-        addDuplicateNameError();
+        AST->getRoot()->accept(this);
     }
 
-    if(programhead->getCnodeList().size() == 1)
+    void SemanticVisitor::visit(AstNode * astnode)
     {
-        int amount = 0;
-        MainTable->addProgramName(id, rn, "program", amount, "");
+        for (auto child : astnode->getCnodeList())
+            child->accept(this);
     }
-    else
+
+    void SemanticVisitor::visit(ProgramHead * programhead)
     {
-        auto idlist = programhead->get(1)->DynamicCast<IdList>()->Lists();
-        int amount = idlist.size();
-        CurrentTable->addProgramName(id, rn, "program", amount, "");
-        for (auto p : idlist)
+        string id = programhead->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+        int rn    = programhead->get(0)->DynamicCast<LeafNode>()->get_rownum();
+
+        set<string> lib;
+        lib.insert("read");
+        lib.insert("write");
+        lib.insert("writeln");
+        lib.insert("exit");
+        //检查主程序是否与库函数重名
+        if (lib.count(id))
         {
-            string para_id = p->get_value<string>();
-            int para_rn = p->get_rownum();
+            addDuplicateNameError();
+        }
 
-            //检查参数是否与主程序。库函数同名
-            if(para_id == id)
+        if (programhead->getCnodeList().size() == 1)
+        {
+            int amount = 0;
+            MainTable->addProgramName(id, rn, "program", amount, "");
+        } 
+        else
+        {
+            auto idlist = programhead->get(1)->DynamicCast<IdList>()->Lists();
+            int amount  = idlist.size();
+            CurrentTable->addProgramName(id, rn, "program", amount, "");
+            for (auto p : idlist)
             {
-                addDuplicateNameError();
+                string para_id = p->get_value<string>();
+                int para_rn    = p->get_rownum();
+
+                //检查参数是否与主程序。库函数同名
+                if (para_id == id)
+                {
+                    addDuplicateNameError();
+                } 
+                else if (lib.count(para_id))
+                {
+                    addDuplicateNameError();
+                }
+
+                MainTable->addVoidPara(para_id, para_rn);
             }
-            else if(lib.count(para_id))
+        }
+
+        MainTable->addProcedure("read", -1, -1, NULL);
+        //添加write过程，该过程变参
+        MainTable->addProcedure("write", -1, -1, NULL);
+        //添加writeln过程，该过程变参
+        MainTable->addProcedure("writeln", -1, -1, NULL);
+        //添加exit过程，该过程的参数个数需要分情况讨论，程序里会有特判，这里指定为0没有特殊含义
+        MainTable->addProcedure("exit", -1, 0, NULL);
+    }
+
+    void SemanticVisitor::visit(ConstDeclaration * constdeclaration)
+    {
+        auto lists = constdeclaration->Lists();
+        for (auto p : lists)
+        {
+            string id           = std::get<1>(p);
+            int rn              = std::get<0>(p);
+
+            TableRecord *record = findID(CurrentTable, id, 1);
+            if(checkDuplicateNameError(id, rn))
             {
-                addDuplicateNameError();
+                return;
+            }
+            else if(record != NULL)
+            {
+                //重定义错误
+                return;
             }
 
-            MainTable->addVoidPara(para_id, para_rn);
+            string type;
+            string value;
+            ConstValue *const_value                     = std::get<2>(p);
+            ConstValue::ConstvalueType const_value_type = const_value->type();
+            bool isMinus                                = const_value->get_uminus();
+
+            switch (const_value_type) {
+                case ConstValue::ConstvalueType::INTEGER:
+                    type  = "integer";
+                    value = std::to_string(const_value->get<int>());
+                    break;
+                case ConstValue::ConstvalueType::REAL:
+                    type  = "real";
+                    value = std::to_string(const_value->get<float>());
+                    break;
+                case ConstValue::ConstvalueType::BOOLEAN:
+                    type = "boolean";
+                    if (const_value->get<bool>() == true)
+                        value = "true";
+                    else
+                        value = "false";
+                    break;
+                case ConstValue::ConstvalueType::CHAR:
+                    type = "char";
+                    value.push_back(const_value->get<char>());
+                    break;
+                case ConstValue::ConstvalueType::STRING:
+                    type  = "string";
+                    value = const_value->get<string>();
+                    break;
+            }
+
+            CurrentTable->addConst(id, rn, type, isMinus, value);
         }
     }
 
-    MainTable->addProcedure("read", -1, -1, NULL);
-    //添加write过程，该过程变参
-    MainTable->addProcedure("write", -1, -1, NULL);
-    //添加writeln过程，该过程变参
-    MainTable->addProcedure("writeln", -1, -1, NULL);
-    //添加exit过程，该过程的参数个数需要分情况讨论，程序里会有特判，这里指定为0没有特殊含义
-    MainTable->addProcedure("exit", -1, 0, NULL);
-}
-
-void SemanticVisitor::visit(ConstDeclaration *constdeclaration)
-{
-    auto lists = constdeclaration->Lists();
-    for(auto p:lists)
+    void SemanticVisitor::visit(RecordDeclaration * recorddeclaration)
     {
-        string id = std::get<1>(p);
-        int rn = std::get<0>(p);
-        string type;
-        string value;
-        ConstValue * const_value = std::get<2>(p);
-        ConstValue::ConstvalueType const_value_type = const_value->type();
-        bool isMinus = const_value->get_uminus();
+        recorddeclaration->get(0)->accept(this);
 
-        switch(const_value_type){
-            case ConstValue::ConstvalueType::INTEGER:
-                type = "integer";
-                value = std::to_string(const_value->get<int>());
-                break;
-            case ConstValue::ConstvalueType::REAL:
-                type = "real";
-                value = std::to_string(const_value->get<float>());
-                break;
-            case ConstValue::ConstvalueType::BOOLEAN:
-                type = "boolean";
-                if(const_value->get<bool>() == true)
-                    value = "true";
-                else
-                    value = "false";
-                break;
-            case ConstValue::ConstvalueType::CHAR:
-                type = "char";
-                value.push_back(const_value->get<char>());
-                break;
-            case ConstValue::ConstvalueType::STRING:
-                type = "string";
-                value = const_value->get<string>();
-                break;
-        }
+        string id             = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_value<string>();
+        int rn                = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_rownum();
 
-        CurrentTable->addConst(id, rn, type, isMinus, value);
-    }
-}
-
-void SemanticVisitor::visit(RecordDeclaration *recorddeclaration)
-{
-    recorddeclaration->get(0)->accept(this);
-
-    string id = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_value<string>();
-    int rn = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_rownum();
-
-    SymbolTable *subTable = new SymbolTable();
-
-    CurrentTable->addRecord(id, rn, subTable);
-
-    SymbolTable *PreviousTable = CurrentTable;
-    CurrentTable               = subTable;
-
-    recorddeclaration->get(2)->accept(this);
-
-    CurrentTable = PreviousTable;
-}
-
-void SemanticVisitor::visit(VarDeclaration *vardeclaration)
-{
-    IdList* idlist;
-    TypeNode* typenode; 
-
-    if(vardeclaration->GetGrammarType() == VarDeclaration::GrammarType::SINGLE_DECL)
-    {
-        idlist = vardeclaration->get(0)->DynamicCast<IdList>();
-        typenode = vardeclaration->get(1)->DynamicCast<TypeNode>();
-    }
-    else
-    {
-        idlist = vardeclaration->get(1)->DynamicCast<IdList>();
-        typenode = vardeclaration->get(2)->DynamicCast<TypeNode>();
-        vardeclaration->get(0)->accept(this);
-    }
-
-    if(typenode->GetVarType() == TypeNode::VarType::ID_TYPE)
-    {
-        for(auto i:idlist->Lists())
+        TableRecord *record   = findID(CurrentTable, id, 1);
+        if (checkDuplicateNameError(id, rn))
         {
-            string id = i->get_value<string>();
-            int rn = i->get_rownum();
-            string type = typenode->get_type_name();
-            CurrentTable->addVar(id, rn, type);
-        }
-    }
-    else if(typenode->GetVarType() == TypeNode::VarType::ARRAY_TYPE)
-    {
-        auto array_type = typenode->get(0)->DynamicCast<ArrayTypeNode>();
-        auto info = array_type->info();
-        string type = array_type->type();
-        int amount = info->GetDimsum();
-        vector<pair<int,int>> bound;
-
-        for(auto j:info->GetDimensions())
+            return;
+        } 
+        else if (record != NULL)
         {
-            bound.push_back(make_pair(j.lowbound, j.upbound));
+            //重定义错误
+            return;
         }
 
-        for(auto i:idlist->Lists())
-        {
-            string id = i->get_value<string>();
-            int rn = i->get_rownum();
-            CurrentTable->addArray(id, rn, type, amount, bound);
-        }
-    }
-    else if(typenode->GetVarType() == TypeNode::VarType::STRING_TYPE)
-    {
-        auto string_type = typenode->get(0)->DynamicCast<StringTypeNode>();
-        auto string_info = string_type->type();
-        string type = "STRING";
-        int amount = string_info->GetLen();
+        SymbolTable *subTable = new SymbolTable();
 
-        for(auto i:idlist->Lists())
-        {
-            string id = i->get_value<string>();
-            int rn = i->get_rownum();
-            CurrentTable->addString(id, rn, type, amount);
-        }
-    }
-    else if(typenode->GetVarType() == TypeNode::VarType::RECORD_TYPE)
-    {
-        SymbolTable * subTable = new SymbolTable();
-        
-        for(auto i:idlist->Lists())
-        {
-            string id = i->get_value<string>();
-            int rn = i->get_rownum();
-            CurrentTable->addRecord(id, rn, subTable);
-        }
+        CurrentTable->addRecord(id, rn, subTable);
 
-        SymbolTable* PreviousTable = CurrentTable;
-        CurrentTable = subTable;
+        SymbolTable *PreviousTable = CurrentTable;
+        CurrentTable               = subTable;
 
-        typenode->get(0)->accept(this);
+        recorddeclaration->get(2)->accept(this);
 
         CurrentTable = PreviousTable;
     }
 
-    
-}
-
-void SemanticVisitor::visit(SubprogramDeclaration *subprogramdeclaration)
-{
-    SymbolTable *subTable = new SymbolTable();
-    CurrentTable          = subTable;
-    subprogramdeclaration->get(0)->DynamicCast<SubprogramHead>()->accept(this);
-    subprogramdeclaration->get(1)->DynamicCast<SubprogramBody>()->accept(this);
-    CurrentTable = MainTable;
-
-}
-
-void SemanticVisitor::visit(SubprogramHead *subprogramhead)
-{
-    auto type = subprogramhead->get_type();
-    string id = subprogramhead->get_id();
-    int amount = 0;
-    auto formal_param = subprogramhead->get(1)->DynamicCast<FormalParam>();
-
-    if(formal_param->getCnodeList().size() != 0)
+    void SemanticVisitor::visit(VarDeclaration * vardeclaration)
     {
-        auto list = formal_param->get(0)->DynamicCast<ParamLists>()->Lists();
-        for(auto p:list)
+        IdList *idlist;
+        TypeNode *typenode;
+
+        if (vardeclaration->GetGrammarType() == VarDeclaration::GrammarType::SINGLE_DECL)
         {
-            auto ptype = p->get_type();
-            std::vector<LeafNode*> idlist;
-            TypeNode* idtype;
-            if(ptype == ParamList::ParamType::VarParam)
+            idlist   = vardeclaration->get(0)->DynamicCast<IdList>();
+            typenode = vardeclaration->get(1)->DynamicCast<TypeNode>();
+        } 
+        else
+        {
+            idlist   = vardeclaration->get(1)->DynamicCast<IdList>();
+            typenode = vardeclaration->get(2)->DynamicCast<TypeNode>();
+            vardeclaration->get(0)->accept(this);
+        }
+
+        if (typenode->GetVarType() == TypeNode::VarType::ID_TYPE)
+        {
+            for (auto i : idlist->Lists())
             {
-                idlist = p->get(0)->get(0)->get(0)->DynamicCast<IdList>()->Lists();
-                idtype = p->get(0)->get(0)->get(1)->DynamicCast<TypeNode>();
-                for(auto id:idlist)
+                string id   = i->get_value<string>();
+                int rn      = i->get_rownum();
+
+                TableRecord *record = findID(CurrentTable, id, 1);
+                if (checkDuplicateNameError(id, rn))
                 {
-                    CurrentTable->addVarPara(id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
-                    id->set_ref(true);
-                    amount++;
+                    return;
+                } 
+                else if (record != NULL)
+                {
+                    //重定义错误
+                    return;
+                }
+
+                string type = typenode->get_type_name();
+                CurrentTable->addVar(id, rn, type);
+            }
+        } 
+        else if (typenode->GetVarType() == TypeNode::VarType::ARRAY_TYPE)
+        {
+            auto array_type = typenode->get(0)->DynamicCast<ArrayTypeNode>();
+            auto info       = array_type->info();
+            string type     = array_type->type();
+            int amount      = info->GetDimsum();
+            vector<pair<int, int>> bound;
+
+            for (auto j : info->GetDimensions())
+            {
+                bound.push_back(make_pair(j.lowbound, j.upbound));
+            }
+
+            //数组上下界检查
+            for(auto p:bound)
+            {
+                if(p.first>p.second)
+                {
+                    //数组下界大于上界
                 }
             }
-            else
+
+            for (auto i : idlist->Lists())
             {
-                idlist = p->get(0)->get(0)->DynamicCast<IdList>()->Lists();
-                idtype = p->get(0)->get(1)->DynamicCast<TypeNode>();
-                for(auto id:idlist)
+                string id = i->get_value<string>();
+                int rn    = i->get_rownum();
+
+                TableRecord *record = findID(CurrentTable, id, 1);
+                if (checkDuplicateNameError(id, rn))
                 {
-                    CurrentTable->addPara(id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
-                    amount++;
+                    return;
+                } 
+                else if (record != NULL)
+                {
+                    //重定义错误
+                    return;
+                }
+
+                CurrentTable->addArray(id, rn, type, amount, bound);
+            }
+        } 
+        else if (typenode->GetVarType() == TypeNode::VarType::STRING_TYPE)
+        {
+            auto string_type = typenode->get(0)->DynamicCast<StringTypeNode>();
+            auto string_info = string_type->type();
+            string type      = "STRING";
+            int amount       = string_info->GetLen();
+
+            for (auto i : idlist->Lists())
+            {
+                string id = i->get_value<string>();
+                int rn    = i->get_rownum();
+
+                TableRecord *record = findID(CurrentTable, id, 1);
+                if (checkDuplicateNameError(id, rn))
+                {
+                    return;
+                } 
+                else if (record != NULL)
+                {
+                    //重定义错误
+                    return;
+                }
+
+                CurrentTable->addString(id, rn, type, amount);
+            }
+        }
+        else if (typenode->GetVarType() == TypeNode::VarType::RECORD_TYPE)
+        {
+            SymbolTable *subTable = new SymbolTable();
+
+            for (auto i : idlist->Lists())
+            {
+                string id = i->get_value<string>();
+                int rn    = i->get_rownum();
+
+                TableRecord *record = findID(CurrentTable, id, 1);
+                if (checkDuplicateNameError(id, rn))
+                {
+                    return;
+                } 
+                else if (record != NULL)
+                {
+                    //重定义错误
+                    return;
+                }
+
+                CurrentTable->addRecord(id, rn, subTable);
+            }
+
+            SymbolTable *PreviousTable = CurrentTable;
+            CurrentTable               = subTable;
+
+            typenode->get(0)->accept(this);
+
+            CurrentTable = PreviousTable;
+        }
+    }
+
+    void SemanticVisitor::visit(SubprogramDeclaration * subprogramdeclaration)
+    {
+        SymbolTable *subTable = new SymbolTable();
+        CurrentTable          = subTable;
+        subprogramdeclaration->get(0)->DynamicCast<SubprogramHead>()->accept(this);
+        subprogramdeclaration->get(1)->DynamicCast<SubprogramBody>()->accept(this);
+        CurrentTable = MainTable;
+    }
+
+    void SemanticVisitor::visit(SubprogramHead * subprogramhead)
+    {
+        auto type         = subprogramhead->get_type();
+
+        TableRecord *record = findID(MainTable, subprogramhead->get_id(), 1);
+        if (record != NULL)
+        {
+            //重定义错误,返回主表检查
+            return;
+        }
+
+        int amount        = 0;
+        auto formal_param = subprogramhead->get(1)->DynamicCast<FormalParam>();
+
+        if (formal_param->getCnodeList().size() != 0)
+        {
+            auto list = formal_param->get(0)->DynamicCast<ParamLists>()->Lists();
+            for (auto p : list)
+            {
+                auto ptype = p->get_type();
+                std::vector<LeafNode *> idlist;
+                TypeNode *idtype;
+                if (ptype == ParamList::ParamType::VarParam)
+                {
+                    idlist = p->get(0)->get(0)->get(0)->DynamicCast<IdList>()->Lists();
+                    idtype = p->get(0)->get(0)->get(1)->DynamicCast<TypeNode>();
+                    for (auto id : idlist)
+                    {
+                        TableRecord *para_record = findID(CurrentTable, subprogramhead->get_id(), 1);
+                        if (para_record != NULL)
+                        {
+                            //重定义错误
+                            return;
+                        }
+
+                        CurrentTable->addVarPara(id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
+                        id->set_ref(true);
+                        amount++;
+                    }
+                } else
+                {
+                    idlist = p->get(0)->get(0)->DynamicCast<IdList>()->Lists();
+                    idtype = p->get(0)->get(1)->DynamicCast<TypeNode>();
+                    for (auto id : idlist)
+                    {
+                        TableRecord *para_record = findID(CurrentTable, subprogramhead->get_id(), 1);
+                        if (para_record != NULL)
+                        {
+                            //重定义错误
+                            return;
+                        }
+
+                        CurrentTable->addPara(id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
+                        amount++;
+                    }
                 }
             }
-            
+        }
+
+        if (type == SubprogramHead::SubprogramType::PROC)
+        {
+            MainTable->addProcedure(subprogramhead->get_id(), subprogramhead->get_rownum(), amount, CurrentTable);
+            CurrentTable->addProgramName(subprogramhead->get_id(), subprogramhead->get_rownum(), "procedure", amount, "");
+        } else
+        {
+            auto ret_type = subprogramhead->get(2)->DynamicCast<TypeNode>()->get_type_name();
+            MainTable->addFunction(subprogramhead->get_id(), subprogramhead->get_rownum(), ret_type, amount, CurrentTable);
+            CurrentTable->addProgramName(subprogramhead->get_id(), subprogramhead->get_rownum(), "procedure", amount, ret_type);
         }
     }
 
-    if(type == SubprogramHead::SubprogramType::PROC)
+    void SemanticVisitor::visit(VariableList * variablelist)
     {
-        MainTable->addProcedure(subprogramhead->get_id(), subprogramhead->get_rownum(), amount, CurrentTable);
-        CurrentTable->addProgramName(subprogramhead->get_id(), subprogramhead->get_rownum(), "procedure", amount, "");
+        vector<AstNode * > lists = variablelist->Lists();
+        std::vector<std::string> *type_list;
+        for (auto a : lists) {
+            Variable *var = a->DynamicCast<Variable>();
+            if (var->get_vn() == "unknown") {
+                var->accept(this);
+            }
+            type_list->emplace_back(var->get_vn());
+        }
+        variablelist->set_types(type_list);
     }
-    else
+
+    void SemanticVisitor::visit(Variable * variable)
     {
-        auto ret_type = subprogramhead->get(2)->DynamicCast<TypeNode>()->get_type_name();
-        MainTable->addFunction(subprogramhead->get_id(), subprogramhead->get_rownum(),ret_type, amount, CurrentTable);
-        CurrentTable->addProgramName(subprogramhead->get_id(), subprogramhead->get_rownum(), "procedure", amount, ret_type);
-    }
-}
-
-void SemanticVisitor::visit(VariableList* variablelist)
-{
-    vector<AstNode* > lists = variablelist->Lists();
-    std::vector<std::string> *type_list;
-    for(auto a : lists){
-        Variable* var = a->DynamicCast<Variable>();
-        if(var->get_vn() == "unknown"){
-            var->accept(this);
-        }
-        type_list->emplace_back(var->get_vn());
-    }
-    variablelist->set_types(type_list);
-}
-
-void SemanticVisitor::visit(Variable *variable)
-{
-    LeafNode* leaf_node = variable->get(0)->DynamicCast<LeafNode>();
-    string id = leaf_node->get_value<string>();
-    auto record_info = findID(CurrentTable, id, 0);
-    if(record_info != NULL){
-        //暂未考虑记录型
-        variable->set_vn(record_info->type); 
-    }
-    else{
-        //子表未找到，到主表找
-        record_info = findID(MainTable, id, 0);
-        if(record_info != NULL){
-            variable->set_vn(record_info->type); 
-        }
-        else{
-            //错误处理，找到未定义变量
-            
+        LeafNode *leaf_node = variable->get(0)->DynamicCast<LeafNode>();
+        string id           = leaf_node->get_value<string>();
+        auto record_info    = findID(CurrentTable, id, 0);
+        if (record_info != NULL) {
+            //暂未考虑记录型
+            variable->set_vn(record_info->type);
+        } else {
+            //子表未找到，到主表找
+            record_info = findID(MainTable, id, 0);
+            if (record_info != NULL) {
+                variable->set_vn(record_info->type);
+            } else {
+                //错误处理，找到未定义变量
+            }
         }
     }
-}
 
-void SemanticVisitor::visit(AssignopStatement *assignstatement)
-{
-    LeafNode* leaf_node = assignstatement->get(0)->get(0)->DynamicCast<LeafNode>();
-    auto record_info = findID(MainTable, leaf_node->get_value<string>(), 0);
-    if(record_info != NULL){
-        if(record_info->flag == "function"){
-            assignstatement->set_type(AssignopStatement::LeftType::FUNCID);
+    void SemanticVisitor::visit(AssignopStatement * assignstatement)
+    {
+        LeafNode *leaf_node = assignstatement->get(0)->get(0)->DynamicCast<LeafNode>();
+        auto record_info    = findID(MainTable, leaf_node->get_value<string>(), 0);
+        if (record_info != NULL) {
+            if (record_info->flag == "function") {
+                assignstatement->set_type(AssignopStatement::LeftType::FUNCID);
+            }
         }
     }
-}
 
-void SemanticVisitor::visit(ExpressionList *expressionlist)
-{
-    vector<AstNode*> lists = expressionlist->Lists();
-    std::vector<std::string> *exp_types = expressionlist->get_types();
-    for(int i = 0 ; i < exp_types->size(); i++){
-        Expression* exp = lists[i]->DynamicCast<Expression>();
-        if((*exp_types)[i] == "unknown"){
-            exp->accept(this);
+    void SemanticVisitor::visit(ExpressionList * expressionlist)
+    {
+        vector<AstNode *> lists             = expressionlist->Lists();
+        std::vector<std::string> *exp_types = expressionlist->get_types();
+        for (int i = 0; i < exp_types->size(); i++) {
+            Expression *exp = lists[i]->DynamicCast<Expression>();
+            if ((*exp_types)[i] == "unknown") {
+                exp->accept(this);
+            }
+            (*exp_types)[i] = exp->GetExpType();
         }
-        (*exp_types)[i] = exp->GetExpType(); 
     }
-}
 
-void SemanticVisitor::visit(Expression *expression)
-{
-    if(expression->GetExpType() == "unknown"){
-        switch (expression->GetGraType()) {
-            case Expression::GrammarType::DOUBLE:
-            {
-                if(expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown"){
+    void SemanticVisitor::visit(Expression * expression)
+    {
+        if (expression->GetExpType() == "unknown") {
+            switch (expression->GetGraType()) {
+                case Expression::GrammarType::DOUBLE:
+                {
+                    if (expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown") {
+                        expression->get(0)->accept(this);
+                    }
+                    string sexpression_type1 = expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType();
+                    if (expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown") {
+                        expression->get(1)->accept(this);
+                    }
+                    string sexpression_type2 = expression->get(1)->DynamicCast<SimpleExpression>()->GetExpType();
+                    // 类型检查
+                    if ((sexpression_type2 == "integer" || sexpression_type2 == "char" || sexpression_type2 == "real") &&
+                        (sexpression_type1 == "integer" || sexpression_type1 == "char" || sexpression_type1 == "real")) {
+                        expression->SetExpType("boolean");
+                    } else {
+                    }
+                }
+                case Expression::GrammarType::SINGLE:
+                {
                     expression->get(0)->accept(this);
+                    string etype = expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType();
+                    expression->SetExpType(etype);
+                    break;
                 }
-                string sexpression_type1 = expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType();
-                if(expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown"){
-                    expression->get(1)->accept(this);
-                }
-                string sexpression_type2 = expression->get(1)->DynamicCast<SimpleExpression>()->GetExpType();
-                // 类型检查
-                if((sexpression_type2 == "integer" || sexpression_type2 == "char" || sexpression_type2 == "real")&&
-                (sexpression_type1 == "integer" || sexpression_type1 == "char" || sexpression_type1 == "real")){
-                    expression->SetExpType("boolean");
-                }
-                else{
-
-                }
-            }
-            case Expression::GrammarType::SINGLE:
-            {
-                expression->get(0)->accept(this);
-                string etype = expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType();
-                expression->SetExpType(etype);
-                break;
             }
         }
     }
-}
 
-void SemanticVisitor::visit(SimpleExpression *sexpression)
-{
-    if(sexpression->GetExpType() == "unknown"){
-        switch (sexpression->GetSymType()) {
-            case SimpleExpression::SymbolType::SINGLE:
-            {
-                sexpression->get(0)->accept(this);
-                string stype = sexpression->get(0)->DynamicCast<Term>()->GetTerType();
-                sexpression->SetExpType(stype);
-                break;
-            }
-            case SimpleExpression::SymbolType::PLUS_:
-            case SimpleExpression::SymbolType::MINUS_:
-            {
-                if(sexpression->getCnodeList().size() == 1){
-                    if(sexpression->get(0)->DynamicCast<Term>()->GetTerType() == "unknown"){
-                        sexpression->get(0)->accept(this);
-                    }
-                    string term_type = sexpression->get(0)->DynamicCast<Term>()->GetTerType();
-                    //类型检查
-                    if(term_type == "real" || term_type == "interger"){
-                        sexpression->SetExpType(term_type);
-                    }
-                    else{
-                        //error
-                    }
+    void SemanticVisitor::visit(SimpleExpression * sexpression)
+    {
+        if (sexpression->GetExpType() == "unknown") {
+            switch (sexpression->GetSymType()) {
+                case SimpleExpression::SymbolType::SINGLE:
+                {
+                    sexpression->get(0)->accept(this);
+                    string stype = sexpression->get(0)->DynamicCast<Term>()->GetTerType();
+                    sexpression->SetExpType(stype);
+                    break;
                 }
-                else{
-                    if(sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown"){
+                case SimpleExpression::SymbolType::PLUS_:
+                case SimpleExpression::SymbolType::MINUS_:
+                {
+                    if (sexpression->getCnodeList().size() == 1) {
+                        if (sexpression->get(0)->DynamicCast<Term>()->GetTerType() == "unknown") {
+                            sexpression->get(0)->accept(this);
+                        }
+                        string term_type = sexpression->get(0)->DynamicCast<Term>()->GetTerType();
+                        //类型检查
+                        if (term_type == "real" || term_type == "interger") {
+                            sexpression->SetExpType(term_type);
+                        } else {
+                            //error
+                        }
+                    } else {
+                        if (sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown") {
+                            sexpression->get(0)->accept(this);
+                        }
+                        string term_type1 = sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType();
+                        if (sexpression->get(1)->DynamicCast<Term>()->GetTerType() == "unknown") {
+                            sexpression->get(1)->accept(this);
+                        }
+                        string term_type2 = sexpression->get(1)->DynamicCast<Term>()->GetTerType();
+                        //类型检查
+                        if ((term_type1 == "real" || term_type1 == "interger") && (term_type2 == "real" || term_type2 == "interger")) {
+                            if (term_type1 == "real" || term_type1 == "real") {
+                                sexpression->SetExpType("real");
+                            } else {
+                                sexpression->SetExpType("integer");
+                            }
+                        } else {
+                            //error
+                        }
+                    }
+                    break;
+                }
+                case SimpleExpression::SymbolType::OR_:
+                {
+                    if (sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown") {
                         sexpression->get(0)->accept(this);
                     }
                     string term_type1 = sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType();
-                    if(sexpression->get(1)->DynamicCast<Term>()->GetTerType() == "unknown"){
+                    if (sexpression->get(1)->DynamicCast<Term>()->GetTerType() == "unknown") {
                         sexpression->get(1)->accept(this);
                     }
                     string term_type2 = sexpression->get(1)->DynamicCast<Term>()->GetTerType();
                     //类型检查
-                    if((term_type1 == "real" || term_type1 == "interger")&&(term_type2 == "real" || term_type2 == "interger")){
-                        if(term_type1 == "real" || term_type1 == "real"){
-                            sexpression->SetExpType("real");
-                        }
-                        else{
-                            sexpression->SetExpType("integer");
-                        }
-                    }
-                    else{
-                        //error
-                    }
-                }
-                break;
-            }
-            case SimpleExpression::SymbolType::OR_:
-            {
-                if(sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown"){
-                    sexpression->get(0)->accept(this);
-                }
-                string term_type1 = sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType();
-                if(sexpression->get(1)->DynamicCast<Term>()->GetTerType() == "unknown"){
-                    sexpression->get(1)->accept(this);
-                }
-                string term_type2 = sexpression->get(1)->DynamicCast<Term>()->GetTerType();
-                //类型检查
-                if(term_type1 == "boolean" && term_type2 == "boolean" ){
+                    if (term_type1 == "boolean" && term_type2 == "boolean") {
                         sexpression->SetExpType("boolean");
                 }
                 else{
@@ -735,4 +823,25 @@ std::vector<AstNode *> VariableList::Lists()
     return lists;
 }
 
+bool checkDuplicateNameError(string id, int lineNumber)
+{                                                                          
+    for (int i = 0; i <= MainTable->records[0]->amount + 4; i++) {
+        if (id == MainTable->records[i]->id) {
+            if (i == 0)
+            {
+                //与主程序同名
+            }                                                      
+            else if (i >= 1 && i <= MainTable->records[0]->amount)           
+            {
+                //与主程序参数同名
+            }
+            else                                                            
+            {
+                //与库函数同名
+            }
+            return true;
+        }
+    }
+    return false;
+}
 }
