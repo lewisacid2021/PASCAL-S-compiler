@@ -73,4 +73,6 @@ class SymbolTable
     ~SymbolTable() {}
 };
 
+extern TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode);
+
 #endif

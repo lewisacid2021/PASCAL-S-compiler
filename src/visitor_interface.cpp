@@ -72,14 +72,11 @@ void CompoundStatement::accept(Visitor *visitor )
     visitor->visit(this );
 }
 
-<<<<<<< HEAD
 void Statement::accept(Visitor *visitor )
 {
     visitor->visit(this );
 }
 
-=======
->>>>>>> 6bbd07a48ed5d305a62c53057bdc94321ed78a0b
 void StatementList::accept(Visitor *visitor )
 {
     visitor->visit(this );
@@ -154,9 +151,5 @@ void Factor::accept(Visitor *visitor )
 {
     visitor->visit(this );
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> 6bbd07a48ed5d305a62c53057bdc94321ed78a0b
 }
 

@@ -2305,7 +2305,7 @@ yyreduce:
 #line 824 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // expression -> simple_expression RELOP simple_expression.
-        (yyval.expression_node) = new Expression(Expression::GrammarType::DOUBLE, (yyvsp[-1].token_info).value.get<string>(), "bool");
+        (yyval.expression_node) = new Expression(Expression::GrammarType::DOUBLE, (yyvsp[-1].token_info).value.get<string>(), "unkown");
         (yyval.expression_node)->set_rownum(line_count);
         (yyval.expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.expression_node)->append_child((yyvsp[0].simple_expression_node));
@@ -2317,7 +2317,7 @@ yyreduce:
 #line 832 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // expression -> simple_expression '=' simple_expression.
-        (yyval.expression_node) = new Expression(Expression::GrammarType::DOUBLE, "=", "bool");
+        (yyval.expression_node) = new Expression(Expression::GrammarType::DOUBLE, "=", "unknown");
         (yyval.expression_node)->set_rownum(line_count);
         (yyval.expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.expression_node)->append_child((yyvsp[0].simple_expression_node));
@@ -2373,7 +2373,7 @@ yyreduce:
 #line 869 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // simple_expression -> simple_expression or term.、
-        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::OR_, "bool");
+        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::OR_, "unknown");
         (yyval.simple_expression_node)->set_rownum(line_count);
         (yyval.simple_expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
@@ -2385,7 +2385,7 @@ yyreduce:
 #line 877 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { 
         // simple_expression -> simple_expression + term.
-        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::PLUS_, (yyvsp[0].term_node)->GetTerType());
+        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::PLUS_, "unknown");
         (yyval.simple_expression_node)->set_rownum(line_count);
         (yyval.simple_expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
@@ -2396,7 +2396,7 @@ yyreduce:
   case 91: /* simple_expression: simple_expression UMINUS term  */
 #line 885 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
-        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::MINUS_, (yyvsp[0].term_node)->GetTerType());
+        (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::MINUS_, "unknown");
         (yyval.simple_expression_node)->set_rownum(line_count);
         (yyval.simple_expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
@@ -2424,23 +2424,23 @@ yyreduce:
         std::string sym_type = (yyvsp[-1].token_info).value.get<string>();
         if(sym_type == "*"){
             (yyval.term_node)->SetSymType(Term::SymbolType::MULTIPLY);
-            (yyval.term_node)->SetTerType("real");
+            (yyval.term_node)->SetTerType("unknown");
         }
         if(sym_type == "/"){
             (yyval.term_node)->SetSymType(Term::SymbolType::DEVIDE);
-            (yyval.term_node)->SetTerType("real");
+            (yyval.term_node)->SetTerType("unknown");
         }
         if(sym_type == "mod"){
             (yyval.term_node)->SetSymType(Term::SymbolType::MOD);
-            (yyval.term_node)->SetTerType("real");
+            (yyval.term_node)->SetTerType("unknown");
         }
         if(sym_type == "and"){
             (yyval.term_node)->SetSymType(Term::SymbolType::AND);
-            (yyval.term_node)->SetTerType("bool");
+            (yyval.term_node)->SetTerType("unknown");
         }
         if(sym_type == "div"){
             (yyval.term_node)->SetSymType(Term::SymbolType::DEVIDE);
-            (yyval.term_node)->SetTerType("real");
+            (yyval.term_node)->SetTerType("unknown");
         }
         (yyval.term_node)->append_child((yyvsp[-2].term_node));
         (yyval.term_node)->append_child((yyvsp[0].factor_node));
@@ -2526,7 +2526,7 @@ yyreduce:
         // factor -> variable.
         (yyval.factor_node) = new Factor(Factor::GrammerType::VARIABLE);
         (yyval.factor_node)->set_rownum(line_count);
-        // $$->SetFacType("STRING");
+        (yyval.factor_node)->SetFacType("unknown");
         (yyval.factor_node)->append_child((yyvsp[0].variable_node));
     }
 #line 2533 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
@@ -2539,7 +2539,7 @@ yyreduce:
         (yyval.factor_node)->set_rownum(line_count);
         LeafNode *leaf_node = new LeafNode((yyvsp[-3].token_info).value, LeafNode::LeafType::NAME);
         // 类型需要靠符号表确认
-        // $$->SetFacType("STRING");
+        (yyval.factor_node)->SetFacType("unknown");
         (yyval.factor_node)->append_child(leaf_node);
         (yyval.factor_node)->append_child((yyvsp[-1].expression_list_node));
     }
