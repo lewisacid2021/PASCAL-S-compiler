@@ -119,6 +119,9 @@ void SymbolTable::addProgramName(string id, int rowNumber, string programInfo, i
 {
     if (records.size() != 0)
     {
+        for(auto i : records){
+            cout << i->flag << i->type << i->id << endl;
+        }
         cout << "[addProgramName Error]:records is not null";
         return;
     }

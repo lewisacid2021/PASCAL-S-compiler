@@ -957,6 +957,14 @@ factor : INT_NUM
         $$->SetFacType("real");
         $$->append_child(leaf_node);
     }
+    | PLUS factor
+    {
+        // factor -> num
+        $$ = new Factor(Factor::GrammerType::UMINUS_);
+        $$->set_rownum(line_count);
+        $$->SetFacType($2->GetFacType());
+        $$->append_child($2);
+    }
     | STRING_
     {
         // factor -> STRING

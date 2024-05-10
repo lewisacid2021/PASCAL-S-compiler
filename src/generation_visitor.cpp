@@ -48,8 +48,16 @@ void GenerationVisitor::visit(LeafNode *leafnode)
         {
             if (leafnode->getLeafType() == LeafNode::LeafType::VALUE)
                 fprintf(fs, "\"%s\"", leafnode->get_value<string>().c_str());
-            else
-                fprintf(fs, "%s", leafnode->get_value<string>().c_str());
+            else{
+                string leaf_id = leafnode->get_value<string>();
+                auto record_info = findID(CurrentTable, leaf_id, 1);
+                if(record_info != NULL){
+                    if(record_info->flag == "var parameter"){
+                        leafnode->set_ref(true);
+                    }
+                }
+                fprintf(fs, "%s", leafnode->id_ref().c_str());
+            }
             break;
         }
         default:
@@ -203,14 +211,21 @@ void GenerationVisitor::visit(PeriodsNode *periodsnode)
 
 void GenerationVisitor::visit(SubprogramDeclaration *subprogramdeclaration)
 {
+    string id = subprogramdeclaration->get(0)->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+    auto record_info = findID(MainTable, id, 0);
+    CurrentTable = record_info->subSymbolTable;
+    // if(CurrentTable == NULL){
+    //     cout << "error" << endl;
+    // }
     subprogramdeclaration->get(0)->accept(this);  //subprogramhead
     fprintf(fs, "{\n");
     subprogramdeclaration->get(1)->accept(this);   //subprogrambody
     fprintf(fs, "}\n");
+    CurrentTable = MainTable;
 }
 
 void GenerationVisitor::visit(SubprogramHead *subprogramhead)
-{
+{   
     if (subprogramhead->get_type() == SubprogramHead::SubprogramType::PROC)
         fprintf(fs, "void ");
     else
@@ -224,6 +239,7 @@ void GenerationVisitor::visit(SubprogramHead *subprogramhead)
     fprintf(fs, "(");
     subprogramhead->get(1)->accept(this);  //formal_param
     fprintf(fs, ")\n");
+
 }
 
 void GenerationVisitor::visit(ParamLists *paramlists)
@@ -405,7 +421,29 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
         else if (procedureCall->get_type() == ProcedureCall::ProcedureType::EXP_LIST)
         {
             fprintf(fs, "(");
-            procedureCall->get(0)->accept(this);//expressionlist
+            //procedureCall->get(0)->accept(this);//expressionlist
+             vector<AstNode*> lists= procedureCall->get(0)->DynamicCast<ExpressionList>()->Lists();
+            for(int i = 0; i < lists.size(); i++){
+                if(lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE){
+                    if(lists[i]->get(0)->DynamicCast<SimpleExpression>()->getCnodeList().size() == 1){
+                        if(lists[i]->get(0)->get(0)->DynamicCast<Term>()->GetSymType() == Term::SymbolType::SINGLE){
+                            if(lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE){
+                                auto table_info = findID(MainTable, procedureCall->get_id(), 0);
+                                if(table_info != NULL){                  
+                                    if(table_info->subSymbolTable->records[i+1]->flag == "var parameter"){
+                                        fprintf(fs, "&");
+                                    }  
+                                }
+                            }
+                        }
+                    }
+                }
+                lists[i]->accept(this);
+                if(i != lists.size() - 1){
+                    fprintf(fs, ", ");
+                }
+            }
+            
             fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
         }
         else if (procedureCall->get_type() == ProcedureCall::ProcedureType::VAR_LIST)
@@ -661,11 +699,34 @@ void GenerationVisitor::visit(VariableList *variableList )   {
             fprintf(fs, ")");
             break;
         case Factor::GrammerType::ID_EXP_LIST:
+        {   
             factor->get(0)-> accept(this);
             fprintf(fs, "(");
-            factor->get(1)-> accept(this);
+            vector<AstNode*> lists= factor->get(1)->DynamicCast<ExpressionList>()->Lists();
+            for(int i = 0; i < lists.size(); i++){
+                if(lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE){
+                    if(lists[i]->get(0)->DynamicCast<SimpleExpression>()->getCnodeList().size() == 1){
+                        if(lists[i]->get(0)->get(0)->DynamicCast<Term>()->GetSymType() == Term::SymbolType::SINGLE){
+                            if(lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE){
+                                auto table_info = findID(MainTable, factor->get(0)->DynamicCast<LeafNode>()->get_value<string>(), 0);
+                                if(table_info != NULL){                  
+                                    if(table_info->subSymbolTable->records[i+1]->flag == "var parameter"){
+                                        fprintf(fs, "&");
+                                    }  
+                                }
+                            }
+                        }
+                    }
+                }
+                lists[i]->accept(this);
+                if(i != lists.size() - 1){
+                    fprintf(fs, ", ");
+                }
+            }
+            //factor->get(1)-> accept(this);
             fprintf(fs, ")");
             break;
+        }
         case Factor::GrammerType::NOT_:
             fprintf(fs, "!");
             factor->get(0)-> accept(this);

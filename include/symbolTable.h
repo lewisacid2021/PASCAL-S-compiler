@@ -2,7 +2,7 @@
 
 #ifndef SYMBOLTABLE_H
 #define SYMBOLTABLE_H
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 
@@ -53,8 +53,8 @@ class SymbolTable
   public:
     string tableType;               //类型，主符号表或子符号表
     vector<TableRecord *> records;  //指向record成员的指针
-    map<string, int> idLoc;         //存储标识符在records中的下标，加快查询速度
-    map<string, int> idCount;
+    unordered_map<string, int> idLoc;         //存储标识符在records中的下标，加快查询速度
+    unordered_map<string, int> idCount;
 
     void addPara(string id, int rowNumber, string type);
     void addVarPara(string id, int rowNumber, string type);
