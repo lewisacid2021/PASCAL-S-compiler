@@ -1,4 +1,3 @@
-%option case-insensitive 
 %{   
 #include "parser.h"
 //#include "log.h"
