@@ -83,7 +83,8 @@ INT_NUM                 {digits}
 REAL_NUM                {digits}{fraction}
 
 /* 注释 */
-ANNO_MUL                (\{|\(\*)[^\{\}(\(\*)(\*\))]*(\}|\*\))
+/*ANNO_MUL                (\{|\(\*)[^\{\}(\(\*)(\*\))]*(\}|\*\))*/
+ANNO_MUL                ((\{)[^\{\}]*(\}))|((\(\*)[^(\(\*)(\*\))]*(\*\)))
 ANNO_SIG                (\/\/[^\n]+\n)
 
 /* 标识符 */
@@ -181,7 +182,8 @@ SUBCATALOG              ".."
 ('[^'\n][^']*(\n)[^']*')        { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
 ('[^']*(\n)[^']*[^'\n]')        { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
               
-(\{|(\(\*)[^\{\}(\(\*)(\*\))]*)  { write_cache(); print_lex_error("unclosed comment"); skip_error_token(); }
+/*(\{|(\(\*)[^\{\}(\(\*)(\*\))]*)  { write_cache(); print_lex_error("unclosed comment"); skip_error_token(); } */
+(\{[^\{\}]*)|((\(\*)[^(\(\*)(\*\))]*)  { write_cache(); print_lex_error("unclosed comment"); skip_error_token(); }
 ('[^']*)                        { write_cache(); print_lex_error("unclosed string constant"); skip_error_token(); }
 
 .                               { write_cache(); print_lex_error("illegal character"); char_count++; }
