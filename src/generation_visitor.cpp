@@ -176,7 +176,7 @@ void GenerationVisitor::visit(VarDeclaration *vardeclaration)
     {
         auto ArrayType = type_node->get(0)->DynamicCast<ArrayTypeNode>();
 
-        auto id_list   = vardeclaration->get(-2)->getCnodeList();
+        auto id_list   = vardeclaration->get(-2)->DynamicCast<IdList>()->Lists();
         for (uint i = 0; i < id_list.size(); i++)
         {
             id_list[i]->accept(this);
@@ -301,30 +301,7 @@ void GenerationVisitor::visit(StatementList *statementList)
     std::vector<AstNode *> &statements = statementList->getCnodeList();
     
     size_t numChildren = statements.size(); 
-    // if(numChildren == 1){
-    //     auto s = statementList->get(0)->DynamicCast<Statement >();
-    //     switch (s->get_type())
-    //     {
-    //     case Statement::StatementType::EPSILON:
-    //         fprintf(fs, "1 ");
-    //         break;
-    //     case Statement::StatementType::ASSIGN_OP_STATEMENT:
-    //     fprintf(fs, "2 ");
-    //         break;
-    //     case Statement::StatementType::PROCEDURE_CALL:
-    //     fprintf(fs, "3 ");
-    //         break;
-    //     case Statement::StatementType::COMPOUND_STATEMENT:
-    //     fprintf(fs, "4 ");
-    //         break;
-    //     case Statement::StatementType::IF_STATEMENT:
-    //     fprintf(fs, "5 ");
-    //         break;
-    //     case Statement::StatementType::LOOP_STATEMENT:
-    //     fprintf(fs, "6 ");
-    //         break;
-    //     }
-    // }
+
     // 递归访问子节点
     for (size_t i = 0; i < numChildren; ++i)
     {
@@ -551,12 +528,33 @@ void GenerationVisitor::visit(Variable *variable )  {
     auto record_info = findID(MainTable, id, 0);
     if(record_info != NULL){
         if(record_info->flag == "function"){
-            fprintf(fs, "( )");
+            fprintf(fs, "()");
         }
     }
     // 访问第二个子节点
     if(variable->getCnodeList().size() == 2){
-        variable->get(1)-> accept(this);
+        std::vector<AstNode *> list = variable->get(1)->DynamicCast<IDVarParts>()->Lists();
+
+        // 遍历子节点列表并逐个访问
+        for (auto i : list) {
+            IDVarPart *idvarpart = i->DynamicCast<IDVarPart>();
+            if (idvarpart->get_type() == IDVarPart::GrammarType::_ID)
+            {
+                fprintf(fs, ".");
+                idvarpart->get(0)->accept(this);// 访问 id
+            }
+            else if (idvarpart->get_type() == IDVarPart::GrammarType::EXP_LIST)
+            {   
+                auto exp_list = idvarpart->get(0)->DynamicCast<ExpressionList>()->Lists();
+                for(auto exp : exp_list){
+                    fprintf(fs, "[");
+                    exp->accept(this);
+                    auto record_info = findID(CurrentTable, id, 0);
+
+                    fprintf(fs, "]");
+                }
+            }
+        }
     }
 }
 
@@ -584,34 +582,36 @@ void GenerationVisitor::visit(VariableList *variableList )   {
         }
     }
 }
-void GenerationVisitor::visit(IDVarPart *idVarPart )  
-{
-    if (idVarPart->get_type() == IDVarPart::GrammarType::_ID)
-    {
-        fprintf(fs, ".");
-        idVarPart->get(0)->accept(this);// 访问 id
-    }
-    else if (idVarPart->get_type() == IDVarPart::GrammarType::EXP_LIST)
-    {
-        fprintf(fs, "[");
-        idVarPart->get(0)->accept(this);
-        fprintf(fs, "]");
-    }
-}
-void GenerationVisitor::visit(IDVarParts *idVarParts )   {
-    // 获取子节点列表
-    std::vector<AstNode *> &children = idVarParts->getCnodeList();
+// void GenerationVisitor::visit(IDVarPart *idVarPart )  
+// {
+//     if (idVarPart->get_type() == IDVarPart::GrammarType::_ID)
+//     {
+//         fprintf(fs, ".");
+//         idVarPart->get(0)->accept(this);// 访问 id
+//     }
+//     else if (idVarPart->get_type() == IDVarPart::GrammarType::EXP_LIST)
+//     {   
+//         auto exp_list = idVarPart->get(0)->DynamicCast<ExpressionList>()->Lists();
+//         for(auto exp : exp_list){
+//             fprintf(fs, "[");
+//             exp->accept(this);
+//             auto record_info = findID(CurrentTable, , 0);
+//             fprintf(fs, "]");
+//         }
+//     }
+// }
+// void GenerationVisitor::visit(IDVarParts *idVarParts )   {
+//     // 获取子节点列表
+//     std::vector<AstNode *> &children = idVarParts->getCnodeList();
 
-    // 遍历子节点列表并逐个访问
-    for (size_t i = 0; i < children.size(); ++i) {
-        children[i]-> accept(this);
+//     // 遍历子节点列表并逐个访问
+//     for (size_t i = 0; i < children.size(); ++i) {
+//         children[i]-> accept(this);
 
-        // 如果不是最后一个节点，则输出空格
-        if (i != children.size() - 1) {
-            fprintf(fs, " ");
-        }
-    }
-}
+//         // 如果不是最后一个节点，则输出空格
+        
+//     }
+// }
 
  void GenerationVisitor::visit(Term *term )  
 {
@@ -811,6 +811,18 @@ void GenerationVisitor::visit(CompoundStatement *compoundStatement )  {
     compoundStatement->get(0)->accept(this); // 访问  StatementList
 }
 
+vector<AstNode*> IDVarParts::Lists(){
+    std::vector<AstNode *> lists;
+    auto *cur_node    = this;
    
+    while (cur_node->getCnodeList().size() == 2) //如果多层 进入循环
+    {
+        AstNode * ln = cur_node->cnode_list[1];
+        lists.insert(lists.begin(), ln);
+        
+        cur_node = cur_node->cnode_list[0]->DynamicCast<IDVarParts>();
+    }
+    return lists;
+}
 
 }  // namespace ast

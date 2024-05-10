@@ -763,6 +763,7 @@ class IDVarParts: public AstNode
     void set_pointer(std::vector<std::string> *pn) { parts_name = pn; }
     std::vector<std::string> *get_pointer() { return parts_name; }
     void accept(Visitor *visitor) override;
+    vector<AstNode* > Lists();
 
   private:
     std::vector<std::string> *parts_name;
@@ -1016,8 +1017,8 @@ class GenerationVisitor: public Visitor
     void visit(LoopStatement *loopStatement) override;
     void visit(Variable *variable) override;
     void visit(VariableList *variableList) override;
-    void visit(IDVarPart *idVarPart) override;
-    void visit(IDVarParts *idVarParts) override;
+    void visit(IDVarPart *idVarPart) override { visitchild(idVarPart);};
+    void visit(IDVarParts *idVarParts) override { visitchild(idVarParts);};
     void visit(Term *term) override;
     void visit(Factor *factor) override;
     void visit(Expression *expression) override;

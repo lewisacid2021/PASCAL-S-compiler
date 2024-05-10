@@ -1,8 +1,7 @@
 #include<stdio.h>
 #include<stdbool.h>
 const int a = 10;
-const int b = 5;
 int main() {
-printf("%d",b);
+printf("%d",a + 5);
 return 0;
 }
