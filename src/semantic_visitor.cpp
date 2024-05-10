@@ -72,7 +72,11 @@ void SemanticVisitor::visit(ConstDeclaration *constdeclaration)
 
         switch(const_value_type){
             case ConstValue::ConstvalueType::INTEGER:
+<<<<<<< HEAD
+                type = "interger";
+=======
                 type = "integer";
+>>>>>>> 2a4dee8ebd8a59d254e9f5592c236d42e152b88a
                 value = std::to_string(const_value->get<int>());
                 break;
             case ConstValue::ConstvalueType::REAL:
@@ -265,6 +269,321 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
     }
 }
 
+void SemanticVisitor::visit(VariableList* variablelist)
+{
+    vector<AstNode* > lists = variablelist->Lists();
+    for(auto a : lists){
+        Variable* var = a->DynamicCast<Variable>();
+        if(var->get_vn() == "unknown"){
+            var->accept(this);
+        }
+    }
+}
+
+void SemanticVisitor::visit(Variable *variable)
+{
+    LeafNode* leaf_node = variable->get(0)->DynamicCast<LeafNode>();
+    string id = leaf_node->get_value<string>();
+    auto record_info = findID(CurrentTable, id, 0);
+    if(record_info != NULL){
+        //暂未考虑记录型
+        variable->set_vn(record_info->type); 
+    }
+    else{
+        //子表未找到，到主表找
+        record_info = findID(MainTable, id, 0);
+        if(record_info != NULL){
+            variable->set_vn(record_info->type); 
+        }
+        else{
+            //错误处理，找到未定义变量
+
+        }
+    }
+}
+
+void SemanticVisitor::visit(AssignopStatement *assignstatement)
+{
+    LeafNode* leaf_node = assignstatement->get(0)->get(0)->DynamicCast<LeafNode>();
+    auto record_info = findID(MainTable, leaf_node->get_value<string>(), 0);
+    if(record_info != NULL){
+        assignstatement->set_type(AssignopStatement::LeftType::FUNCID);
+    }
+}
+
+void SemanticVisitor::visit(ExpressionList *expressionlist)
+{
+    vector<AstNode*> lists = expressionlist->Lists();
+    for(auto a : lists){
+        Expression* exp = a->DynamicCast<Expression>();
+        if(exp->GetExpType() == "unknown"){
+            exp->accept(this);
+        } 
+    }
+}
+
+void SemanticVisitor::visit(Expression *expression)
+{
+    if(expression->GetExpType() == "unknown"){
+        switch (expression->GetGraType()) {
+            case Expression::GrammarType::DOUBLE:
+            {
+                if(expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown"){
+                    expression->get(0)->accept(this);
+                }
+                string sexpression_type1 = expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType();
+                if(expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown"){
+                    expression->get(1)->accept(this);
+                }
+                string sexpression_type2 = expression->get(1)->DynamicCast<SimpleExpression>()->GetExpType();
+                // 类型检查
+                if((sexpression_type2 == "integer" || sexpression_type2 == "char" || sexpression_type2 == "real")&&
+                (sexpression_type1 == "integer" || sexpression_type1 == "char" || sexpression_type1 == "real")){
+                    expression->SetExpType("boolean");
+                }
+                else{
+
+                }
+            }
+            case Expression::GrammarType::SINGLE:
+            {
+                expression->get(0)->accept(this);
+                string etype = expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType();
+                expression->SetExpType(etype);
+                break;
+            }
+        }
+    }
+}
+
+void SemanticVisitor::visit(SimpleExpression *sexpression)
+{
+    if(sexpression->GetExpType() == "unknown"){
+        switch (sexpression->GetSymType()) {
+            case SimpleExpression::SymbolType::SINGLE:
+            {
+                sexpression->get(0)->accept(this);
+                string stype = sexpression->get(0)->DynamicCast<Term>()->GetTerType();
+                sexpression->SetExpType(stype);
+                break;
+            }
+            case SimpleExpression::SymbolType::PLUS_:
+            case SimpleExpression::SymbolType::MINUS_:
+            {
+                if(sexpression->getCnodeList().size() == 1){
+                    if(sexpression->get(0)->DynamicCast<Term>()->GetTerType() == "unknown"){
+                        sexpression->get(0)->accept(this);
+                    }
+                    string term_type = sexpression->get(0)->DynamicCast<Term>()->GetTerType();
+                    //类型检查
+                    if(term_type == "real" || term_type == "interger"){
+                        sexpression->SetExpType(term_type);
+                    }
+                    else{
+                        //error
+                    }
+                }
+                else{
+                    if(sexpression->get(0)->DynamicCast<Term>()->GetTerType() == "unknown"){
+                        sexpression->get(0)->accept(this);
+                    }
+                    string term_type1 = sexpression->get(0)->DynamicCast<Term>()->GetTerType();
+                    if(sexpression->get(1)->DynamicCast<Term>()->GetTerType() == "unknown"){
+                        sexpression->get(1)->accept(this);
+                    }
+                    string term_type2 = sexpression->get(1)->DynamicCast<Term>()->GetTerType();
+                    //类型检查
+                    if((term_type1 == "real" || term_type1 == "interger")&&(term_type2 == "real" || term_type2 == "interger")){
+                        if(term_type1 == "real" || term_type1 == "real"){
+                            sexpression->SetExpType("real");
+                        }
+                        else{
+                            sexpression->SetExpType("integer");
+                        }
+                    }
+                    else{
+                        //error
+                    }
+                }
+                break;
+            }
+            case SimpleExpression::SymbolType::OR_:
+            {
+                if(sexpression->get(0)->DynamicCast<Term>()->GetTerType() == "unknown"){
+                    sexpression->get(0)->accept(this);
+                }
+                string term_type1 = sexpression->get(0)->DynamicCast<Term>()->GetTerType();
+                if(sexpression->get(1)->DynamicCast<Term>()->GetTerType() == "unknown"){
+                    sexpression->get(1)->accept(this);
+                }
+                string term_type2 = sexpression->get(1)->DynamicCast<Term>()->GetTerType();
+                //类型检查
+                if(term_type1 == "boolean" && term_type2 == "boolean" ){
+                        sexpression->SetExpType("boolean");
+                }
+                else{
+                    //error
+                }
+                break;
+            }
+        }
+    }
+}
+
+void SemanticVisitor::visit(Term *term)
+{
+    if(term->GetTerType() == "unknown"){
+        switch(term->GetSymType()){
+            case Term::SymbolType::SINGLE:
+            {
+                term->get(0)->accept(this);
+                string fac_type = term->get(0)->DynamicCast<Factor>()->GetFacType();
+                term->SetTerType(fac_type);
+                break;
+            }
+            case Term::SymbolType::MULTIPLY:
+            case Term::SymbolType::DEVIDE:
+            {
+                if(term->get(0)->DynamicCast<Term>()->GetTerType() == "unknown"){
+                    term->get(0)->accept(this);
+                }
+                string term_type = term->get(0)->DynamicCast<Term>()->GetTerType();
+                if(term->get(1)->DynamicCast<Factor>()->GetFacType() == "unknown"){
+                    term->get(1)->accept(this);
+                }
+                string fac_type = term->get(1)->DynamicCast<Factor>()->GetFacType();
+                //类型检查
+                if((term_type == "real" || term_type == "integer" || term_type == "char")&&
+                (fac_type == "real" || fac_type == "integer" || term_type == "char"))
+                {
+                    if(term_type == "real" || fac_type == "real")
+                    {
+                        term->SetTerType("real");
+                    }
+                    else
+                    {
+                        term->SetTerType("integer");
+                    }
+                }
+                else{
+                    //错误处理
+                }
+                break;
+            }
+            case Term::SymbolType::MOD:
+            {
+                if(term->get(0)->DynamicCast<Term>()->GetTerType() == "unknown"){
+                    term->get(0)->accept(this);
+                }
+                string term_type = term->get(0)->DynamicCast<Term>()->GetTerType();
+                if(term->get(1)->DynamicCast<Factor>()->GetFacType() == "unknown"){
+                    term->get(1)->accept(this);
+                }
+                string fac_type = term->get(1)->DynamicCast<Factor>()->GetFacType();
+                //类型检查
+                if((term_type == "integer" || term_type == "char")&&(fac_type == "integer" || term_type == "char"))
+                {
+                    term->SetTerType("integer");
+                }
+                else{
+                    //错误处理
+                }
+                break;
+            }
+            case Term::SymbolType::AND:
+            {
+                if(term->get(0)->DynamicCast<Term>()->GetTerType() == "unknown"){
+                    term->get(0)->accept(this);
+                }
+                string term_type = term->get(0)->DynamicCast<Term>()->GetTerType();
+                if(term->get(1)->DynamicCast<Factor>()->GetFacType() == "unknown"){
+                    term->get(1)->accept(this);
+                }
+                string fac_type = term->get(1)->DynamicCast<Factor>()->GetFacType();
+                //类型检查
+                if( term_type == "boolean" && fac_type == "boolean")
+                {
+                    term->SetTerType("boolean");
+                }
+                else{
+                    //错误处理
+                }
+                break;
+            }
+        }
+    }
+}
+
+void SemanticVisitor::visit(Factor *factor)
+{
+    if(factor->GetFacType() == "unknown"){
+        switch(factor->get_type()){
+            case Factor::GrammerType::ID_EXP_LIST:
+            {
+            // 对于函数直接获取其返回值类型
+                auto id = factor->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+                TableRecord *tr = findID(MainTable, id, 0);
+                factor->SetFacType(tr->type);
+                break;
+            }
+            case Factor::GrammerType::VARIABLE:
+            {
+            // 对于变量直接获取其类型
+                factor->get(0)->accept(this);
+                Variable* var = factor->get(0)->DynamicCast<Variable>();
+                factor->SetFacType(var->get_vn());
+                break;
+            }
+            case Factor::GrammerType::EXP:
+            {
+            // 对于表达式直接获取表达式的类型
+                Expression* exp = factor->get(0)->DynamicCast<Expression>();
+                if(exp->GetExpType() == "unknown"){
+                    factor->get(0)->accept(this);
+                }
+                factor->SetFacType(exp->GetExpType());
+                break;
+            }
+            case Factor::GrammerType::UMINUS_:
+            {
+            // 对于负号直接与子节点的factor类型相同
+                Factor* fac = factor->get(0)->DynamicCast<Factor>();
+                if(fac->GetFacType() == "unknown"){
+                    factor->get(0)->accept(this);
+                }
+                string fac_type = fac->GetFacType();
+            // 类型检查(只有实数、整数、字符可以)
+                if(fac_type == "real" || fac_type == "char" || fac_type == "integer"){
+                    factor->SetFacType(fac->GetFacType());
+                }
+                else{
+
+                }
+                break;
+            }
+            case Factor::GrammerType::NOT_:
+            {
+                Factor* fac = factor->get(0)->DynamicCast<Factor>();
+                if(fac->GetFacType() == "unknown"){
+                    factor->get(0)->accept(this);
+                }
+                string fac_type = fac->GetFacType();
+            // 类型检查(只有布尔值可以)
+                if(fac_type == "boolean" ){
+                    factor->SetFacType(fac->GetFacType());
+                }
+                else{
+                    
+                }
+                break;
+            }
+            default:
+                break;
+        }
+    }
+}
+
+
 std::vector<ParamList *> ParamLists::Lists()
 {
     std::vector<ParamList *> lists;
@@ -343,6 +662,48 @@ std::vector<tuple<vector<LeafNode *>,AstNode *>> VarDeclaration::Lists()
 
     return lists;
 
+}
+
+std::vector<AstNode *> ExpressionList::Lists()
+{
+    std::vector<AstNode *> lists;
+    auto *cur_node    = this;
+    ExpressionType gtype = expression_type;
+
+    while (gtype == ExpressionType::MULTIPLE) //如果多层 进入循环
+    {
+        AstNode * ln = cur_node->cnode_list[1];
+        lists.insert(lists.begin(), ln);
+        
+        cur_node = cur_node->cnode_list[0]->DynamicCast<ExpressionList>();
+        gtype    = cur_node->expression_type;
+    }
+
+    // 插入最后一个节点
+    AstNode * ln = cur_node->cnode_list[1];
+    lists.insert(lists.begin(), ln);
+    return lists;
+}
+
+std::vector<AstNode *> VariableList::Lists()
+{
+    std::vector<AstNode *> lists;
+    auto *cur_node    = this;
+    GrammarType gtype = grammar_type;
+
+    while (gtype == GrammarType::VAR_LIST_VAR) //如果多层 进入循环
+    {
+        AstNode * ln = cur_node->cnode_list[1];
+        lists.insert(lists.begin(), ln);
+        
+        cur_node = cur_node->cnode_list[0]->DynamicCast<VariableList>();
+        gtype    = cur_node->grammar_type;
+    }
+
+    // 插入最后一个节点
+    AstNode * ln = cur_node->cnode_list[1];
+    lists.insert(lists.begin(), ln);
+    return lists;
 }
 
 }

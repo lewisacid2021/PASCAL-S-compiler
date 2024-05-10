@@ -823,7 +823,7 @@ expression_list : expression_list ',' expression
 expression : simple_expression RELOP simple_expression
     {
         // expression -> simple_expression RELOP simple_expression.
-        $$ = new Expression(Expression::GrammarType::DOUBLE, $2.value.get<string>(), "bool");
+        $$ = new Expression(Expression::GrammarType::DOUBLE, $2.value.get<string>(), "unkown");
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($3);
@@ -831,7 +831,7 @@ expression : simple_expression RELOP simple_expression
     | simple_expression CONSTASSIGNOP simple_expression
     {
         // expression -> simple_expression '=' simple_expression.
-        $$ = new Expression(Expression::GrammarType::DOUBLE, "=", "bool");
+        $$ = new Expression(Expression::GrammarType::DOUBLE, "=", "unknown");
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($3);
@@ -868,7 +868,7 @@ simple_expression : term
     | simple_expression ADDOP term
     {
         // simple_expression -> simple_expression or term.、
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::OR_, "bool");
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::OR_, "unknown");
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($3);
@@ -876,14 +876,14 @@ simple_expression : term
     | simple_expression PLUS term
     { 
         // simple_expression -> simple_expression + term.
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::PLUS_, $3->GetTerType());
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::PLUS_, "unknown");
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($3);
     }
     | simple_expression UMINUS term
     {
-        $$ = new SimpleExpression(SimpleExpression::SymbolType::MINUS_, $3->GetTerType());
+        $$ = new SimpleExpression(SimpleExpression::SymbolType::MINUS_, "unknown");
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($3);
@@ -904,23 +904,23 @@ term : factor
         std::string sym_type = $2.value.get<string>();
         if(sym_type == "*"){
             $$->SetSymType(Term::SymbolType::MULTIPLY);
-            $$->SetTerType("real");
+            $$->SetTerType("unknown");
         }
         if(sym_type == "/"){
             $$->SetSymType(Term::SymbolType::DEVIDE);
-            $$->SetTerType("real");
+            $$->SetTerType("unknown");
         }
         if(sym_type == "mod"){
             $$->SetSymType(Term::SymbolType::MOD);
-            $$->SetTerType("real");
+            $$->SetTerType("unknown");
         }
         if(sym_type == "and"){
             $$->SetSymType(Term::SymbolType::AND);
-            $$->SetTerType("bool");
+            $$->SetTerType("unknown");
         }
         if(sym_type == "div"){
             $$->SetSymType(Term::SymbolType::DEVIDE);
-            $$->SetTerType("real");
+            $$->SetTerType("unknown");
         }
         $$->append_child($1);
         $$->append_child($3);
@@ -987,7 +987,7 @@ factor : INT_NUM
         // factor -> variable.
         $$ = new Factor(Factor::GrammerType::VARIABLE);
         $$->set_rownum(line_count);
-        // $$->SetFacType("STRING");
+        $$->SetFacType("unknown");
         $$->append_child($1);
     }
     |ID '(' expression_list ')'
@@ -996,7 +996,7 @@ factor : INT_NUM
         $$->set_rownum(line_count);
         LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::NAME);
         // 类型需要靠符号表确认
-        // $$->SetFacType("STRING");
+        $$->SetFacType("unknown");
         $$->append_child(leaf_node);
         $$->append_child($3);
     }
