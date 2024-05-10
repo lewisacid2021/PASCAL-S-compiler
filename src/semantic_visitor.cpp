@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <iostream>
+#include <set>
 #include <sys/types.h>
 #include <tuple>
 #include <utility>
@@ -12,7 +13,9 @@ using std::string;
 using std::vector;
 
 extern SymbolTable* MainTable;
-SymbolTable* CurrentTable = MainTable;
+extern SymbolTable* CurrentTable;
+
+void addDuplicateNameError(); //重名错误
 
 namespace ast{
 void SemanticVisitor::visit(AST *AST)
@@ -30,6 +33,18 @@ void SemanticVisitor::visit(ProgramHead *programhead)
 {
     string id = programhead->get(0)->DynamicCast<LeafNode>()->get_value<string>();
     int rn = programhead->get(0)->DynamicCast<LeafNode>()->get_rownum();
+
+    set<string> lib;
+    lib.insert("read");
+    lib.insert("write");
+    lib.insert("writeln");
+    lib.insert("exit");
+    //检查主程序是否与库函数重名
+    if(lib.count(id))
+    {
+        addDuplicateNameError();
+    }
+
     if(programhead->getCnodeList().size() == 1)
     {
         int amount = 0;
@@ -44,6 +59,17 @@ void SemanticVisitor::visit(ProgramHead *programhead)
         {
             string para_id = p->get_value<string>();
             int para_rn = p->get_rownum();
+
+            //检查参数是否与主程序。库函数同名
+            if(para_id == id)
+            {
+                addDuplicateNameError();
+            }
+            else if(lib.count(para_id))
+            {
+                addDuplicateNameError();
+            }
+
             MainTable->addVoidPara(para_id, para_rn);
         }
     }
@@ -72,11 +98,7 @@ void SemanticVisitor::visit(ConstDeclaration *constdeclaration)
 
         switch(const_value_type){
             case ConstValue::ConstvalueType::INTEGER:
-<<<<<<< HEAD
-                type = "interger";
-=======
                 type = "integer";
->>>>>>> 2a4dee8ebd8a59d254e9f5592c236d42e152b88a
                 value = std::to_string(const_value->get<int>());
                 break;
             case ConstValue::ConstvalueType::REAL:
@@ -258,13 +280,13 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
 
     if(type == SubprogramHead::SubprogramType::PROC)
     {
-        MainTable->addProcedure(subprogramhead->get_id(), subprogramhead->get_rownum(), amount, subTable);
+        MainTable->addProcedure(subprogramhead->get_id(), subprogramhead->get_rownum(), amount, CurrentTable);
         CurrentTable->addProgramName(subprogramhead->get_id(), subprogramhead->get_rownum(), "procedure", amount, "");
     }
     else
     {
         auto ret_type = subprogramhead->get(2)->DynamicCast<TypeNode>()->get_type_name();
-        MainTable->addFunction(subprogramhead->get_id(), subprogramhead->get_rownum(),ret_type, amount, subTable);
+        MainTable->addFunction(subprogramhead->get_id(), subprogramhead->get_rownum(),ret_type, amount, CurrentTable);
         CurrentTable->addProgramName(subprogramhead->get_id(), subprogramhead->get_rownum(), "procedure", amount, ret_type);
     }
 }
@@ -272,12 +294,15 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
 void SemanticVisitor::visit(VariableList* variablelist)
 {
     vector<AstNode* > lists = variablelist->Lists();
+    std::vector<std::string> *type_list;
     for(auto a : lists){
         Variable* var = a->DynamicCast<Variable>();
         if(var->get_vn() == "unknown"){
             var->accept(this);
         }
+        type_list->emplace_back(var->get_vn());
     }
+    variablelist->set_types(type_list);
 }
 
 void SemanticVisitor::visit(Variable *variable)
@@ -297,7 +322,7 @@ void SemanticVisitor::visit(Variable *variable)
         }
         else{
             //错误处理，找到未定义变量
-
+            
         }
     }
 }
@@ -307,18 +332,22 @@ void SemanticVisitor::visit(AssignopStatement *assignstatement)
     LeafNode* leaf_node = assignstatement->get(0)->get(0)->DynamicCast<LeafNode>();
     auto record_info = findID(MainTable, leaf_node->get_value<string>(), 0);
     if(record_info != NULL){
-        assignstatement->set_type(AssignopStatement::LeftType::FUNCID);
+        if(record_info->flag == "function"){
+            assignstatement->set_type(AssignopStatement::LeftType::FUNCID);
+        }
     }
 }
 
 void SemanticVisitor::visit(ExpressionList *expressionlist)
 {
     vector<AstNode*> lists = expressionlist->Lists();
-    for(auto a : lists){
-        Expression* exp = a->DynamicCast<Expression>();
-        if(exp->GetExpType() == "unknown"){
+    std::vector<std::string> *exp_types = expressionlist->get_types();
+    for(int i = 0 ; i < exp_types->size(); i++){
+        Expression* exp = lists[i]->DynamicCast<Expression>();
+        if((*exp_types)[i] == "unknown"){
             exp->accept(this);
-        } 
+        }
+        (*exp_types)[i] = exp->GetExpType(); 
     }
 }
 
@@ -384,10 +413,10 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                     }
                 }
                 else{
-                    if(sexpression->get(0)->DynamicCast<Term>()->GetTerType() == "unknown"){
+                    if(sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown"){
                         sexpression->get(0)->accept(this);
                     }
-                    string term_type1 = sexpression->get(0)->DynamicCast<Term>()->GetTerType();
+                    string term_type1 = sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType();
                     if(sexpression->get(1)->DynamicCast<Term>()->GetTerType() == "unknown"){
                         sexpression->get(1)->accept(this);
                     }
@@ -409,10 +438,10 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
             }
             case SimpleExpression::SymbolType::OR_:
             {
-                if(sexpression->get(0)->DynamicCast<Term>()->GetTerType() == "unknown"){
+                if(sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown"){
                     sexpression->get(0)->accept(this);
                 }
-                string term_type1 = sexpression->get(0)->DynamicCast<Term>()->GetTerType();
+                string term_type1 = sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType();
                 if(sexpression->get(1)->DynamicCast<Term>()->GetTerType() == "unknown"){
                     sexpression->get(1)->accept(this);
                 }
@@ -680,7 +709,7 @@ std::vector<AstNode *> ExpressionList::Lists()
     }
 
     // 插入最后一个节点
-    AstNode * ln = cur_node->cnode_list[1];
+    AstNode * ln = cur_node->cnode_list[0];
     lists.insert(lists.begin(), ln);
     return lists;
 }
@@ -701,7 +730,7 @@ std::vector<AstNode *> VariableList::Lists()
     }
 
     // 插入最后一个节点
-    AstNode * ln = cur_node->cnode_list[1];
+    AstNode * ln = cur_node->cnode_list[0];
     lists.insert(lists.begin(), ln);
     return lists;
 }

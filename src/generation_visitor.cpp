@@ -368,7 +368,9 @@ void GenerationVisitor::visit(ElsePart *elseNode )
             formatString += "%f";
         } else if (type == "boolean") {
             formatString += "%d";
-        }
+        } else if (type == "unknown"){
+            formatString += "%i";
+        } 
         // 添加逗号和空格
         formatString += ", ";
     }

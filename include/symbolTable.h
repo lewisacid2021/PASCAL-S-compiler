@@ -16,12 +16,11 @@ class TableRecord
     string flag;                              //种类标志
     string id;                                //标识符名字
     int rowNumber;                            //行号
-    string type;                              //类型
+    string type;                              //变量/常量类型，数组类型，返回值类型
     string value;                             //常量取值
     bool isMinus;                             //常量前是否有负号
     int amount;                               //参数个数/数组维数/字符串字符数
     vector<pair<int, int>> arrayRange;        //数组各维上下界
-    vector<pair<string, string>> recordType;  //record类型内容
     SymbolTable *subSymbolTable;              //指向函数/过程子符号表的指针
     string programInfo;                       //当前符号表对应的程序相关信息
 
