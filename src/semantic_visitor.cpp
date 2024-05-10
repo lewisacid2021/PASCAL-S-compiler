@@ -15,7 +15,7 @@ using std::vector;
 extern SymbolTable* MainTable;
 SymbolTable* CurrentTable = MainTable;
 
-void addDuplicateNameError();
+void addDuplicateNameError(); //重名错误
 
 namespace ast{
 void SemanticVisitor::visit(AST *AST)
@@ -98,11 +98,7 @@ void SemanticVisitor::visit(ConstDeclaration *constdeclaration)
 
         switch(const_value_type){
             case ConstValue::ConstvalueType::INTEGER:
-<<<<<<< HEAD
-                type = "interger";
-=======
                 type = "integer";
->>>>>>> 2a4dee8ebd8a59d254e9f5592c236d42e152b88a
                 value = std::to_string(const_value->get<int>());
                 break;
             case ConstValue::ConstvalueType::REAL:
