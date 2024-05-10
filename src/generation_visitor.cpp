@@ -340,12 +340,12 @@ void GenerationVisitor::visit(StatementList *statementList)
     
 void GenerationVisitor::visit(IfStatement *ifStatement )  {
     fprintf(fs, "if (");
-    visit(ifStatement->get(0)); // 访问 expression
+    ifStatement->get(0)->accept(this); // 访问 expression
     fprintf(fs, ")\n{\n");
-    visit(ifStatement->get(1)); // 访问 then statement
+    ifStatement->get(1)->accept(this); // 访问 then statement
     fprintf(fs, "}\n");
 
-    visit(ifStatement->get(2)); // 访问 else_part
+    ifStatement->get(2)->accept(this); // 访问 else_part
 }
  
 void GenerationVisitor::visit(ElsePart *elseNode )  
@@ -802,9 +802,7 @@ void GenerationVisitor::visit(Statement *statement )
 }
 
 void GenerationVisitor::visit(CompoundStatement *compoundStatement )  {
-    fprintf(fs, "{\n");
-    visit(compoundStatement->get(0)); // 访问  StatementList
-    fprintf(fs, "}\n");
+    compoundStatement->get(0)->accept(this); // 访问  StatementList
 }
 
    
