@@ -249,7 +249,11 @@ void GenerationVisitor::visit(ValueParam *valueparam)
     {
         type->accept(this);
         fprintf(fs, " %s",list[i]->id_ref().c_str());
+<<<<<<< HEAD
+        
+=======
 
+>>>>>>> 6bbd07a48ed5d305a62c53057bdc94321ed78a0b
         if(type->GetVarType() == TypeNode::VarType::ARRAY_TYPE)
         {
             auto dim = type->get(0)->DynamicCast<ArrayTypeNode>()->info()->GetDimsum();
@@ -283,102 +287,132 @@ std::vector<LeafNode *> IdList::Lists()
     return lists;
 }
 
-    void GenerationVisitor::visit(StatementList *statementList, FILE *fs)  
+void GenerationVisitor::visit(StatementList *statementList)  
     {
          // 获取表达式节点列表
     std::vector<AstNode *> &statements = statementList->getCnodeList();
     
     size_t numChildren = statements.size(); 
+    // if(numChildren == 1){
+    //     auto s = statementList->get(0)->DynamicCast<Statement >();
+    //     switch (s->get_type())
+    //     {
+    //     case Statement::StatementType::EPSILON:
+    //         fprintf(fs, "1 ");
+    //         break;
+    //     case Statement::StatementType::ASSIGN_OP_STATEMENT:
+    //     fprintf(fs, "2 ");
+    //         break;
+    //     case Statement::StatementType::PROCEDURE_CALL:
+    //     fprintf(fs, "3 ");
+    //         break;
+    //     case Statement::StatementType::COMPOUND_STATEMENT:
+    //     fprintf(fs, "4 ");
+    //         break;
+    //     case Statement::StatementType::IF_STATEMENT:
+    //     fprintf(fs, "5 ");
+    //         break;
+    //     case Statement::StatementType::LOOP_STATEMENT:
+    //     fprintf(fs, "6 ");
+    //         break;
+    //     }
+    // }
     // 递归访问子节点
     for (size_t i = 0; i < numChildren; ++i)
     {
         // 访问当前子节点
-        statementList->get(i)->accept(this, fs);
+        statementList->get(i)->accept(this);
 
         // 如果不是最后一个语句节点，则输出分号
-        if (i != numChildren - 1)
-        {
-            fprintf(fs, "; ");
-        }
+        // if (i != numChildren - 1)
+        // {
+        //     fprintf(fs, "; ");
+        // }
     }
     }
     
-    void GenerationVisitor::visit(IfStatement *ifStatement, FILE *fs)  {
+void GenerationVisitor::visit(IfStatement *ifStatement )  {
     fprintf(fs, "if (");
-    visit(ifStatement->get(0), fs); // 访问 expression
+    visit(ifStatement->get(0)); // 访问 expression
     fprintf(fs, ")\n{\n");
-    visit(ifStatement->get(1), fs); // 访问 then statement
+    visit(ifStatement->get(1)); // 访问 then statement
     fprintf(fs, "}\n");
 
-    visit(ifStatement->get(2), fs); // 访问 else_part
+    visit(ifStatement->get(2)); // 访问 else_part
 }
  
-    void GenerationVisitor::visit(ElsePart *elseNode, FILE *fs)  
+void GenerationVisitor::visit(ElsePart *elseNode )  
     {
-        switch (elseNode->grammar_type_)
+        switch (elseNode->get_type())
         {
         case ElsePart::ELSEType::EPSILON:
             return;
         case ElsePart::ELSEType::ELSE_STATEMENT:
             fprintf(fs, "else {\n");
-            visit(ifStatement->get(0), fs); // 访问 expression
+            elseNode->get(0)->accept(this); // 访问 expression
             fprintf(fs, "}\n");
         }
     } 
 
- void GenerationVisitor::visit(ProcedureCall *procedureCall, FILE *fs)  {
-   fprintf(fs, "%s", procedureCall->get_id().c_str());
+ void GenerationVisitor::visit(ProcedureCall *procedureCall )  {
+    fprintf(fs, "%s", procedureCall->get_id().c_str());
     // 根据调用类型决定是否输出参数列表
-    if (procedureCall->procedure_type == ProcedureCall::ProcedureType::NO_LIST)
+    if (procedureCall->get_type() == ProcedureCall::ProcedureType::NO_LIST)
     {
         fprintf(fs, "();\n"); // 输出空参数列表
     }
-    else if (procedureCall->procedure_type == ProcedureCall::ProcedureType::EXP_LIST)
+    else if (procedureCall->get_type() == ProcedureCall::ProcedureType::EXP_LIST)
     {
         fprintf(fs, "(");
-        procedureCall->get(1)->accept(this, fs);//expressionlist
+        procedureCall->get(0)-> accept(this);//expressionlist
         fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
     }
-    else if (procedureCall->procedure_type == ProcedureCall::ProcedureType::VAR_LIST)
+    else if (procedureCall->get_type() == ProcedureCall::ProcedureType::VAR_LIST)
     {
         fprintf(fs, "(");
-        procedureCall->get(1)->accept(this, fs);//variablelist
+        procedureCall->get(0)-> accept(this);//variablelist
         fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
     }
  }
 
-void GenerationVisitor::visit(AssignopStatement *assignopStatement, FILE *fs)  
+void GenerationVisitor::visit(AssignopStatement *assignopStatement )  
     {
-        auto assignment_node = dynamic_cast<AssignmentNode *>(statement->get(0));
-        auto exp = assignment_node->get(1)->DynamicCast<ExpressionNode>();
+        auto assignment_node = dynamic_cast<AssignopStatement *>(assignopStatement->get(0));
+ 
         // 根据左侧类型决定生成的代码逻辑
-        switch (assignopStatement->left_type)
+        switch (assignopStatement->get_type())
         {
-        case AssignopStatement::LEFTTYPE::VARIABLE:
-        case AssignopStatement::LEFTTYPE::FUNC:
-        {
+        case AssignopStatement::LeftType::VARIABLE:
+        
             // 生成函数调用的代码
-            assignopStatement->get(0)->accept(this, fs);
+            assignopStatement->get(0)-> accept(this);
 
             // 输出赋值操作符
             fprintf(fs, " = ");
 
             // 生成右侧表达式的代码
-            assignopStatement->get(1)->accept(this, fs);
+            assignopStatement->get(1)-> accept(this);
 
             // 输出分号以结束语句
             fprintf(fs, ";\n");
             break;
-        }
+        case AssignopStatement::LeftType::FUNCID:
+            fprintf(fs, "return ");
+            // 生成右侧表达式的代码
+            assignopStatement->get(1)-> accept(this);
+
+            // 输出分号以结束语句
+            fprintf(fs, ";\n");
+            break;
         default:
             // 其他情况下，什么也不做
             break;
         }
     }
 
-void GenerationVisitor::visit(LoopStatement *loopStatement, FILE *fs)  
+void GenerationVisitor::visit(LoopStatement *loopStatement )  
     {
-          switch (loopStatement->loop_type)
+          switch (loopStatement->get_type())
         {
         case LoopStatement::LoopType::FORUP:
         {
@@ -386,19 +420,19 @@ void GenerationVisitor::visit(LoopStatement *loopStatement, FILE *fs)
             auto id = loopStatement->get(0)->DynamicCast<LeafNode>();
             if (id)
             {
-                id->accept(this, fs);
+                id-> accept(this);
             }
             fprintf(fs, " = ");
-            loopStatement->get(1)->accept(this, fs);//expression
+            loopStatement->get(1)-> accept(this);//expression
             fprintf(fs, "; ");
-            id->accept(this, fs);
+            id-> accept(this);
             fprintf(fs, " <= ");
-            loopStatement->get(2)->accept(this, fs);//中间的expression
+            loopStatement->get(2)-> accept(this);//中间的expression
             fprintf(fs, "; ");
             
-            id->accept(this, fs);
+            id-> accept(this);
             fprintf(fs, "++) {\n");
-            loopStatement->get(3)->accept(this, fs);//statement
+            loopStatement->get(3)-> accept(this);//statement
             fprintf(fs, "}\n");
             break;
         }
@@ -408,36 +442,36 @@ void GenerationVisitor::visit(LoopStatement *loopStatement, FILE *fs)
             auto id = loopStatement->get(0)->DynamicCast<LeafNode>();
             if (id)
             {
-                id->accept(this, fs);
+                id-> accept(this);
             }
             fprintf(fs, " = ");
-            loopStatement->get(1)->accept(this, fs);
+            loopStatement->get(1)-> accept(this);
             fprintf(fs, "; ");
-            id->accept(this, fs);
+            id-> accept(this);
             fprintf(fs, " >= ");
-            loopStatement->get(2)->accept(this, fs);
+            loopStatement->get(2)-> accept(this);
             fprintf(fs, "; ");
-            id->accept(this, fs);
+            id-> accept(this);
             fprintf(fs, "--) {\n");
-            loopStatement->get(3)->accept(this, fs);
+            loopStatement->get(3)-> accept(this);
             fprintf(fs, "}\n");
             break;
         }
-        case LoopStatement::LoopType::WHILE:
+        case LoopStatement::LoopType::WHILE_:
         {
             fprintf(fs, "while (");
-            loopStatement->get(0)->accept(this, fs);
+            loopStatement->get(0)-> accept(this);
             fprintf(fs, ") {\n");
-            loopStatement->get(1)->accept(this, fs);
+            loopStatement->get(1)-> accept(this);
             fprintf(fs, "}\n");
             break;
         }
-        case LoopStatement::LoopType::REAPT:
+        case LoopStatement::LoopType::REPEAT_:
         {
             fprintf(fs, "do {\n");
-            loopStatement->get(0)->accept(this, fs);
+            loopStatement->get(0)-> accept(this);
             fprintf(fs, "} while (!(");
-            loopStatement->get(1)->accept(this, fs);
+            loopStatement->get(1)-> accept(this);
             fprintf(fs, "));\n");
             break;
         }
@@ -445,62 +479,58 @@ void GenerationVisitor::visit(LoopStatement *loopStatement, FILE *fs)
     }
 
 
-void GenerationVisitor::visit(Variable *variable, FILE *fs)  {
+void GenerationVisitor::visit(Variable *variable )  {
     // 访问第一个子节点
-    variable->get(0)->accept(this, fs);
+    variable->get(0)-> accept(this);
     // 访问第二个子节点
-    variable->get(1)->accept(this, fs);
+    variable->get(1)-> accept(this);
 }
 
-void GenerationVisitor::visit(VariableList *variableList, FILE *fs)   {
+void GenerationVisitor::visit(VariableList *variableList )   {
     
     std::vector<AstNode *> &children = variableList->getCnodeList();
     
     // 处理单个表达式节点
-    if (variableList->grammar_type() ==  VariableList::GrammarType::VAR_)
+    if (variableList->get_type() ==  VariableList::GrammarType::VAR_)
     {
-        variableList->get(0)->accept(this, fs);
+        variableList->get(0)-> accept(this);
     }
     // 处理多个表达式节点
-    else if (variableList->grammar_type() == VariableList::GrammarType::VAR_LIST_VAR)
+    else if (variableList->get_type() == VariableList::GrammarType::VAR_LIST_VAR)
     {
         size_t numChildren=children.size();
         // 遍历子节点列表并逐个访问
         for (size_t i = 0; i < numChildren; ++i) {
-            children[i]->accept(this, fs);
+            children[i]-> accept(this);
 
             // 如果不是最后一个节点，则输出逗号
-            if (variableList->grammar_type() == VariableList::GrammarType:: VAR_LIST_VAR && i != numChildren - 1) {
+            if (variableList->get_type() == VariableList::GrammarType:: VAR_LIST_VAR && i != numChildren - 1) {
                 fprintf(fs, ", ");
             }
         }
     }
 }
-void GenerationVisitor::visit(IDVarPart *idVarPart, FILE *fs)  
+void GenerationVisitor::visit(IDVarPart *idVarPart )  
+{
+    if (idVarPart->get_type() == IDVarPart::GrammarType::_ID)
     {
-    if (grammar_type_ == GrammarType::_ID)
-      {
         fprintf(fs, ".");
-        visit(switchStatement->get(0), fs); // 访问 id
-      }
-      else if (grammar_type_ == GrammarType::EXP_LIST)
-      {
-        fprintf(fs, "[");
-       visit(switchStatement->get(0), fs); // 访问 expression_list
-        if (array_lb_ > 0)
-          PRINT(" - %d", array_lb_)
-        else if (array_lb_ < 0)
-          PRINT(" + %d", -array_lb_)
-        fprintf(fs, "]");
-      }
+        idVarPart->get(0)->accept(this);// 访问 id
     }
-void GenerationVisitor::visit(IDVarParts *idVarParts, FILE *fs)   {
+    else if (idVarPart->get_type() == IDVarPart::GrammarType::EXP_LIST)
+    {
+        fprintf(fs, "[");
+        idVarPart->get(0)->accept(this);
+        fprintf(fs, "]");
+    }
+}
+void GenerationVisitor::visit(IDVarParts *idVarParts )   {
     // 获取子节点列表
     std::vector<AstNode *> &children = idVarParts->getCnodeList();
 
     // 遍历子节点列表并逐个访问
     for (size_t i = 0; i < children.size(); ++i) {
-        children[i]->accept(this, fs);
+        children[i]-> accept(this);
 
         // 如果不是最后一个节点，则输出空格
         if (i != children.size() - 1) {
@@ -509,17 +539,17 @@ void GenerationVisitor::visit(IDVarParts *idVarParts, FILE *fs)   {
     }
 }
 
- void GenerationVisitor::visit(Term *term, FILE *fs)  
+ void GenerationVisitor::visit(Term *term )  
 {
     if (term->GetSymType() == Term::SymbolType::SINGLE)
     {
         // term -> factor 的情况
-        term->get(0)->accept(this, fs); // 访问 factor 节点
+        term->get(0)-> accept(this); // 访问 factor 节点
     }
     else
     {
         // term -> term MULOP factor 的情况
-        term->get(0)->accept(this, fs); // 访问左侧 term 节点
+        term->get(0)-> accept(this); // 访问左侧 term 节点
       
         // 根据乘法操作符类型输出相应的符号
         switch (term->GetSymType())
@@ -527,7 +557,7 @@ void GenerationVisitor::visit(IDVarParts *idVarParts, FILE *fs)   {
         case Term::SymbolType::MULTIPLY:
             fprintf(fs, " * ");
             break;
-        case Term::SymbolType::DIVIDE:
+        case Term::SymbolType::DEVIDE:
             fprintf(fs, " / ");
             break;
         case Term::SymbolType::MOD:
@@ -539,146 +569,114 @@ void GenerationVisitor::visit(IDVarParts *idVarParts, FILE *fs)   {
         case Term::SymbolType::SINGLE:
             break;
         }
-        term->get(2)->accept(this, fs); // 访问右侧 factor 节点
+        term->get(2)-> accept(this); // 访问右侧 factor 节点
     }
 }
 
-    void GenerationVisitor::visit(Factor *factor, FILE *fs)  
+    void GenerationVisitor::visit(Factor *factor )  
     {
-        switch (factor->get_factor_type())
+        switch (factor->get_type())
         {
-        case Factor::FactorType::NUM:
-        case Factor::FactorType::VARIABLE:
-            factor->get(0)->accept(this, fs);
+        case Factor::GrammerType::NUM:
+        case Factor::GrammerType::VARIABLE:
+            factor->get(0)-> accept(this);
             break;
-        case Factor::FactorType::EXP:
+        case Factor::GrammerType::EXP:
             fprintf(fs, "(");
-            factor->get(0)->accept(this, fs);
+            factor->get(0)-> accept(this);
             fprintf(fs, ")");
             break;
-        case Factor::FactorType::ID_EXP_LIST:
-            factor->get(0)->accept(this, fs);
+        case Factor::GrammerType::ID_EXP_LIST:
+            factor->get(0)-> accept(this);
             fprintf(fs, "(");
-            factor->get(1)->accept(this, fs);
+            factor->get(1)-> accept(this);
             fprintf(fs, ")");
             break;
-        case Factor::FactorType::NOT_:
+        case Factor::GrammerType::NOT_:
             fprintf(fs, "!");
-            factor->get(0)->accept(this, fs);
+            factor->get(0)-> accept(this);
             break;
-        case Factor::FactorType::UMINUS_:
+        case Factor::GrammerType::UMINUS_:
             fprintf(fs, "-");
-            factor->get(0)->accept(this, fs); // 访问因子节点
+            factor->get(0)-> accept(this); // 访问因子节点
             break;
-        case Factor::FactorType::CHAR_:
+        case Factor::GrammerType::CHAR_:
             fprintf(fs, "'");
-            factor->get(0)->accept(this, fs); // 'letter'
+            factor->get(0)-> accept(this); // 'letter'
             fprintf(fs, "'");
             break;
-        case Factor::FactorType::STR:
-        case Factor::FactorType::BOOL:
-            factor->get(0)->accept(this, fs);
+        case Factor::GrammerType::STR:
+        case Factor::GrammerType::BOOL:
+            factor->get(0)-> accept(this);
             break;
         default:
             break;
         }
     }
 
-<<<<<<< HEAD:src/visitor.cpp
-void ConstDeclaration::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void TypeNode::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void StringTypeNode::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void VarDeclaration::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void PeriodsNode::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void SubprogramDeclaration::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void SubprogramHead::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void ParamLists::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void ValueParam::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void GenerationVisitor::visit(Expression *expression, FILE *fs)  {
-    if (expression->GetGraType() == SimpleExpression::GrammarType::SINGLE)
+void GenerationVisitor::visit(Expression *expression )  {
+    if (expression->GetGraType() == Expression::GrammarType::SINGLE)
     {
         // expression -> simple_expression 的情况
-        expression->get(0)->accept(this, fs); // 访问 term 节点
+        expression->get(0)-> accept(this); // 访问 term 节点
     }
-    if (expression->GetGraType() == SimpleExpression::GrammarType::DOUBLE)
+    if (expression->GetGraType() == Expression::GrammarType::DOUBLE)
     {
         // expression -> expression relop simple_expression 的情况
-        expression->get(0)->accept(this, fs); // 访问左侧 expression 节点
-        if(expression->GetSymType()==Expression::SymbolType::PLUS_) fprintf(fs, "+ ");
-        if(expression->GetSymType()==Expression::SymbolType::MINUS_) fprintf(fs, "- ");
-        if(expression->GetSymType()==Expression::SymbolType::OR_) fprintf(fs, "or ");
-
-        expression->get(1)->accept(this, fs); // 访问右侧 simple_expression 节点
+        expression->get(0)-> accept(this); // 访问左侧 expression 节点
+        if(expression->GetSymType() == "+") fprintf(fs, " + ");
+        if(expression->GetSymType() == "-") fprintf(fs, " - ");
+        if(expression->GetSymType() == "or") fprintf(fs, " or ");
+        expression->get(1)-> accept(this); // 访问右侧 simple_expression 节点
     
     }
 }
 
-void GenerationVisitor::visit(SimpleExpression *simpleExpression, FILE *fs)  {
+void GenerationVisitor::visit(SimpleExpression *simpleExpression )  {
     if (simpleExpression->GetSymType() == SimpleExpression::SymbolType::SINGLE)
     {
         // simple_expression -> term 的情况
-        simpleExpression->get(0)->accept(this, fs); // 访问 term 节点
+        simpleExpression->get(0)-> accept(this); // 访问 term 节点
     }
     else if (simpleExpression->GetSymType() == SimpleExpression::SymbolType::PLUS_)
     {
-        // simple_expression -> + term 的情况
-        fprintf(fs, "+ ");
-        simpleExpression->get(0)->accept(this, fs); // 访问 term 节点
+        // simple_expression -> + term / simple_exp + term 的情况
+        if(simpleExpression->getCnodeList().size() == 3){
+            simpleExpression->get(0)-> accept(this); 
+            fprintf(fs, " + ");
+            simpleExpression->get(1)-> accept(this); // 访问 term 节点
+        }
+        else{
+            fprintf(fs, "+");
+            simpleExpression->get(0)-> accept(this); // 访问 term 节点
+        }
     }
     else if (simpleExpression->GetSymType() == SimpleExpression::SymbolType::MINUS_)
     {
-        // simple_expression -> - term 的情况
-        fprintf(fs, "- ");
-        simpleExpression->get(0)->accept(this, fs); // 访问 term 节点
+        // simple_expression -> - term / simple_exp - term 的情况
+        if(simpleExpression->getCnodeList().size() == 3){
+            simpleExpression->get(0)-> accept(this); 
+            fprintf(fs, " - ");
+            simpleExpression->get(1)-> accept(this); // 访问 term 节点
+        }
+        else{
+            fprintf(fs, "-");
+            simpleExpression->get(0)-> accept(this); // 访问 term 节点
+        }
+
     }
     else if (simpleExpression->GetSymType() == SimpleExpression::SymbolType::OR_)
     {
         // simple_expression -> simple_expression or term 的情况
-        simpleExpression->get(0)->accept(this, fs); // 访问左侧 simple_expression 节点
+        simpleExpression->get(0)-> accept(this); // 访问左侧 simple_expression 节点
         fprintf(fs, " or ");
-        simpleExpression->get(1)->accept(this, fs); // 访问右侧 term 节点
+        simpleExpression->get(1)-> accept(this); // 访问右侧 term 节点
     }
    }
 
-    void GenerationVisitor::visit(ExpressionList *expressionList, FILE *fs)  {
+void GenerationVisitor::visit(ExpressionList *expressionList )  {
     // 获取表达式列表类型
-    ExpressionList::ExpressionType type = expressionList->expression_type;
+    ExpressionList::ExpressionType type = expressionList->get_type();
 
     // 获取表达式节点列表
     std::vector<AstNode *> &expressions = expressionList->getCnodeList();
@@ -686,7 +684,7 @@ void GenerationVisitor::visit(SimpleExpression *simpleExpression, FILE *fs)  {
     // 处理单个表达式节点
     if (type == ExpressionList::ExpressionType::SINGLE)
     {
-        expressions[0]->accept(this, fs);
+        expressions[0]-> accept(this);
     }
     // 处理多个表达式节点
     else if (type == ExpressionList::ExpressionType::MULTIPLE)
@@ -695,7 +693,7 @@ void GenerationVisitor::visit(SimpleExpression *simpleExpression, FILE *fs)  {
     
         for (size_t i = 0; i < numExpressions; ++i)
         {
-            expressions[i]->accept(this, fs);
+            expressions[i]-> accept(this);
             // 如果不是最后一个表达式，则输出逗号分隔符
             if (i != numExpressions - 1)
             {
@@ -704,421 +702,36 @@ void GenerationVisitor::visit(SimpleExpression *simpleExpression, FILE *fs)  {
         }
     }
 }
-    void GenerationVisitor::visit(Statement *statement, FILE *fs)  
+
+void GenerationVisitor::visit(Statement *statement )  
+{
+    switch (statement->get_type())
     {
-        switch (statement->statement_type)
-        {
-        case Statement::StatementType::EPSILON:
-            return;
-        case Statement::StatementType::ASSIGN_OP_STATEMENT:
-        case Statement::StatementType::PROCEDURE_CALL:
-        case Statement::StatementType::COMPOUND_STATEMENT:
-        case Statement::StatementType::IF_STATEMENT:
-            visit(statement->get(0), fs);
-            break;
+    case Statement::StatementType::EPSILON:
+        return;
+    case Statement::StatementType::ASSIGN_OP_STATEMENT:
+    case Statement::StatementType::PROCEDURE_CALL:
+    case Statement::StatementType::COMPOUND_STATEMENT:
+    case Statement::StatementType::IF_STATEMENT:
+    case Statement::StatementType::LOOP_STATEMENT:
+        statement->get(0)->accept(this);
+        break;
 
-        // case Statement::StatementType::READ_STATEMENT:
-        // case Statement::StatementType::READLN_STATEMENT:
-        //     break;
-        // case Statement::StatementType::WRITE_STATEMENT:
-        // case Statement::StatementType::WRITELN_STATEMENT:
-        //     break;
-        }
+    // case Statement::StatementType::READ_STATEMENT:
+    // case Statement::StatementType::READLN_STATEMENT:
+    //     break;
+    // case Statement::StatementType::WRITE_STATEMENT:
+    // case Statement::StatementType::WRITELN_STATEMENT:
+    //     break;
     }
+}
 
-    void GenerationVisitor::visit(CompoundStatement *compoundStatement, FILE *fs)  {
+void GenerationVisitor::visit(CompoundStatement *compoundStatement )  {
     fprintf(fs, "{\n");
-    visit(compoundStatement->get(0), fs); // 访问  StatementList
+    visit(compoundStatement->get(0)); // 访问  StatementList
     fprintf(fs, "}\n");
 }
 
-    void GenerationVisitor::visit(StatementList *statementList, FILE *fs)  
-    {
-         // 获取表达式节点列表
-    std::vector<AstNode *> &statements = statementList->getCnodeList();
-    
-    size_t numChildren = statements.size(); 
-    // 递归访问子节点
-    for (size_t i = 0; i < numChildren; ++i)
-    {
-        // 访问当前子节点
-        statementList->get(i)->accept(this, fs);
-
-        // 如果不是最后一个语句节点，则输出分号
-        if (i != numChildren - 1)
-        {
-            fprintf(fs, "; ");
-        }
-    }
-    }
-    
-    void GenerationVisitor::visit(IfStatement *ifStatement, FILE *fs)  {
-    fprintf(fs, "if (");
-    visit(ifStatement->get(0), fs); // 访问 expression
-    fprintf(fs, ")\n{\n");
-    visit(ifStatement->get(1), fs); // 访问 then statement
-    fprintf(fs, "}\n");
-
-    visit(ifStatement->get(2), fs); // 访问 else_part
-}
- 
-    void GenerationVisitor::visit(ElsePart *elseNode, FILE *fs)  
-    {
-        switch (elseNode->grammar_type_)
-        {
-        case ElsePart::ELSEType::EPSILON:
-            return;
-        case ElsePart::ELSEType::ELSE_STATEMENT:
-            fprintf(fs, "else {\n");
-            visit(ifStatement->get(0), fs); // 访问 expression
-            fprintf(fs, "}\n");
-        }
-    } 
-
- void GenerationVisitor::visit(ProcedureCall *procedureCall, FILE *fs)  {
-   fprintf(fs, "%s", procedureCall->get_id().c_str());
-    // 根据调用类型决定是否输出参数列表
-    if (procedureCall->procedure_type == ProcedureCall::ProcedureType::NO_LIST)
-    {
-        fprintf(fs, "();\n"); // 输出空参数列表
-    }
-    else if (procedureCall->procedure_type == ProcedureCall::ProcedureType::EXP_LIST)
-    {
-        fprintf(fs, "(");
-        procedureCall->get(1)->accept(this, fs);//expressionlist
-        fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
-    }
-    else if (procedureCall->procedure_type == ProcedureCall::ProcedureType::VAR_LIST)
-    {
-        fprintf(fs, "(");
-        procedureCall->get(1)->accept(this, fs);//variablelist
-        fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
-    }
- }
-
-void GenerationVisitor::visit(AssignopStatement *assignopStatement, FILE *fs)  
-    {
-        auto assignment_node = dynamic_cast<AssignmentNode *>(statement->get(0));
-        auto exp = assignment_node->get(1)->DynamicCast<ExpressionNode>();
-        // 根据左侧类型决定生成的代码逻辑
-        switch (assignopStatement->left_type)
-        {
-        case AssignopStatement::LEFTTYPE::VARIABLE:
-        case AssignopStatement::LEFTTYPE::FUNC:
-        {
-            // 生成函数调用的代码
-            assignopStatement->get(0)->accept(this, fs);
-
-            // 输出赋值操作符
-            fprintf(fs, " = ");
-
-            // 生成右侧表达式的代码
-            assignopStatement->get(1)->accept(this, fs);
-
-            // 输出分号以结束语句
-            fprintf(fs, ";\n");
-            break;
-        }
-        default:
-            // 其他情况下，什么也不做
-            break;
-        }
-    }
-
-void GenerationVisitor::visit(LoopStatement *loopStatement, FILE *fs)  
-    {
-          switch (loopStatement->loop_type)
-        {
-        case LoopStatement::LoopType::FORUP:
-        {
-            fprintf(fs, "for (");
-            auto id = loopStatement->get(0)->DynamicCast<LeafNode>();
-            if (id)
-            {
-                id->accept(this, fs);
-            }
-            fprintf(fs, " = ");
-            loopStatement->get(1)->accept(this, fs);//expression
-            fprintf(fs, "; ");
-            id->accept(this, fs);
-            fprintf(fs, " <= ");
-            loopStatement->get(2)->accept(this, fs);//中间的expression
-            fprintf(fs, "; ");
-            
-            id->accept(this, fs);
-            fprintf(fs, "++) {\n");
-            loopStatement->get(3)->accept(this, fs);//statement
-            fprintf(fs, "}\n");
-            break;
-        }
-        case LoopStatement::LoopType::FORDOWN:
-        {
-            fprintf(fs, "for (");
-            auto id = loopStatement->get(0)->DynamicCast<LeafNode>();
-            if (id)
-            {
-                id->accept(this, fs);
-            }
-            fprintf(fs, " = ");
-            loopStatement->get(1)->accept(this, fs);
-            fprintf(fs, "; ");
-            id->accept(this, fs);
-            fprintf(fs, " >= ");
-            loopStatement->get(2)->accept(this, fs);
-            fprintf(fs, "; ");
-            id->accept(this, fs);
-            fprintf(fs, "--) {\n");
-            loopStatement->get(3)->accept(this, fs);
-            fprintf(fs, "}\n");
-            break;
-        }
-        case LoopStatement::LoopType::WHILE:
-        {
-            fprintf(fs, "while (");
-            loopStatement->get(0)->accept(this, fs);
-            fprintf(fs, ") {\n");
-            loopStatement->get(1)->accept(this, fs);
-            fprintf(fs, "}\n");
-            break;
-        }
-        case LoopStatement::LoopType::REAPT:
-        {
-            fprintf(fs, "do {\n");
-            loopStatement->get(0)->accept(this, fs);
-            fprintf(fs, "} while (!(");
-            loopStatement->get(1)->accept(this, fs);
-            fprintf(fs, "));\n");
-            break;
-        }
-        }
-    }
-
-
-void GenerationVisitor::visit(Variable *variable, FILE *fs)  {
-    // 访问第一个子节点
-    variable->get(0)->accept(this, fs);
-    // 访问第二个子节点
-    variable->get(1)->accept(this, fs);
-}
-
-void GenerationVisitor::visit(VariableList *variableList, FILE *fs)   {
-    
-    std::vector<AstNode *> &children = variableList->getCnodeList();
-    
-    // 处理单个表达式节点
-    if (variableList->grammar_type() ==  VariableList::GrammarType::VAR_)
-    {
-        variableList->get(0)->accept(this, fs);
-    }
-    // 处理多个表达式节点
-    else if (variableList->grammar_type() == VariableList::GrammarType::VAR_LIST_VAR)
-    {
-        size_t numChildren=children.size();
-        // 遍历子节点列表并逐个访问
-        for (size_t i = 0; i < numChildren; ++i) {
-            children[i]->accept(this, fs);
-
-            // 如果不是最后一个节点，则输出逗号
-            if (variableList->grammar_type() == VariableList::GrammarType:: VAR_LIST_VAR && i != numChildren - 1) {
-                fprintf(fs, ", ");
-            }
-        }
-    }
-}
-void GenerationVisitor::visit(IDVarPart *idVarPart, FILE *fs)  
-    {
-    if (grammar_type_ == GrammarType::_ID)
-      {
-        fprintf(fs, ".");
-        visit(switchStatement->get(0), fs); // 访问 id
-      }
-      else if (grammar_type_ == GrammarType::EXP_LIST)
-      {
-        fprintf(fs, "[");
-       visit(switchStatement->get(0), fs); // 访问 expression_list
-        if (array_lb_ > 0)
-          PRINT(" - %d", array_lb_)
-        else if (array_lb_ < 0)
-          PRINT(" + %d", -array_lb_)
-        fprintf(fs, "]");
-      }
-    }
-void GenerationVisitor::visit(IDVarParts *idVarParts, FILE *fs)   {
-    // 获取子节点列表
-    std::vector<AstNode *> &children = idVarParts->getCnodeList();
-
-    // 遍历子节点列表并逐个访问
-    for (size_t i = 0; i < children.size(); ++i) {
-        children[i]->accept(this, fs);
-
-        // 如果不是最后一个节点，则输出空格
-        if (i != children.size() - 1) {
-            fprintf(fs, " ");
-        }
-    }
-}
-
- void GenerationVisitor::visit(Term *term, FILE *fs)  
-{
-    if (term->GetSymType() == Term::SymbolType::SINGLE)
-    {
-        // term -> factor 的情况
-        term->get(0)->accept(this, fs); // 访问 factor 节点
-    }
-    else
-    {
-        // term -> term MULOP factor 的情况
-        term->get(0)->accept(this, fs); // 访问左侧 term 节点
-      
-        // 根据乘法操作符类型输出相应的符号
-        switch (term->GetSymType())
-        {
-        case Term::SymbolType::MULTIPLY:
-            fprintf(fs, " * ");
-            break;
-        case Term::SymbolType::DIVIDE:
-            fprintf(fs, " / ");
-            break;
-        case Term::SymbolType::MOD:
-            fprintf(fs, " % ");
-            break;
-        case Term::SymbolType::AND:
-            fprintf(fs, " && ");
-            break;
-        case Term::SymbolType::SINGLE:
-            break;
-        }
-        term->get(2)->accept(this, fs); // 访问右侧 factor 节点
-    }
-}
-
-    void GenerationVisitor::visit(Factor *factor, FILE *fs)  
-    {
-        switch (factor->get_factor_type())
-        {
-        case Factor::FactorType::NUM:
-        case Factor::FactorType::VARIABLE:
-            factor->get(0)->accept(this, fs);
-            break;
-        case Factor::FactorType::EXP:
-            fprintf(fs, "(");
-            factor->get(0)->accept(this, fs);
-            fprintf(fs, ")");
-            break;
-        case Factor::FactorType::ID_EXP_LIST:
-            factor->get(0)->accept(this, fs);
-            fprintf(fs, "(");
-            factor->get(1)->accept(this, fs);
-            fprintf(fs, ")");
-            break;
-        case Factor::FactorType::NOT_:
-            fprintf(fs, "!");
-            factor->get(0)->accept(this, fs);
-            break;
-        case Factor::FactorType::UMINUS_:
-            fprintf(fs, "-");
-            factor->get(0)->accept(this, fs); // 访问因子节点
-            break;
-        case Factor::FactorType::CHAR_:
-            fprintf(fs, "'");
-            factor->get(0)->accept(this, fs); // 'letter'
-            fprintf(fs, "'");
-            break;
-        case Factor::FactorType::STR:
-        case Factor::FactorType::BOOL:
-            factor->get(0)->accept(this, fs);
-            break;
-        default:
-            break;
-        }
-    }
-
-void Statement::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void CompoundStatement::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void StatementList::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void IfStatement::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void ProcedureCall::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void AssignopStatement::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void ElsePart::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void LoopStatement::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void VariableList::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void Variable::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void IDVarPart::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void IDVarParts::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void Expression::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void SimpleExpression::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void ExpressionList::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void Term::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
-
-void Factor::accept(Visitor *visitor, FILE *fs)
-{
-    visitor->visit(this, fs);
-}
+   
 
 }  // namespace ast
-=======
-}  // namespace ast
->>>>>>> 2e8df6f659dc28235ebde21c391d09b0b7304b64:src/generation_visitor.cpp

@@ -1,14 +1,3 @@
 {
     "cmake.configureOnEdit": true,
-    "files.associations": {
-        "*.l": "perl6",
-        "array": "cpp",
-        "*.tcc": "cpp",
-        "memory": "cpp",
-        "functional": "cpp",
-        "future": "cpp",
-        "istream": "cpp",
-        "tuple": "cpp",
-        "utility": "cpp"
-    },
 }

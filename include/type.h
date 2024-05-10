@@ -117,31 +117,31 @@ public:
     ConstValue() {}
     ~ConstValue() {}
     // 拷贝构造函数
-    ConstValue(ConstValue &cv){
-        switch(cv.type()){
+    ConstValue(const ConstValue &cv){
+        switch(cv.value_type){
             case ConstvalueType::INTEGER:
-                value_type = cv.type();
-                C_INT = cv.get<int>();
+                value_type = cv.value_type;
+                C_INT = cv.C_INT;
                 Is_Uminus = cv.Is_Uminus;
                 break;
             case ConstvalueType::REAL:
-                value_type = cv.type();
-                C_REAL = cv.get<float>();
+                value_type = cv.value_type;
+                C_REAL = cv.C_REAL;
                 Is_Uminus = cv.Is_Uminus;
                 break;
             case ConstvalueType::BOOLEAN:
-                value_type = cv.type();
-                C_BOOLEAN = cv.get<bool>();
+                value_type = cv.value_type;
+                C_BOOLEAN = cv.C_BOOLEAN;
                 Is_Uminus = cv.Is_Uminus;
                 break;
             case ConstvalueType::CHAR:
-                value_type = cv.type();
-                C_CHAR = cv.get<char>();
+                value_type = cv.value_type;
+                C_CHAR = cv.C_CHAR;
                 Is_Uminus = cv.Is_Uminus;
                 break;
             case ConstvalueType::STRING:
-                value_type = cv.type();
-                C_STRING = cv.get<std::string>();
+                value_type = cv.value_type;
+                C_STRING = cv.C_STRING;
                 Is_Uminus = cv.Is_Uminus;
                 break;
         }
@@ -207,31 +207,31 @@ public:
         C_STRING = v; 
     }
     ConstvalueType type() { return value_type; }
-    ConstValue &operator= (ConstValue &cv){
-        switch(cv.type()){
+    ConstValue &operator= (const ConstValue &cv){
+        switch(cv.value_type){
             case ConstvalueType::INTEGER:
-                value_type = cv.type();
-                C_INT = cv.get<int>();
+                value_type = cv.value_type;
+                C_INT = cv.C_INT;
                 Is_Uminus = cv.Is_Uminus;
                 break;
             case ConstvalueType::REAL:
-                value_type = cv.type();
-                C_REAL = cv.get<float>();
+                value_type = cv.value_type;
+                C_REAL = cv.C_REAL;
                 Is_Uminus = cv.Is_Uminus;
                 break;
             case ConstvalueType::BOOLEAN:
-                value_type = cv.type();
-                C_BOOLEAN = cv.get<bool>();
+                value_type = cv.value_type;
+                C_BOOLEAN = cv.C_BOOLEAN;
                 Is_Uminus = cv.Is_Uminus;
                 break;
             case ConstvalueType::CHAR:
-                value_type = cv.type();
-                C_CHAR = cv.get<char>();
+                value_type = cv.value_type;
+                C_CHAR = cv.C_CHAR;
                 Is_Uminus = cv.Is_Uminus;
                 break;
             case ConstvalueType::STRING:
-                value_type = cv.type();
-                C_STRING = cv.get<std::string>();
+                value_type = cv.value_type;
+                C_STRING = cv.C_STRING;
                 Is_Uminus = cv.Is_Uminus;
                 break;
         }
@@ -247,7 +247,7 @@ private:
         float C_REAL;
         char C_CHAR;
         bool C_BOOLEAN;
-        std::string C_STRING;
     };
+    std::string C_STRING;
     bool Is_Uminus = false;
 };
