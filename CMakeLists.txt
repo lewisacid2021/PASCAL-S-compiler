@@ -24,12 +24,17 @@ add_subdirectory(unittest)
 file(GLOB SRC_FILES src/*.cpp)
 message(STATUS "SRC_FILES: ${SRC_FILES}")
 
-add_executable(PascalToC 
+add_executable(pascc 
   main.cpp
   ${SRC_FILES}
   ${PROJECT_SOURCE_DIR}/scripts/parser.tab.cpp
   ${PROJECT_SOURCE_DIR}/scripts/lex.yy.cpp
   )
+
+  set_target_properties(pascc PROPERTIES LINK_SEARCH_START_STATIC ON)
+  set_target_properties(pascc PROPERTIES LINK_SEARCH_END_STATIC ON)
+  
+  target_link_options(pascc PRIVATE -static-libgcc -static-libstdc++ -static)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

@@ -164,7 +164,7 @@ void GenerationVisitor::visit(VarDeclaration *vardeclaration)
     {
         auto ArrayType = type_node->get(0)->DynamicCast<ArrayTypeNode>();
 
-        auto id_list   = vardeclaration->get(-2)->getCnodeList();
+        auto id_list   = vardeclaration->get(-2)->DynamicCast<IdList>()->Lists();
         for (uint i = 0; i < id_list.size(); i++)
         {
             id_list[i]->accept(this);
