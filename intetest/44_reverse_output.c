@@ -6,11 +6,11 @@ void reverse(int n)
 int next;
 if (n <= 1)
 {
-scanf("%d",next);
+scanf("%d",&next);
 printf("%d",next);
 }
 else {
-scanf("%d",next);
+scanf("%d",&next);
 reverse(n - 1);
 printf("%d",next);
 }

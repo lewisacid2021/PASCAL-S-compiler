@@ -181,7 +181,7 @@ SUBCATALOG              ".."
 ('[^'\n][^']*(\n)[^']*')        { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
 ('[^']*(\n)[^']*[^'\n]')        { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
               
-/*(\{|(\(\*)[^\{\}(\(\*)(\*\))]*)  { write_cache(); print_lex_error("unclosed comment"); skip_error_token(); } */
+
 (\{[^\{\}]*)|((\(\*)[^(\(\*)(\*\))]*)  { write_cache(); print_lex_error("unclosed comment"); skip_error_token(); }
 ('[^']*)                        { write_cache(); print_lex_error("unclosed string constant"); skip_error_token(); }
 
@@ -242,7 +242,6 @@ void print_syntax_error(const char *msg)
 void to_str()
 {
     std::string str = std::string(yytext);
-    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
     yylval.token_info.value.set(str);
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;

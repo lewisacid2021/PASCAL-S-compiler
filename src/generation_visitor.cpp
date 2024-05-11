@@ -408,7 +408,33 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
 
         // 使用 fprintf 打印生成的格式化字符串
         fprintf(fs, "%s", formatString.c_str());
-        procedureCall->get(0)->accept(this);//expressionlist
+        vector<AstNode*> lists= procedureCall->get(0)->DynamicCast<ExpressionList>()->Lists();
+        for(int i = 0; i < lists.size(); i++){
+            if(lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE){
+                if(lists[i]->get(0)->DynamicCast<SimpleExpression>()->getCnodeList().size() == 1){
+                    if(lists[i]->get(0)->get(0)->DynamicCast<Term>()->GetSymType() == Term::SymbolType::SINGLE){
+                        if(lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE){
+                        // 找到相应变量的表项
+                            auto var = lists[i]->get(0)->get(0)->get(0)->get(0)->DynamicCast<Variable>();
+                            string id = var->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+                            auto table_info = findID(MainTable, procedureCall->get_id(), 0);
+                            if(table_info != NULL){                  
+                                auto record_info = findID(CurrentTable, id, 0);
+                                if(record_info != NULL){
+                                    if(record_info->flag == "variant" || record_info->flag == "array"){
+                                        fprintf(fs, "&");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            lists[i]->accept(this);
+            if(i != lists.size() - 1){
+                fprintf(fs, ", ");
+            }
+        }
         fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
     }
     else{
@@ -422,7 +448,7 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
         {
             fprintf(fs, "(");
             //procedureCall->get(0)->accept(this);//expressionlist
-             vector<AstNode*> lists= procedureCall->get(0)->DynamicCast<ExpressionList>()->Lists();
+            vector<AstNode*> lists= procedureCall->get(0)->DynamicCast<ExpressionList>()->Lists();
             for(int i = 0; i < lists.size(); i++){
                 if(lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE){
                     if(lists[i]->get(0)->DynamicCast<SimpleExpression>()->getCnodeList().size() == 1){
@@ -731,9 +757,15 @@ void GenerationVisitor::visit(VariableList *variableList )   {
             fprintf(fs, "!");
             factor->get(0)-> accept(this);
             break;
-        case Factor::GrammerType::UMINUS_:
-            fprintf(fs, "-");
+        case Factor::GrammerType::UPLUS:  
+            fprintf(fs, "(+");
             factor->get(0)-> accept(this); // 访问因子节点
+            fprintf(fs, ")");
+            break;
+        case Factor::GrammerType::UMINUS_:
+            fprintf(fs, "(-");
+            factor->get(0)-> accept(this); // 访问因子节点
+            fprintf(fs, ")");
             break;
         case Factor::GrammerType::CHAR_:
             fprintf(fs, "'");

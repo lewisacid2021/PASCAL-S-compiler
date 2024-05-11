@@ -1,8 +1,8 @@
 #include<stdio.h>
 #include<stdbool.h>
-const char dog = 'd';
-const char cat = 'c';
-int n, k, i, j;
+const char DOG = 'd';
+const char CAT = 'c';
+int N, k, i, j;
 int a[5][5];
 int relu_reg(int n)
 {
@@ -26,19 +26,19 @@ return 0;
 }
 }
 int main() {
-scanf("%d",n);
-for (k = 0; k <= n - 1; k++) {
+scanf("%d",&N);
+for (k = 0; k <= N - 1; k++) {
 for (i = 0; i <= 4; i++) {
 for (j = 0; j <= 4; j++) {
-scanf("%d",a[i][j]);
+scanf("%d",&a[i][j]);
 }
 }
 if (model() != 0)
 {
-printf("%c",cat);
+printf("%c",CAT);
 }
 else {
-printf("%c",dog);
+printf("%c",DOG);
 }
 }
 return 0;

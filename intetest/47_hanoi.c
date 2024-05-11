@@ -19,9 +19,9 @@ hanoi(n - 1, two, one, three);
 }
 }
 int main() {
-scanf("%d",n);
+scanf("%d",&n);
 for (i = 1; i <= n; i++) {
-scanf("%d",t);
+scanf("%d",&t);
 hanoi(t, 1, 2, 3);
 }
 return 0;

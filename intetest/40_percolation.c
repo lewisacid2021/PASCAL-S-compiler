@@ -39,8 +39,8 @@ flag = false;
 init(n);
 k = n * n + 1;
 for (i = 0; i <= m - 1; i++) {
-scanf("%d",a);
-scanf("%d",b);
+scanf("%d",&a);
+scanf("%d",&b);
 if (flag == false)
 {
 loc = n * (a - 1) + b;

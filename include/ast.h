@@ -923,6 +923,7 @@ class Factor: public AstNode
         ID_EXP_LIST,  // factor -> id ( expression_list ) 子节点为叶子节点和 expression_list节点
         NOT_,         // factor -> not factor 子节点为factor节点
         UMINUS_,      // factor -> - factor 子节点为factor节点
+        UPLUS,        // factor -> + factor 子节点为factor节点
         CHAR_,        // factor -> ′ letter ′ 子节点为叶子节点
         STR,          // 子节点为叶子节点
         BOOL          // 子节点为叶子节点

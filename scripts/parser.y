@@ -520,6 +520,11 @@ formal_parameter :
         $$ = new FormalParam();
         $$->set_rownum(line_count);
     }
+    | '(' ')'
+    {
+        $$ = new FormalParam();
+        $$->set_rownum(line_count);
+    }
     | '(' parameter_lists ')'
     {
         // formal_parameter -> '(' parameter_lists ')'
@@ -960,7 +965,7 @@ factor : INT_NUM
     | PLUS factor
     {
         // factor -> num
-        $$ = new Factor(Factor::GrammerType::UMINUS_);
+        $$ = new Factor(Factor::GrammerType::UPLUS);
         $$->set_rownum(line_count);
         $$->SetFacType($2->GetFacType());
         $$->append_child($2);
