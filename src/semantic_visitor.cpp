@@ -522,7 +522,8 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                     }
                     string term_type2 = sexpression->get(1)->DynamicCast<Term>()->GetTerType();
                     //类型检查
-                    if ((term_type1 == "real" || term_type1 == "integer") && (term_type2 == "real" || term_type2 == "integer")) {
+                    if ((term_type1 == "real" || term_type1 == "integer" || term_type1 == "char") && 
+                    (term_type2 == "real" || term_type2 == "integer" || term_type2 == "char")) {
                         if (term_type1 == "real" || term_type2 == "real") {
                             sexpression->SetExpType("real");
                         } else {
@@ -545,7 +546,8 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                 }
                 string term_type2 = sexpression->get(1)->DynamicCast<Term>()->GetTerType();
                 //类型检查
-                if (term_type1 == "boolean" && term_type2 == "boolean") {
+                if ((term_type1 == "real" || term_type1 == "integer" || term_type1 == "char" ||term_type1 == "boolean" )
+                && (term_type2 == "boolean" || term_type2 == "real" || term_type2 == "integer" || term_type2 == "char")) {
                     sexpression->SetExpType("boolean");
                 } else {
                     //error
@@ -580,7 +582,7 @@ void SemanticVisitor::visit(Term *term)
                 string fac_type = term->get(1)->DynamicCast<Factor>()->GetFacType();
                 //类型检查
                 if ((term_type == "real" || term_type == "integer" || term_type == "char") &&
-                    (fac_type == "real" || fac_type == "integer" || term_type == "char"))
+                    (fac_type == "real" || fac_type == "integer" || fac_type == "char"))
                 {
                     if (term_type == "real" || fac_type == "real")
                     {
@@ -605,7 +607,7 @@ void SemanticVisitor::visit(Term *term)
                 }
                 string fac_type = term->get(1)->DynamicCast<Factor>()->GetFacType();
                 //类型检查
-                if ((term_type == "integer" || term_type == "char") && (fac_type == "integer" || term_type == "char"))
+                if ((term_type == "integer" || term_type == "char") && (fac_type == "integer" || fac_type == "char"))
                 {
                     term->SetTerType("integer");
                 } else {
@@ -624,7 +626,8 @@ void SemanticVisitor::visit(Term *term)
                 }
                 string fac_type = term->get(1)->DynamicCast<Factor>()->GetFacType();
                 //类型检查
-                if (term_type == "boolean" && fac_type == "boolean")
+                if ((term_type == "real" || term_type == "integer" || term_type == "char" || term_type == "boolean" )&& 
+                (fac_type == "real" || fac_type == "integer" || fac_type == "char" || fac_type == "boolean"))
                 {
                     term->SetTerType("boolean");
                 } else {
@@ -666,6 +669,7 @@ void SemanticVisitor::visit(Factor *factor)
                 factor->SetFacType(exp->GetExpType());
                 break;
             }
+            case Factor::GrammerType::UPLUS:
             case Factor::GrammerType::UMINUS_:
             {
                 // 对于负号直接与子节点的factor类型相同
@@ -688,10 +692,11 @@ void SemanticVisitor::visit(Factor *factor)
                     factor->get(0)->accept(this);
                 }
                 string fac_type = fac->GetFacType();
-                // 类型检查(只有布尔值可以)
-                if (fac_type == "boolean") {
-                    factor->SetFacType(fac->GetFacType());
+                // 类型检查(实数、整数、字符、布尔型都可以)
+                if (fac_type == "boolean" || fac_type == "integer" || fac_type == "char" || fac_type == "real") {
+                    factor->SetFacType("boolean");
                 } else {
+
                 }
                 break;
             }

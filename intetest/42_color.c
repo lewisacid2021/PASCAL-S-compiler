@@ -55,7 +55,7 @@ return dp[a][b][c][d][e][last];
 }
 }
 int main() {
-scanf("%d",n);
+scanf("%d",&n);
 for (i = 0; i <= 17; i++) {
 for (j = 0; j <= 17; j++) {
 for (k = 0; k <= 17; k++) {
@@ -70,7 +70,7 @@ dp[i][j][k][l][m][h] = -1;
 }
 }
 for (i = 0; i <= n - 1; i++) {
-scanf("%d",list[i]);
+scanf("%d",&list[i]);
 cns[list[i]] = cns[list[i]] + 1;
 }
 ans = dfs(cns[1], cns[2], cns[3], cns[4], cns[5], 0);

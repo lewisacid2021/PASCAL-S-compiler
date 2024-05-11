@@ -46,9 +46,9 @@ line2[n + step - i] = 0;
 }
 int main() {
 sum = 0;
-scanf("%d",k);
+scanf("%d",&k);
 for (i = 1; i <= k; i++) {
-scanf("%d",n);
+scanf("%d",&n);
 f(1);
 }
 printf("%d",sum);

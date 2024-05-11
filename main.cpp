@@ -17,17 +17,18 @@ int main(int argc, char *argv[]){
     ast::SemanticVisitor* Semantic_Visitor = new ast::SemanticVisitor();
     MainTable=new SymbolTable();
     CurrentTable = MainTable;
-    if (argc < 2){
-        std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
+    
+    if (argc < 3){
+        std::cerr << "Usage: " << argv[0] << "-i <filename>" << std::endl;
         return 1;
     }
-    yyin = fopen(argv[1], "r");
+    yyin = fopen(argv[2], "r");
     if (yyin == nullptr){
         std::cerr << "Cannot open file " << argv[1] << std::endl;
         return 1;
     }
 
-    std::string outfile(argv[1]);   
+    std::string outfile(argv[2]);   
     outfile=outfile.substr(0,outfile.find_last_of('.'))+".c"; 
 
     fs=fopen(outfile.c_str(),"w");

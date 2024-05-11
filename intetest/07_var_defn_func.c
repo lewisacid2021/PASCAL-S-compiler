@@ -6,9 +6,7 @@ int defn()
 return 4;
 }
 int main() {
-{
-a = defn;
+a = defn();
 printf("%d",a);
-}
 return 0;
 }
