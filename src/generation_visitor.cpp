@@ -36,7 +36,7 @@ void GenerationVisitor::visit(LeafNode *leafnode)
             fprintf(fs, "%d", leafnode->get_value<int>());
             break;
         case ConstValue::ConstvalueType::REAL:
-            fprintf(fs, "%.16lf", leafnode->get_value<double>());
+            fprintf(fs, "%f", leafnode->get_value<double>());
             break;
         case ConstValue::ConstvalueType::BOOLEAN:
             fprintf(fs, "%s", leafnode->get_value<bool>() ? "true" : "false");
@@ -216,6 +216,7 @@ void GenerationVisitor::visit(SubprogramDeclaration *subprogramdeclaration)
     bool isFunc   = (headnode->get_type() == SubprogramHead::SubprogramType::FUNC);
    
     auto record_info = findID(MainTable, id, 0);
+    CurrentTable = record_info->subSymbolTable;
 
     if (isFunc)  //判断是函数还是过程 过程类型为void 无返回值
         id   = "_" + id + "_";
@@ -466,8 +467,14 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
                             if(table_info != NULL){                  
                                 auto record_info = findID(CurrentTable, id, 0);
                                 if(record_info != NULL){
-                                    if(record_info->flag == "variant" || record_info->flag == "array" || record_info->flag == "function" || record_info->flag == "procedure"){
+                                    if(record_info->flag == "variant" || record_info->flag == "array"){
                                         fprintf(fs, "&");
+                                    }
+                                    else if( record_info->flag == "(sub)program name" ){
+                                        string func_id = record_info->id;
+                                        func_id   = "&_" + id + "_";
+                                        fprintf(fs, "%s", func_id.c_str());
+                                        continue;
                                     }
                                 }
                             }
