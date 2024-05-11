@@ -36,7 +36,7 @@ void GenerationVisitor::visit(LeafNode *leafnode)
             fprintf(fs, "%d", leafnode->get_value<int>());
             break;
         case ConstValue::ConstvalueType::REAL:
-            fprintf(fs, "%lf", leafnode->get_value<double>());
+            fprintf(fs, "%s", leafnode->get_value<string>().c_str());
             break;
         case ConstValue::ConstvalueType::BOOLEAN:
             fprintf(fs, "%s", leafnode->get_value<bool>() ? "true" : "false");
@@ -82,7 +82,7 @@ void ConstDeclaration::print_type()
             fprintf(fs, "int ");
             break;
         case ConstValue::ConstvalueType::REAL:
-            fprintf(fs, "double ");
+            fprintf(fs, "float ");
             break;
         case ConstValue::ConstvalueType::CHAR:
         case ConstValue::ConstvalueType::STRING:
@@ -130,7 +130,7 @@ void GenerationVisitor::visit(TypeNode *typenode)
             else if(type=="boolean"&&true) 
                 fprintf(fs, "bool");
             else if(type=="real"&&true) 
-                fprintf(fs, "double");
+                fprintf(fs, "float");
             else  fprintf(fs, "%s", type.c_str());
             break;
         }
@@ -141,7 +141,7 @@ void GenerationVisitor::visit(TypeNode *typenode)
             else if(typenode->get_type_name()=="boolean"&&true) 
                 fprintf(fs, "bool");
             else if(typenode->get_type_name()=="real"&&true) 
-                fprintf(fs, "double");
+                fprintf(fs, "float");
             else  fprintf(fs, "%s", typenode->get_type_name().c_str());
             break;
         }
@@ -216,6 +216,7 @@ void GenerationVisitor::visit(SubprogramDeclaration *subprogramdeclaration)
     bool isFunc   = (headnode->get_type() == SubprogramHead::SubprogramType::FUNC);
    
     auto record_info = findID(MainTable, id, 0);
+    CurrentTable = record_info->subSymbolTable;
 
     if (isFunc)  //判断是函数还是过程 过程类型为void 无返回值
         id   = "_" + id + "_";
@@ -396,7 +397,7 @@ void GenerationVisitor::visit(ElsePart *elseNode )
         } else if (type == "integer") {
             formatString += "%d";
         } else if (type == "real") {
-            formatString += "%lf";
+            formatString += "%f";
         } else if (type == "boolean") {
             formatString += "%d";
         } else if (type == "unknown"){
@@ -410,8 +411,38 @@ void GenerationVisitor::visit(ElsePart *elseNode )
     return formatString;
 }
 
+std::string generateFormatString2(ExpressionList* expressionList) {
+    std::string formatString = "\"";
+    std::vector<std::string>* types = expressionList->get_types();
+
+    for(const auto& type : *types) {
+        if (type == "string") {
+            formatString += "%s";
+        } else if (type == "char") {
+            formatString += "%c";
+        } else if (type == "integer") {
+            formatString += "%d";
+        } else if (type == "real") {
+            formatString += "%f";
+        } else if (type == "boolean") {
+            formatString += "%d";
+        } else if (type == "unknown"){
+            formatString += "%i";
+        } 
+        // 添加逗号和空格
+        //formatString += " ";
+    }
+    formatString += "\",";
+    
+    return formatString;
+}
+
 void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
     //fprintf(fs, "here");
+    if(procedureCall->get_id()=="break"){
+        fprintf(fs, "break;\n");
+        return;
+    }
     if(procedureCall->get_id()=="writeln"){
             fprintf(fs, "printf(\"\\n\");\n");
             return;}
@@ -431,7 +462,7 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
     else if(procedureCall->get_id()=="read"){
         fprintf(fs, "scanf(");
         ExpressionList* expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
-        std::string formatString = generateFormatString(expressionList);
+        std::string formatString = generateFormatString2(expressionList);
 
         // 使用 fprintf 打印生成的格式化字符串
         fprintf(fs, "%s", formatString.c_str());
@@ -450,6 +481,12 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
                                 if(record_info != NULL){
                                     if(record_info->flag == "variant" || record_info->flag == "array"){
                                         fprintf(fs, "&");
+                                    }
+                                    else if( record_info->flag == "(sub)program name" ){
+                                        string func_id = record_info->id;
+                                        func_id   = "&_" + id + "_";
+                                        fprintf(fs, "%s", func_id.c_str());
+                                        continue;
                                     }
                                 }
                             }

@@ -1530,11 +1530,11 @@ yyreduce:
 #line 273 "/root/works/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // const_variable -> string
-        if((yyvsp[0].token_info).value.get<string>() == "TRUE"){
+        if((yyvsp[0].token_info).value.get<string>() == "true"){
             //boolean true
             (yyval.const_value_node) = new ConstValue(true);
         }
-        else if((yyvsp[0].token_info).value.get<string>() == "FALSE"){
+        else if((yyvsp[0].token_info).value.get<string>() == "false" ){
             //boolean false
             (yyval.const_value_node) = new ConstValue(false);
         }
@@ -1576,7 +1576,7 @@ yyreduce:
     break;
 
   case 23: /* record_declaration: TYPE ID CONSTASSIGNOP RECORD var_declaration END ';'  */
-#line 308 "/root/works/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 308 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // record_declaration -> def-record | record_declaration def-record
         (yyval.record_declaration_node) = new RecordDeclaration(RecordDeclaration::GrammarType::SINGLE_DECLARATION);
@@ -1590,7 +1590,7 @@ yyreduce:
     break;
 
   case 24: /* record_declaration: record_declaration TYPE ID CONSTASSIGNOP RECORD var_declaration END ';'  */
-#line 318 "/root/works/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 318 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         (yyval.record_declaration_node) = new RecordDeclaration(RecordDeclaration::GrammarType::MULTI_DECLARATION);
         (yyval.record_declaration_node)->set_rownum(line_count);

@@ -1,14 +1,14 @@
 #include<stdio.h>
 #include<stdbool.h>
-const double RADIUS = 5.500000;
-const double PI = 3.141596;
-const double EPS = 0.000001;
-const double EVAL1 = 95.033188;
-const int CONV1 = 233;
-const int MAX = 1000000000;
-const double TWO = 2.900000;
-const int THREE = 3;
-const int FIVE = 5;
+const double radius = 5.500000;
+const double pi = 3.141596;
+const double eps = 0.000001;
+const double eval1 = 95.033188;
+const int conv1 = 233;
+const int max = 1000000000;
+const double two = 2.900000;
+const int three = 3;
+const int five = 5;
 const char e = 'e';
 const char o = 'o';
 int p;
@@ -16,27 +16,33 @@ double arr[10];
 double input, area, area_trunc;
 double float_abs(double x)
 {
+double _float_abs_;
 if (x < 0)
 {
-return -x;
+_float_abs_ = -x;
 }
 else {
-return x;
+_float_abs_ = x;
 }
+return _float_abs_;
 }
 double circle_area(int radius)
 {
-return (PI * radius * radius + (radius * radius) * PI) / 2;
+double _circle_area_;
+_circle_area_ = (pi * radius * radius + (radius * radius) * pi) / 2;
+return _circle_area_;
 }
 int float_eq(double a,double b)
 {
-if (float_abs(a - b) < EPS)
+int _float_eq_;
+if (float_abs(a - b) < eps)
 {
-return 1;
+_float_eq_ = 1;
 }
 else {
-return 0;
+_float_eq_ = 0;
 }
+return _float_eq_;
 }
 void error()
 {
@@ -57,7 +63,7 @@ ok();
 }
 }
 int main() {
-assert(float_eq(circle_area(5), circle_area(FIVE)));
+assert(float_eq(circle_area(5), circle_area(five)));
 if (1.500000 != 0.000000)
 {
 ok();
@@ -78,11 +84,11 @@ p = 0;
 arr[0] = 1.000000;
 arr[1] = 2.000000;
 input = 0.520000;
-area = PI * input * input;
+area = pi * input * input;
 area_trunc = circle_area(0);
 arr[p] = arr[p] + input;
-printf("%lf",area);
-printf("%lf",area_trunc);
-printf("%lf",arr[0]);
+printf("%.6lf",area);
+printf("%.6lf",area_trunc);
+printf("%.6lf",arr[0]);
 return 0;
 }
