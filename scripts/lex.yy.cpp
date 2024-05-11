@@ -2306,7 +2306,8 @@ void to_int()
 
 void to_float()
 {
-    yylval.token_info.value.set(std::stod(yytext));
+    //yylval.token_info.value.set(std::stof(yytext));
+    yylval.token_info.value.set(yytext);
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;

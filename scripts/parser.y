@@ -304,7 +304,7 @@ record_declarations :
         $$->append_child($1);
     }
 
-record_declaration : TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
+record_declaration : TYPE ID CONSTASSIGNOP RECORD  var_declaration END ';'
     {
         // record_declaration -> def-record | record_declaration def-record
         $$ = new RecordDeclaration(RecordDeclaration::GrammarType::SINGLE_DECLARATION);
@@ -314,7 +314,7 @@ record_declaration : TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
         $$->append_child($5);
 
     }
-    | record_declaration TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
+    | record_declaration TYPE ID CONSTASSIGNOP RECORD  var_declaration END ';'
     {
         $$ = new RecordDeclaration(RecordDeclaration::GrammarType::MULTI_DECLARATION);
         $$->set_rownum(line_count);

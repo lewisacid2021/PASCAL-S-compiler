@@ -126,7 +126,7 @@ public:
                 break;
             case ConstvalueType::REAL:
                 value_type = cv.value_type;
-                C_REAL = cv.C_REAL;
+                C_STRING = cv.C_STRING;
                 Is_Uminus = cv.Is_Uminus;
                 break;
             case ConstvalueType::BOOLEAN:
@@ -146,7 +146,7 @@ public:
                 break;
         }
     }
-    ConstValue(double v) { 
+    ConstValue(float v) { 
         value_type =  ConstvalueType::REAL;
         C_REAL = v;
     }
@@ -163,8 +163,14 @@ public:
         C_INT = v;
     }
     ConstValue(std::string &v) { 
-        value_type =  ConstvalueType::STRING;
-        C_STRING = v; 
+        if(v[0] <= '9' && v[0] >= '0'){
+            value_type =  ConstvalueType::REAL;
+            C_STRING = v;
+        }
+        else{
+            value_type =  ConstvalueType::STRING;
+            C_STRING = v; 
+        }
     }
 
     // get by type
@@ -174,8 +180,8 @@ public:
         return *(T *)(&C_INT);
         else if (std::is_same<T, char>::value)
         return *(T *)(&C_CHAR);
-        else if (std::is_same<T, double>::value)
-        return *(T *)(&C_REAL);
+        else if (std::is_same<T, float>::value)
+        return *((T *)(&C_STRING));
         else if (std::is_same<T, bool>::value)
         return *(T *)(&C_BOOLEAN);
         else if (std::is_same<T, std::string>::value)
@@ -190,22 +196,29 @@ public:
         value_type =  ConstvalueType::INTEGER;
         C_INT = v;
     }
-    void set(double v) {
-        value_type =  ConstvalueType::REAL;
-        C_REAL = v;
+    // void set(float v) {
+    //     value_type =  ConstvalueType::REAL;
+    //     C_REAL = v;
+    // }
+    void set(std::string v) {
+        if(v[0] <= '9' && v[0] >= '0'){
+            value_type =  ConstvalueType::REAL;
+            C_STRING = v;
+        }
+        else{
+            value_type =  ConstvalueType::STRING;
+            C_STRING = v;
+        } 
     }
-    void set(bool v) {
-        value_type =  ConstvalueType::BOOLEAN;
-        C_BOOLEAN = v;
-    }
+    // void set(bool v) {
+    //     value_type =  ConstvalueType::BOOLEAN;
+    //     C_BOOLEAN = v;
+    // }
     void set(char v) {
         value_type =  ConstvalueType::CHAR;
         C_CHAR = v;
     }
-    void set(std::string v) {
-        value_type =  ConstvalueType::STRING;
-        C_STRING = v; 
-    }
+    
     ConstvalueType type() { return value_type; }
     ConstValue &operator= (const ConstValue &cv){
         switch(cv.value_type){
@@ -216,7 +229,7 @@ public:
                 break;
             case ConstvalueType::REAL:
                 value_type = cv.value_type;
-                C_REAL = cv.C_REAL;
+                C_STRING = cv.C_STRING;
                 Is_Uminus = cv.Is_Uminus;
                 break;
             case ConstvalueType::BOOLEAN:
@@ -244,7 +257,7 @@ private:
     ConstvalueType value_type;
     union {
         int C_INT;
-        double C_REAL;
+        float C_REAL;
         char C_CHAR;
         bool C_BOOLEAN;
     };

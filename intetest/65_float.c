@@ -1,12 +1,12 @@
 #include<stdio.h>
 #include<stdbool.h>
-const double radius = 5.500000000000000;
-const double pi = 3.141595653589793;
-const double eps = 0.000001000000000;
-const double eval1 = 95.033187999999996;
+const double radius = 5.500000;
+const double pi = 3.141596;
+const double eps = 0.000001;
+const double eval1 = 95.033188;
 const int conv1 = 233;
 const int max = 1000000000;
-const double two = 2.900000000000000;
+const double two = 2.900000;
 const int three = 3;
 const int five = 5;
 const char e = 'e';
@@ -64,26 +64,26 @@ ok();
 }
 int main() {
 assert(float_eq(circle_area(5), circle_area(five)));
-if (1.500000000000000 != 0.000000000000000)
+if (1.500000 != 0.000000)
 {
 ok();
 }
-if ((~(3.300000000000000 == 0.000000000000000)))
+if ((~(3.300000 == 0.000000)))
 {
 ok();
 }
-if ((0.000000000000000 != 0.000000000000000) && (3 != 0.000000000000000))
+if ((0.000000 != 0.000000) && (3 != 0.000000))
 {
 error();
 }
-if ((0 != 0.000000000000000) || (0.300000000000000 != 0.000000000000000))
+if ((0 != 0.000000) || (0.300000 != 0.000000))
 {
 ok();
 }
 p = 0;
-arr[0] = 1.000000000000000;
-arr[1] = 2.000000000000000;
-input = 0.520000000000000;
+arr[0] = 1.000000;
+arr[1] = 2.000000;
+input = 0.520000;
 area = pi * input * input;
 area_trunc = circle_area(0);
 arr[p] = arr[p] + input;

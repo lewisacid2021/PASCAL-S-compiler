@@ -36,7 +36,7 @@ void GenerationVisitor::visit(LeafNode *leafnode)
             fprintf(fs, "%d", leafnode->get_value<int>());
             break;
         case ConstValue::ConstvalueType::REAL:
-            fprintf(fs, "%f", leafnode->get_value<double>());
+            fprintf(fs, "%s", leafnode->get_value<string>().c_str());
             break;
         case ConstValue::ConstvalueType::BOOLEAN:
             fprintf(fs, "%s", leafnode->get_value<bool>() ? "true" : "false");
@@ -82,7 +82,7 @@ void ConstDeclaration::print_type()
             fprintf(fs, "int ");
             break;
         case ConstValue::ConstvalueType::REAL:
-            fprintf(fs, "double ");
+            fprintf(fs, "float ");
             break;
         case ConstValue::ConstvalueType::CHAR:
         case ConstValue::ConstvalueType::STRING:
@@ -130,7 +130,7 @@ void GenerationVisitor::visit(TypeNode *typenode)
             else if(type=="boolean"&&true) 
                 fprintf(fs, "bool");
             else if(type=="real"&&true) 
-                fprintf(fs, "double");
+                fprintf(fs, "float");
             else  fprintf(fs, "%s", type.c_str());
             break;
         }
@@ -141,7 +141,7 @@ void GenerationVisitor::visit(TypeNode *typenode)
             else if(typenode->get_type_name()=="boolean"&&true) 
                 fprintf(fs, "bool");
             else if(typenode->get_type_name()=="real"&&true) 
-                fprintf(fs, "double");
+                fprintf(fs, "float");
             else  fprintf(fs, "%s", typenode->get_type_name().c_str());
             break;
         }
@@ -385,7 +385,7 @@ void GenerationVisitor::visit(ElsePart *elseNode )
         } else if (type == "integer") {
             formatString += "%d";
         } else if (type == "real") {
-            formatString += "%.6lf";
+            formatString += "%f";
         } else if (type == "boolean") {
             formatString += "%d";
         } else if (type == "unknown"){
@@ -411,14 +411,14 @@ std::string generateFormatString2(ExpressionList* expressionList) {
         } else if (type == "integer") {
             formatString += "%d";
         } else if (type == "real") {
-            formatString += "%lf";
+            formatString += "%f";
         } else if (type == "boolean") {
             formatString += "%d";
         } else if (type == "unknown"){
             formatString += "%i";
         } 
         // 添加逗号和空格
-        //formatString += ", ";
+        //formatString += " ";
     }
     formatString += "\",";
     
