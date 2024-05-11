@@ -272,11 +272,11 @@ const_value : PLUS INT_NUM
     | STRING_
     {
         // const_variable -> string
-        if($1.value.get<string>() == "TRUE"){
+        if($1.value.get<string>() == "true"){
             //boolean true
             $$ = new ConstValue(true);
         }
-        else if($1.value.get<string>() == "FALSE"){
+        else if($1.value.get<string>() == "false" ){
             //boolean false
             $$ = new ConstValue(false);
         }

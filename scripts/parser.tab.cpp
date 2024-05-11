@@ -1530,11 +1530,11 @@ yyreduce:
 #line 273 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // const_variable -> string
-        if((yyvsp[0].token_info).value.get<string>() == "TRUE"){
+        if((yyvsp[0].token_info).value.get<string>() == "true"){
             //boolean true
             (yyval.const_value_node) = new ConstValue(true);
         }
-        else if((yyvsp[0].token_info).value.get<string>() == "FALSE"){
+        else if((yyvsp[0].token_info).value.get<string>() == "false" ){
             //boolean false
             (yyval.const_value_node) = new ConstValue(false);
         }

@@ -36,7 +36,7 @@ void GenerationVisitor::visit(LeafNode *leafnode)
             fprintf(fs, "%d", leafnode->get_value<int>());
             break;
         case ConstValue::ConstvalueType::REAL:
-            fprintf(fs, "%lf", leafnode->get_value<double>());
+            fprintf(fs, "%.16lf", leafnode->get_value<double>());
             break;
         case ConstValue::ConstvalueType::BOOLEAN:
             fprintf(fs, "%s", leafnode->get_value<bool>() ? "true" : "false");
@@ -367,6 +367,32 @@ void GenerationVisitor::visit(ElsePart *elseNode )
         } else if (type == "integer") {
             formatString += "%d";
         } else if (type == "real") {
+            formatString += "%.6lf";
+        } else if (type == "boolean") {
+            formatString += "%d";
+        } else if (type == "unknown"){
+            formatString += "%i";
+        } 
+        // 添加逗号和空格
+        //formatString += ", ";
+    }
+    formatString += "\",";
+    
+    return formatString;
+}
+
+std::string generateFormatString2(ExpressionList* expressionList) {
+    std::string formatString = "\"";
+    std::vector<std::string>* types = expressionList->get_types();
+
+    for(const auto& type : *types) {
+        if (type == "string") {
+            formatString += "%s";
+        } else if (type == "char") {
+            formatString += "%c";
+        } else if (type == "integer") {
+            formatString += "%d";
+        } else if (type == "real") {
             formatString += "%lf";
         } else if (type == "boolean") {
             formatString += "%d";
@@ -383,6 +409,10 @@ void GenerationVisitor::visit(ElsePart *elseNode )
 
 void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
     //fprintf(fs, "here");
+    if(procedureCall->get_id()=="break"){
+        fprintf(fs, "break;\n");
+        return;
+    }
     if(procedureCall->get_id()=="writeln"){
             fprintf(fs, "printf(\"\\n\");\n");
             return;}
@@ -402,7 +432,7 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
     else if(procedureCall->get_id()=="read"){
         fprintf(fs, "scanf(");
         ExpressionList* expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
-        std::string formatString = generateFormatString(expressionList);
+        std::string formatString = generateFormatString2(expressionList);
 
         // 使用 fprintf 打印生成的格式化字符串
         fprintf(fs, "%s", formatString.c_str());
@@ -419,7 +449,7 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
                             if(table_info != NULL){                  
                                 auto record_info = findID(CurrentTable, id, 0);
                                 if(record_info != NULL){
-                                    if(record_info->flag == "variant" || record_info->flag == "array"){
+                                    if(record_info->flag == "variant" || record_info->flag == "array" || record_info->flag == "function" || record_info->flag == "procedure"){
                                         fprintf(fs, "&");
                                     }
                                 }
