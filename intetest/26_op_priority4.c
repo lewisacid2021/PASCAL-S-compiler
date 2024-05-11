@@ -9,7 +9,7 @@ scanf("%d",&c);
 scanf("%d",&d);
 scanf("%d",&e);
 flag = false;
-if (((a - b * c != d - a / c) or (a * b / c == e + d) or (a + b + c == d + e)))
+if (((a - b * c != d - a / c) || (a * b / c == e + d) || (a + b + c == d + e)))
 {
 flag = true;
 }

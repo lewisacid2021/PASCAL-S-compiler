@@ -36,7 +36,7 @@ void GenerationVisitor::visit(LeafNode *leafnode)
             fprintf(fs, "%d", leafnode->get_value<int>());
             break;
         case ConstValue::ConstvalueType::REAL:
-            fprintf(fs, "%f", leafnode->get_value<float>());
+            fprintf(fs, "%lf", leafnode->get_value<double>());
             break;
         case ConstValue::ConstvalueType::BOOLEAN:
             fprintf(fs, "%s", leafnode->get_value<bool>() ? "true" : "false");
@@ -82,7 +82,7 @@ void ConstDeclaration::print_type()
             fprintf(fs, "int ");
             break;
         case ConstValue::ConstvalueType::REAL:
-            fprintf(fs, "float ");
+            fprintf(fs, "double ");
             break;
         case ConstValue::ConstvalueType::CHAR:
             fprintf(fs, "char ");
@@ -130,7 +130,7 @@ void GenerationVisitor::visit(TypeNode *typenode)
             else if(type=="boolean"&&true) 
                 fprintf(fs, "bool");
             else if(type=="real"&&true) 
-                fprintf(fs, "float");
+                fprintf(fs, "double");
             else  fprintf(fs, "%s", type.c_str());
             break;
         }
@@ -141,7 +141,7 @@ void GenerationVisitor::visit(TypeNode *typenode)
             else if(typenode->get_type_name()=="boolean"&&true) 
                 fprintf(fs, "bool");
             else if(typenode->get_type_name()=="real"&&true) 
-                fprintf(fs, "float");
+                fprintf(fs, "double");
             else  fprintf(fs, "%s", typenode->get_type_name().c_str());
             break;
         }
@@ -367,17 +367,15 @@ void GenerationVisitor::visit(ElsePart *elseNode )
         } else if (type == "integer") {
             formatString += "%d";
         } else if (type == "real") {
-            formatString += "%f";
+            formatString += "%lf";
         } else if (type == "boolean") {
             formatString += "%d";
         } else if (type == "unknown"){
             formatString += "%i";
         } 
         // 添加逗号和空格
-        formatString += ", ";
+        //formatString += ", ";
     }
-    formatString.pop_back(); // 去除最后一个逗号和空格
-    formatString.pop_back();
     formatString += "\",";
     
     return formatString;
@@ -754,7 +752,7 @@ void GenerationVisitor::visit(VariableList *variableList )   {
             break;
         }
         case Factor::GrammerType::NOT_:
-            fprintf(fs, "!");
+            fprintf(fs, "~");
             factor->get(0)-> accept(this);
             break;
         case Factor::GrammerType::UPLUS:  
@@ -843,7 +841,7 @@ void GenerationVisitor::visit(SimpleExpression *simpleExpression )  {
     {
         // simple_expression -> simple_expression or term 的情况
         simpleExpression->get(0)-> accept(this); // 访问左侧 simple_expression 节点
-        fprintf(fs, " or ");
+        fprintf(fs, " || ");
         simpleExpression->get(1)-> accept(this); // 访问右侧 term 节点
     }
    }
