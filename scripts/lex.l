@@ -244,8 +244,10 @@ void to_str()
 {
     std::string str = std::string(yytext);
     std::transform(str.begin(),str.end(),str.begin(),::tolower);
+
     if(str == "true" or str == "false") yylval.token_info.value.set_bool(str);
-    else yylval.token_info.value.set(str);
+    else yylval.token_info.value.set_string(str);
+    
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;
@@ -257,7 +259,7 @@ void to_str_case_sensitive()
 {
     std::string str = std::string(yytext);
     str = str.substr(1, str.length() - 2);  
-    yylval.token_info.value.set(str);
+    yylval.token_info.value.set_string(str);
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;
@@ -267,7 +269,7 @@ void to_str_case_sensitive()
 
 void to_int()
 {
-    yylval.token_info.value.set(std::stoi(yytext));
+    yylval.token_info.value.set_int(std::stoi(yytext));
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;
@@ -278,7 +280,7 @@ void to_int()
 void to_float()
 {
     //yylval.token_info.value.set(std::stof(yytext));
-    yylval.token_info.value.set(yytext);
+    yylval.token_info.value.set_float(yytext);
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;
@@ -288,7 +290,7 @@ void to_float()
 
 void to_char()
 {
-    yylval.token_info.value.set(yytext[1]);
+    yylval.token_info.value.set_char(yytext[1]);
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;
