@@ -22,18 +22,9 @@ void addDuplicateNameError()
 //检查是否与主程序名，主程序参数，库函数重名
 bool checkDuplicateNameError(string id, int lineNumber)
 {
-    for (int i = 0; i <= MainTable->records[0]->amount + 4; i++) {
+    for (int i = 0; i < 4; i++) {
         if (id == MainTable->records[i]->id) {
-            if (i == 0)
-            {
-                //与主程序同名
-            } else if (i >= 1 && i <= MainTable->records[0]->amount)
-            {
-                //与主程序参数同名
-            } else
-            {
-                //与库函数同名
-            }
+            //与库函数同名
             return true;
         }
     }
@@ -67,7 +58,7 @@ void SemanticVisitor::visit(ProgramHead *programhead)
         addDuplicateNameError();
     }
 
-    if (programhead->getCnodeList().size() == 1)
+    /* if (programhead->getCnodeList().size() == 1)
     {
         int amount = 0;
         MainTable->addProgramName(id, rn, "program", amount, "");
@@ -92,7 +83,7 @@ void SemanticVisitor::visit(ProgramHead *programhead)
 
             MainTable->addVoidPara(para_id, para_rn);
         }
-    }
+    } */
 
     MainTable->addProcedure("read", -1, -1, NULL);
     //添加write过程，该过程变参
