@@ -256,34 +256,23 @@ const_value : PLUS INT_NUM
     | PLUS REAL_NUM
     {   
         // const_value -> REAL_NUM
-        $$ = new ConstValue($2.value);
+        $$ = new ConstValue($2.value,ConstValue::ValueType::REAL);
     }
     | UMINUS REAL_NUM
     {   
         // const_value -> REAL_NUM
-        $$ = new ConstValue($2.value);
+        $$ = new ConstValue($2.value,ConstValue::ValueType::REAL);
         $$->set_uminus();
     }
     | REAL_NUM
     {   
         // const_value -> REAL_NUM
-        $$ = new ConstValue($1.value);
+        $$ = new ConstValue($1.value,ConstValue::ValueType::REAL);
     }
     | STRING_
     {
         // const_variable -> string
-        if($1.value.get<string>() == "true"){
-            //boolean true
-            $$ = new ConstValue(true);
-        }
-        else if($1.value.get<string>() == "false" ){
-            //boolean false
-            $$ = new ConstValue(false);
-        }
-        else {
-            //字符
-            $$ = new ConstValue($1.value);
-        }
+        $$ = new ConstValue($1.value,ConstValue::ValueType::STRING);
     }
     | CHAR
     {

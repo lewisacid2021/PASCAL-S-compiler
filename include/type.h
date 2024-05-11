@@ -146,10 +146,6 @@ public:
                 break;
         }
     }
-    ConstValue(float v) { 
-        value_type =  ConstvalueType::REAL;
-        C_REAL = v;
-    }
     ConstValue(bool v) { 
         value_type =  ConstvalueType::BOOLEAN;
         C_BOOLEAN = v;
@@ -162,15 +158,9 @@ public:
         value_type =  ConstvalueType::INTEGER;
         C_INT = v;
     }
-    ConstValue(std::string &v) { 
-        if(v[0] <= '9' && v[0] >= '0'){
-            value_type =  ConstvalueType::REAL;
-            C_STRING = v;
-        }
-        else{
-            value_type =  ConstvalueType::STRING;
-            C_STRING = v; 
-        }
+    ConstValue(std::string &v,ConstvalueType type) { 
+        value_type =  type;
+        C_STRING = v;
     }
 
     // get by type
@@ -192,29 +182,23 @@ public:
                                 " not supported");
         }
     }
-    void set(int v) {
+    void set_int(int v) {
         value_type =  ConstvalueType::INTEGER;
         C_INT = v;
     }
-    // void set(float v) {
-    //     value_type =  ConstvalueType::REAL;
-    //     C_REAL = v;
-    // }
-    void set(std::string v) {
-        if(v[0] <= '9' && v[0] >= '0'){
-            value_type =  ConstvalueType::REAL;
-            C_STRING = v;
-        }
-        else{
-            value_type =  ConstvalueType::STRING;
-            C_STRING = v;
-        } 
+    void set_float(std::string v) {
+        value_type =  ConstvalueType::REAL;
+        C_STRING = v;
     }
-    // void set(bool v) {
-    //     value_type =  ConstvalueType::BOOLEAN;
-    //     C_BOOLEAN = v;
-    // }
-    void set(char v) {
+    void set_string(std::string v) {
+        value_type =  ConstvalueType::STRING;
+        C_STRING = v;
+    }
+    void set_bool(bool v) {
+        value_type =  ConstvalueType::BOOLEAN;
+        C_BOOLEAN = v;
+    }
+    void set_char(char v) {
         value_type =  ConstvalueType::CHAR;
         C_CHAR = v;
     }
@@ -257,7 +241,6 @@ private:
     ConstvalueType value_type;
     union {
         int C_INT;
-        float C_REAL;
         char C_CHAR;
         bool C_BOOLEAN;
     };
