@@ -211,16 +211,33 @@ void GenerationVisitor::visit(PeriodsNode *periodsnode)
 
 void GenerationVisitor::visit(SubprogramDeclaration *subprogramdeclaration)
 {
-    string id = subprogramdeclaration->get(0)->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+    auto headnode = subprogramdeclaration->get(0)->DynamicCast<SubprogramHead>();
+    string id = headnode->get_id();
+    bool isFunc   = (headnode->get_type() == SubprogramHead::SubprogramType::FUNC);
+   
     auto record_info = findID(MainTable, id, 0);
-    CurrentTable = record_info->subSymbolTable;
-    // if(CurrentTable == NULL){
-    //     cout << "error" << endl;
-    // }
-    subprogramdeclaration->get(0)->accept(this);  //subprogramhead
+
+    if (isFunc)  //判断是函数还是过程 过程类型为void 无返回值
+        id   = "_" + id + "_";
+
+    headnode->accept(this);  //subprogramhead
+
     fprintf(fs, "{\n");
-    subprogramdeclaration->get(1)->accept(this);   //subprogrambody
+
+    if (isFunc)  //声明函数的返回值 pascal用函数名表示返回值 转换成C时需要额外声明一个变量
+    {
+        subprogramdeclaration->get(0)->get(2)->accept(this);
+        fprintf(fs, " %s;\n", id.c_str());
+    }
+
+    subprogramdeclaration->get(1)->accept(this);
+
+    if (isFunc)  //函数返回值
+        fprintf(fs, "return %s;\n", id.c_str());
+
     fprintf(fs, "}\n");
+
+
     CurrentTable = MainTable;
 }
 
@@ -503,7 +520,12 @@ void GenerationVisitor::visit(AssignopStatement *assignopStatement )
             fprintf(fs, ";\n");
             break;
         case AssignopStatement::LeftType::FUNCID:
-            fprintf(fs, "return ");
+             // 生成函数调用的代码
+            fprintf(fs, "_");
+            assignopStatement->get(0)->get(0)->accept(this);
+            fprintf(fs, "_");
+            // 输出赋值操作符
+            fprintf(fs, " = ");
             // 生成右侧表达式的代码
             assignopStatement->get(1)-> accept(this);
 
