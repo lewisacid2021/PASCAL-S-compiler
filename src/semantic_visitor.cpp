@@ -125,7 +125,7 @@ void SemanticVisitor::visit(ConstDeclaration *constdeclaration)
                 break;
             case ConstValue::ConstvalueType::REAL:
                 type  = "real";
-                value = std::to_string(const_value->get<float>());
+                value = std::to_string(const_value->get<double>());
                 break;
             case ConstValue::ConstvalueType::BOOLEAN:
                 type = "boolean";

@@ -146,7 +146,7 @@ public:
                 break;
         }
     }
-    ConstValue(float v) { 
+    ConstValue(double v) { 
         value_type =  ConstvalueType::REAL;
         C_REAL = v;
     }
@@ -174,7 +174,7 @@ public:
         return *(T *)(&C_INT);
         else if (std::is_same<T, char>::value)
         return *(T *)(&C_CHAR);
-        else if (std::is_same<T, float>::value)
+        else if (std::is_same<T, double>::value)
         return *(T *)(&C_REAL);
         else if (std::is_same<T, bool>::value)
         return *(T *)(&C_BOOLEAN);
@@ -190,7 +190,7 @@ public:
         value_type =  ConstvalueType::INTEGER;
         C_INT = v;
     }
-    void set(float v) {
+    void set(double v) {
         value_type =  ConstvalueType::REAL;
         C_REAL = v;
     }
@@ -244,7 +244,7 @@ private:
     ConstvalueType value_type;
     union {
         int C_INT;
-        float C_REAL;
+        double C_REAL;
         char C_CHAR;
         bool C_BOOLEAN;
     };
