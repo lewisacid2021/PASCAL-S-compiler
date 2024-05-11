@@ -247,7 +247,8 @@ void to_str()
     std::string str = std::string(yytext);
     std::transform(str.begin(),str.end(),str.begin(),::tolower);
 
-    if(str == "true" or str == "false") yylval.token_info.value.set_bool(str);
+    if(str == "true") yylval.token_info.value.set_bool(true);
+    else if(str == "false") yylval.token_info.value.set_bool(false);
     else yylval.token_info.value.set_string(str);
     
     yylval.token_info.line_num = line_count;

@@ -1,6 +1,6 @@
-#line 2 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
+#line 2 "/root/works/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
 
-#line 4 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
+#line 4 "/root/works/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -352,8 +352,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 55
-#define YY_END_OF_BUFFER 56
+#define YY_NUM_RULES 56
+#define YY_END_OF_BUFFER 57
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -361,26 +361,27 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[168] =
+static const flex_int16_t yy_accept[175] =
     {   0,
-        0,    0,   56,   54,    1,    2,    3,   53,   44,   46,
-       37,   27,   41,   28,   41,   37,   29,   41,   35,   40,
+        0,    0,   57,   55,    1,    2,    3,   54,   45,   47,
+       37,   27,   42,   28,   42,   37,   29,   42,   35,   41,
        35,   39,   39,   39,   39,   39,   39,   39,   39,   39,
-       39,   39,   39,   39,   39,   39,   39,   39,   43,   45,
-       52,    3,   53,   53,   47,   53,   52,   42,    0,    0,
+       39,   39,   39,   39,   39,   39,   39,   39,   44,   46,
+       53,    3,   54,   54,   48,   54,   53,   43,    0,    0,
        29,   38,   35,   39,   39,   39,   39,   39,   39,   39,
-       25,   39,   39,   39,   39,   15,   39,   39,    9,   36,
-       39,   39,   39,   23,   39,   39,   39,   39,   52,   31,
-       53,   53,   33,   53,   53,   53,   49,   48,   53,   33,
-       52,    0,    0,   30,   37,   39,   39,   39,   39,   37,
+       25,   39,   39,   39,   39,   39,   15,   39,   39,    9,
+       36,   39,   39,   39,   23,   39,   39,   39,   39,   39,
+       53,   31,   54,   54,   33,   54,   54,   54,   50,   49,
+       54,   33,   53,    0,    0,   30,   37,   39,   39,   39,
 
-       39,   39,   14,   22,   39,   37,   26,   39,   39,   39,
-       39,   39,   39,   10,   39,   53,   34,   53,   53,   53,
-       50,    0,   51,    0,   32,   39,   39,   18,   39,   39,
-       17,   39,   39,   39,   39,   39,   16,    6,   39,   39,
-        0,   50,    0,    7,   13,    5,   39,   39,   39,   39,
-       39,   39,   21,   19,   24,   39,   39,   39,    8,   20,
-       39,   39,    4,   11,   39,   12,    0
+       39,   37,   39,   39,   14,   39,   22,   39,   37,   26,
+       39,   39,   39,   39,   39,   39,   39,   10,   39,   54,
+       34,   54,   54,   54,   51,    0,   52,    0,   32,   39,
+       39,   18,   39,   39,   17,   39,   39,   39,   39,   39,
+       39,   16,   39,    6,   39,   39,    0,   51,    0,    7,
+       13,    5,   39,   39,   39,   39,   39,   39,   39,   21,
+       19,   24,   39,   39,   39,    8,   20,   39,   39,    4,
+       11,   39,   12,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -426,53 +427,55 @@ static const YY_CHAR yy_meta[69] =
         5,    5,    5,    5,    5,    5,    6,    1
     } ;
 
-static const flex_int16_t yy_base[180] =
+static const flex_int16_t yy_base[187] =
     {   0,
-        0,    0,  292,  366,  366,  366,  282,   66,  277,  366,
-      366,  366,  366,  366,  272,  270,   58,  264,   55,  366,
-      262,   43,   52,   59,   52,   56,   49,    0,   64,   50,
-       58,   69,   58,   71,   92,   65,   78,   74,  366,  366,
-      209,  260,  123,  127,  207,  131,  162,  366,    0,  146,
-      123,  366,  366,    0,   91,   88,  105,  102,  107,  103,
-      103,  108,  123,  114,  119,    0,  124,  115,    0,    0,
-      120,  137,  130,    0,  122,  124,  127,  137,   87,  366,
-      179,  185,  366,  189,  190,  194,  366,  366,  195,   98,
-       91,   89,   87,   70,    0,  155,  151,  159,  153,    0,
+        0,    0,  309,  381,  381,  381,  304,   66,  292,  381,
+      381,  381,  381,  381,  287,  284,   58,  277,   55,  381,
+      274,   43,   52,   59,   52,   56,   61,    0,   57,   54,
+       56,   90,   56,   71,   93,   61,   76,   70,  381,  381,
+      209,  261,  124,  127,  256,  128,  219,  381,    0,  207,
+      123,  381,  381,    0,  113,  103,  113,  107,  112,  106,
+      107,  112,  117,  119,  117,  122,    0,  132,  120,    0,
+        0,  125,  142,  136,    0,  133,  141,  141,  145,  133,
+      148,  381,  186,  189,  381,  190,  194,  199,  381,  381,
+      203,  113,   93,   91,   87,   70,    0,  164,  157,  164,
 
-      170,  179,    0,    0,  182,    0,    0,  184,  175,  187,
-      183,  189,  188,    0,  188,  214,  366,  218,  221,  241,
-      366,  202,  366,   76,  366,  184,  196,    0,  194,  197,
-        0,  198,  217,  212,  213,  229,    0,    0,  221,  228,
-      215,  366,    0,    0,    0,    0,  221,  227,  238,  242,
-      240,  228,    0,    0,    0,  233,  230,  238,    0,    0,
-      238,  236,    0,    0,  250,    0,  366,  300,   72,  306,
-      311,  317,  323,  329,  335,  341,  347,  353,  359
+      162,    0,  175,  185,    0,  176,    0,  191,    0,    0,
+      193,  184,  194,  190,  200,  201,  198,    0,  198,  228,
+      381,  231,  235,  251,  381,   99,  381,   78,  381,  189,
+      211,    0,  211,  212,    0,  233,  222,  236,  227,  228,
+      244,    0,    0,    0,  236,  243,  215,  381,    0,    0,
+        0,    0,  236,    0,  242,  249,  255,  253,  241,    0,
+        0,    0,  246,  242,  250,    0,    0,  250,  250,    0,
+        0,  265,    0,  381,  315,   72,  321,  326,  332,  338,
+      344,  350,  356,  362,  368,  374
     } ;
 
-static const flex_int16_t yy_def[180] =
+static const flex_int16_t yy_def[187] =
     {   0,
-      167,    1,  167,  167,  167,  167,  167,  168,  167,  167,
-      167,  167,  167,  167,  167,  167,  167,  167,  167,  167,
-      167,  169,  169,  169,  169,  169,  169,  169,  169,  169,
-      169,  169,  169,  169,  169,  169,  169,  169,  167,  167,
-      170,  167,  171,  172,  167,  173,  174,  167,  175,  167,
-      167,  167,  167,  169,  169,  169,  169,  169,  169,  169,
-      169,  169,  169,  169,  169,  169,  169,  169,  169,  169,
-      169,  169,  169,  169,  169,  169,  169,  169,  170,  167,
-      176,  177,  167,  171,  172,  172,  167,  167,  171,  178,
-      174,  167,  175,  167,  169,  169,  169,  169,  169,  169,
+      174,    1,  174,  174,  174,  174,  174,  175,  174,  174,
+      174,  174,  174,  174,  174,  174,  174,  174,  174,  174,
+      174,  176,  176,  176,  176,  176,  176,  176,  176,  176,
+      176,  176,  176,  176,  176,  176,  176,  176,  174,  174,
+      177,  174,  178,  179,  174,  180,  181,  174,  182,  174,
+      174,  174,  174,  176,  176,  176,  176,  176,  176,  176,
+      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
+      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
+      177,  174,  183,  184,  174,  178,  179,  179,  174,  174,
+      178,  185,  181,  174,  182,  174,  176,  176,  176,  176,
 
-      169,  169,  169,  169,  169,  169,  169,  169,  169,  169,
-      169,  169,  169,  169,  169,  176,  167,  176,  177,  177,
-      167,  179,  167,  178,  167,  169,  169,  169,  169,  169,
-      169,  169,  169,  169,  169,  169,  169,  169,  169,  169,
-      179,  167,  179,  169,  169,  169,  169,  169,  169,  169,
-      169,  169,  169,  169,  169,  169,  169,  169,  169,  169,
-      169,  169,  169,  169,  169,  169,    0,  167,  167,  167,
-      167,  167,  167,  167,  167,  167,  167,  167,  167
+      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
+      176,  176,  176,  176,  176,  176,  176,  176,  176,  183,
+      174,  183,  184,  184,  174,  186,  174,  185,  174,  176,
+      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
+      176,  176,  176,  176,  176,  176,  186,  174,  186,  176,
+      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
+      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
+      176,  176,  176,    0,  174,  174,  174,  174,  174,  174,
+      174,  174,  174,  174,  174,  174
     } ;
 
-static const flex_int16_t yy_nxt[435] =
+static const flex_int16_t yy_nxt[450] =
     {   0,
         4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
        14,   15,   16,   17,   18,   13,   19,   20,   21,   22,
@@ -482,49 +485,50 @@ static const flex_int16_t yy_nxt[435] =
        27,   28,   28,   29,   28,   30,   31,   32,   33,   34,
        28,   35,   36,   37,   38,   28,   41,    4,   44,   50,
        45,   51,   53,   53,   55,   57,   54,   56,   58,   60,
-      122,   64,   67,   94,   61,   62,   65,   63,   66,  125,
-       68,   59,   71,   69,   72,   80,   76,   77,   92,   55,
+       64,   67,  126,   96,   61,   62,   68,   63,   69,  129,
+       72,   59,   78,   65,   73,   79,   80,   82,   66,   55,
 
-       78,   57,   56,   70,   58,   60,   64,   67,   46,   61,
-       62,   65,   63,   95,   66,   68,   59,   71,   73,   69,
-       72,   76,   96,   77,   74,   82,   78,   83,   70,   86,
-       97,   87,   75,   82,   50,   90,   51,   98,   99,   95,
-      124,  100,  101,  102,   73,  103,  106,   96,  104,   74,
-      105,  107,  108,  111,   80,  112,   97,   75,  109,   94,
-      113,  114,   98,   99,  115,   84,  100,  101,  102,   92,
-      110,  103,  106,  104,  126,  105,  107,  108,  127,  111,
-      112,   82,  128,  117,  109,  113,  114,  120,  129,  121,
-      115,   82,   86,  122,  123,  110,   86,   82,  167,  167,
+       94,   57,   56,  121,   58,   60,   64,   67,   46,   61,
+       62,   68,   63,   69,   70,   72,   59,   78,   65,   74,
+       73,   79,   80,   66,   71,   75,   84,   76,   85,   88,
+       84,   89,   92,   77,   50,   97,   51,   98,   99,  105,
+       70,  149,  100,  101,  102,   74,  103,  104,  106,   71,
+       75,  107,   76,  108,  109,  128,  110,  111,   77,  114,
+      119,   97,   98,  112,   99,  105,   86,  100,  101,  102,
+      115,  103,  104,  106,  116,  113,  107,  117,  108,  118,
+      109,  110,  111,  130,  131,  114,  119,  132,   84,  112,
+      121,  124,   84,  125,  126,  115,   88,  133,  127,  116,
 
-      126,  130,  131,  132,  127,  133,  117,  135,  128,  134,
-      136,   88,  138,  129,  137,  139,   82,  140,  117,  117,
-       82,  118,  141,  120,  144,  142,  130,  145,  131,  132,
-      146,  133,  135,  147,  148,  134,  136,   84,  138,  137,
-      149,  139,  140,  120,  143,  121,  150,  151,  152,  144,
-      153,  154,  145,  155,  156,  146,  118,  143,  147,  148,
-      157,  158,  159,   42,  160,  161,  149,  162,  163,  164,
-      165,  150,  151,  166,  152,  153,   80,  154,  155,   53,
-      156,   52,   49,   48,   47,   42,  157,  158,  159,  160,
-      161,  167,  162,  163,  164,  165,  167,  167,  167,  166,
+      113,   88,  117,  174,  118,   84,  134,  174,  135,  130,
+      131,  136,  137,  132,  138,   82,  140,  141,  139,  121,
+       96,  142,  133,  143,  144,  145,   94,  146,  122,  150,
+       84,  134,  121,   84,  135,  147,  136,  124,  137,  148,
+      138,  140,  151,  141,  139,   86,  142,  152,  153,  143,
+      144,  145,  146,  124,  150,  125,  154,  149,  155,  156,
+       90,  157,  158,  159,   42,  160,  161,  151,  162,  163,
+      122,  164,  152,  153,  165,  166,   82,  167,  168,  169,
+      170,  171,  154,  155,  172,  156,  157,  158,  173,  159,
+      160,   53,  161,  162,   52,  163,   49,  164,   48,   47,
 
-       43,   43,   43,   43,   43,   43,   79,   79,   79,   79,
-       79,   81,   81,   81,   81,   81,   81,   85,   85,   85,
-       85,   85,   85,   89,   89,   89,   89,   89,   89,   91,
-       91,   91,  167,   91,   91,   93,  167,   93,   93,   93,
-       93,  116,  116,  116,  116,  116,  116,  119,  119,  119,
-      119,  119,  119,  122,  167,  167,  122,  122,  122,  141,
-      167,  141,  141,  141,  141,    3,  167,  167,  167,  167,
-      167,  167,  167,  167,  167,  167,  167,  167,  167,  167,
-      167,  167,  167,  167,  167,  167,  167,  167,  167,  167,
-      167,  167,  167,  167,  167,  167,  167,  167,  167,  167,
+      165,  166,  167,  168,  169,  170,  171,   42,  174,  172,
+      174,  174,  174,  174,  173,   43,   43,   43,   43,   43,
+       43,   81,   81,   81,   81,   81,   83,   83,   83,   83,
+       83,   83,   87,   87,   87,   87,   87,   87,   91,   91,
+       91,   91,   91,   91,   93,   93,   93,  174,   93,   93,
+       95,  174,   95,   95,   95,   95,  120,  120,  120,  120,
+      120,  120,  123,  123,  123,  123,  123,  123,  126,  174,
+      174,  126,  126,  126,  147,  174,  147,  147,  147,  147,
+        3,  174,  174,  174,  174,  174,  174,  174,  174,  174,
+      174,  174,  174,  174,  174,  174,  174,  174,  174,  174,
 
-      167,  167,  167,  167,  167,  167,  167,  167,  167,  167,
-      167,  167,  167,  167,  167,  167,  167,  167,  167,  167,
-      167,  167,  167,  167,  167,  167,  167,  167,  167,  167,
-      167,  167,  167,  167
+      174,  174,  174,  174,  174,  174,  174,  174,  174,  174,
+      174,  174,  174,  174,  174,  174,  174,  174,  174,  174,
+      174,  174,  174,  174,  174,  174,  174,  174,  174,  174,
+      174,  174,  174,  174,  174,  174,  174,  174,  174,  174,
+      174,  174,  174,  174,  174,  174,  174,  174,  174
     } ;
 
-static const flex_int16_t yy_chk[435] =
+static const flex_int16_t yy_chk[450] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -533,47 +537,48 @@ static const flex_int16_t yy_chk[435] =
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    8,   17,
-        8,   17,   19,   19,   22,   23,  169,   22,   24,   25,
-      124,   27,   30,   94,   25,   26,   27,   26,   29,   93,
-       31,   24,   33,   32,   34,   92,   36,   37,   91,   22,
+        8,   17,   19,   19,   22,   23,  176,   22,   24,   25,
+       27,   29,  128,   96,   25,   26,   30,   26,   31,   95,
+       33,   24,   36,   27,   34,   37,   38,   94,   27,   22,
 
-       38,   23,   22,   32,   24,   25,   27,   30,    8,   25,
-       26,   27,   26,   55,   29,   31,   24,   33,   35,   32,
-       34,   36,   56,   37,   35,   43,   38,   43,   32,   44,
-       57,   44,   35,   46,   51,   46,   51,   58,   59,   55,
-       90,   60,   61,   62,   35,   63,   67,   56,   64,   35,
-       65,   68,   71,   73,   79,   75,   57,   35,   72,   50,
-       76,   77,   58,   59,   78,   43,   60,   61,   62,   47,
-       72,   63,   67,   64,   96,   65,   68,   71,   97,   73,
-       75,   81,   98,   81,   72,   76,   77,   82,   99,   82,
-       78,   84,   85,   84,   85,   72,   86,   89,   86,   89,
+       93,   23,   22,  126,   24,   25,   27,   29,    8,   25,
+       26,   30,   26,   31,   32,   33,   24,   36,   27,   35,
+       34,   37,   38,   27,   32,   35,   43,   35,   43,   44,
+       46,   44,   46,   35,   51,   55,   51,   56,   57,   63,
+       32,  126,   58,   59,   60,   35,   61,   62,   64,   32,
+       35,   65,   35,   66,   68,   92,   69,   72,   35,   74,
+       80,   55,   56,   73,   57,   63,   43,   58,   59,   60,
+       76,   61,   62,   64,   77,   73,   65,   78,   66,   79,
+       68,   69,   72,   98,   99,   74,   80,  100,   83,   73,
+       83,   84,   86,   84,   86,   76,   87,  101,   87,   77,
 
-       96,  101,  102,  105,   97,  108,  122,  109,   98,  108,
-      110,   45,  112,   99,  111,  113,  116,  115,  116,  141,
-      118,   81,  118,  119,  126,  119,  101,  127,  102,  105,
-      129,  108,  109,  130,  132,  108,  110,   89,  112,  111,
-      133,  113,  115,  120,  122,  120,  134,  135,  136,  126,
-      139,  140,  127,  147,  148,  129,  116,  141,  130,  132,
-      149,  150,  151,   42,  152,  156,  133,  157,  158,  161,
-      162,  134,  135,  165,  136,  139,   41,  140,  147,   21,
-      148,   18,   16,   15,    9,    7,  149,  150,  151,  152,
-      156,    3,  157,  158,  161,  162,    0,    0,    0,  165,
+       73,   88,   78,   88,   79,   91,  103,   91,  104,   98,
+       99,  106,  108,  100,  111,   81,  112,  113,  111,  147,
+       50,  114,  101,  115,  116,  117,   47,  119,   83,  130,
+      120,  103,  120,  122,  104,  122,  106,  123,  108,  123,
+      111,  112,  131,  113,  111,   91,  114,  133,  134,  115,
+      116,  117,  119,  124,  130,  124,  136,  147,  137,  138,
+       45,  139,  140,  141,   42,  145,  146,  131,  153,  155,
+      120,  156,  133,  134,  157,  158,   41,  159,  163,  164,
+      165,  168,  136,  137,  169,  138,  139,  140,  172,  141,
+      145,   21,  146,  153,   18,  155,   16,  156,   15,    9,
 
-      168,  168,  168,  168,  168,  168,  170,  170,  170,  170,
-      170,  171,  171,  171,  171,  171,  171,  172,  172,  172,
-      172,  172,  172,  173,  173,  173,  173,  173,  173,  174,
-      174,  174,    0,  174,  174,  175,    0,  175,  175,  175,
-      175,  176,  176,  176,  176,  176,  176,  177,  177,  177,
-      177,  177,  177,  178,    0,    0,  178,  178,  178,  179,
-        0,  179,  179,  179,  179,  167,  167,  167,  167,  167,
-      167,  167,  167,  167,  167,  167,  167,  167,  167,  167,
-      167,  167,  167,  167,  167,  167,  167,  167,  167,  167,
-      167,  167,  167,  167,  167,  167,  167,  167,  167,  167,
+      157,  158,  159,  163,  164,  165,  168,    7,    3,  169,
+        0,    0,    0,    0,  172,  175,  175,  175,  175,  175,
+      175,  177,  177,  177,  177,  177,  178,  178,  178,  178,
+      178,  178,  179,  179,  179,  179,  179,  179,  180,  180,
+      180,  180,  180,  180,  181,  181,  181,    0,  181,  181,
+      182,    0,  182,  182,  182,  182,  183,  183,  183,  183,
+      183,  183,  184,  184,  184,  184,  184,  184,  185,    0,
+        0,  185,  185,  185,  186,    0,  186,  186,  186,  186,
+      174,  174,  174,  174,  174,  174,  174,  174,  174,  174,
+      174,  174,  174,  174,  174,  174,  174,  174,  174,  174,
 
-      167,  167,  167,  167,  167,  167,  167,  167,  167,  167,
-      167,  167,  167,  167,  167,  167,  167,  167,  167,  167,
-      167,  167,  167,  167,  167,  167,  167,  167,  167,  167,
-      167,  167,  167,  167
+      174,  174,  174,  174,  174,  174,  174,  174,  174,  174,
+      174,  174,  174,  174,  174,  174,  174,  174,  174,  174,
+      174,  174,  174,  174,  174,  174,  174,  174,  174,  174,
+      174,  174,  174,  174,  174,  174,  174,  174,  174,  174,
+      174,  174,  174,  174,  174,  174,  174,  174,  174
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -590,8 +595,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
-#line 3 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 1 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 3 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 #include "parser.h"
 //#include "log.h"
 #include "parser.tab.h"
@@ -627,7 +632,7 @@ extern "C"
     void yyerror(const char *s);
 }
 
-#line 631 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
+#line 636 "/root/works/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
 /* 保留字 */
 /* 运算符 */
 /* 常数 */
@@ -637,7 +642,7 @@ extern "C"
 /* 字符 */
 /*字符串*/
 /* 分隔符 */
-#line 641 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
+#line 646 "/root/works/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
 
 #define INITIAL 0
 
@@ -854,9 +859,9 @@ YY_DECL
 		}
 
 	{
-#line 104 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 105 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 
-#line 860 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
+#line 865 "/root/works/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -883,13 +888,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 168 )
+				if ( yy_current_state >= 175 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 366 );
+		while ( yy_base[yy_current_state] != 381 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -915,230 +920,235 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 105 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 106 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); char_count += 4; }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 106 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 107 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { wrap(); new_line_flag = true;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 107 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 108 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); char_count += yyleng; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 109 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 110 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return PROGRAM; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 110 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 111 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return CONST; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 111 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 112 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return TYPE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 113 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 114 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return ARRAY; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 114 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 115 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return RECORD;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 115 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 116 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return OF; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 116 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 117 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return VAR; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 117 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 118 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return FUNCTION; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 118 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 119 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return PROCEDURE; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 119 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 120 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return BEGIN_; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 120 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 121 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return END; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 121 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 122 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return IF; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 122 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 123 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return THEN; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 123 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 124 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return ELSE; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 124 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 125 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return CASE; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 125 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 126 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return WHILE; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 126 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 127 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return REPEAT; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 127 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 128 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return UNTIL; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 128 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 129 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return FOR; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 129 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 130 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return TO; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 130 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 131 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return DOWNTO; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 131 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 132 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return DO; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 133 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 134 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return NOT; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 134 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 135 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return PLUS; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 135 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 136 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return UMINUS; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 137 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 138 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_int(); return INT_NUM; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 138 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 139 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_float(); return REAL_NUM; }
 	YY_BREAK
 case 31:
 /* rule 31 can match eol */
 YY_RULE_SETUP
-#line 140 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 141 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { skip_anno(); }
 	YY_BREAK
 case 32:
 /* rule 32 can match eol */
 YY_RULE_SETUP
-#line 141 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 142 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { skip_anno(); }    
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 143 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 144 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_char(); return CHAR; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 144 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 145 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str_case_sensitive(); return STRING_; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 146 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 147 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return RELOP; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 147 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 148 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return ADDOP; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 148 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 149 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return MULOP; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 149 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 150 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return ASSIGNOP; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 151 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 152 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); to_str(); return ID; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 153 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
-{ write_cache(); to_str(); return CONSTASSIGNOP; }
+#line 153 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+{ write_cache(); to_str(); return BOOL; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 154 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
-{ write_cache(); to_str(); return yytext[0]; }
+#line 155 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+{ write_cache(); to_str(); return CONSTASSIGNOP; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 155 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
-{ write_cache(); to_str(); return SUBCATALOG; }
+#line 156 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+{ write_cache(); to_str(); return yytext[0]; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 157 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
-{ write_cache(); to_str(); left_Mbrackets_num++;return yytext[0];}    
+#line 157 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+{ write_cache(); to_str(); return SUBCATALOG; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 158 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
-{ write_cache(); to_str(); left_brackets_num++;return yytext[0];}
+#line 159 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+{ write_cache(); to_str(); left_Mbrackets_num++;return yytext[0];}    
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 159 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 160 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+{ write_cache(); to_str(); left_brackets_num++;return yytext[0];}
+	YY_BREAK
+case 46:
+YY_RULE_SETUP
+#line 161 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { 
                                     write_cache(); to_str(); 
                                     left_Mbrackets_num--;
@@ -1149,9 +1159,9 @@ YY_RULE_SETUP
                                     return yytext[0];
                                 }
 	YY_BREAK
-case 46:
+case 47:
 YY_RULE_SETUP
-#line 168 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 170 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { 
                                     write_cache(); to_str(); 
                                     left_brackets_num--;
@@ -1162,57 +1172,57 @@ YY_RULE_SETUP
                                     return yytext[0];
                                 }
 	YY_BREAK
-case 47:
-YY_RULE_SETUP
-#line 178 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
-{ write_cache(); print_lex_error("illegal character constant"); }
-	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 179 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 180 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); print_lex_error("illegal character constant"); }
 	YY_BREAK
 case 49:
-/* rule 49 can match eol */
 YY_RULE_SETUP
-#line 180 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
-{ write_cache(); print_lex_error("illegal character constant"); skip_error_token(); }
+#line 181 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+{ write_cache(); print_lex_error("illegal character constant"); }
 	YY_BREAK
 case 50:
 /* rule 50 can match eol */
 YY_RULE_SETUP
-#line 182 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
-{ write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
+#line 182 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+{ write_cache(); print_lex_error("illegal character constant"); skip_error_token(); }
 	YY_BREAK
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 183 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 184 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
 	YY_BREAK
 case 52:
 /* rule 52 can match eol */
 YY_RULE_SETUP
-#line 186 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
-{ write_cache(); print_lex_error("unclosed comment"); skip_error_token(); }
+#line 185 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+{ write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
 	YY_BREAK
 case 53:
 /* rule 53 can match eol */
 YY_RULE_SETUP
-#line 187 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
-{ write_cache(); print_lex_error("unclosed string constant"); skip_error_token(); }
+#line 188 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+{ write_cache(); print_lex_error("unclosed comment"); skip_error_token(); }
 	YY_BREAK
 case 54:
+/* rule 54 can match eol */
 YY_RULE_SETUP
-#line 189 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
-{ write_cache(); print_lex_error("illegal character"); char_count++; }
+#line 189 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+{ write_cache(); print_lex_error("unclosed string constant"); skip_error_token(); }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 191 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 191 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
+{ write_cache(); print_lex_error("illegal character"); char_count++; }
+	YY_BREAK
+case 56:
+YY_RULE_SETUP
+#line 193 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 ECHO;
 	YY_BREAK
-#line 1216 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
+#line 1226 "/root/works/PASCAL-S-compiler/build/../scripts/lex.yy.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1509,7 +1519,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 168 )
+			if ( yy_current_state >= 175 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1537,11 +1547,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 168 )
+		if ( yy_current_state >= 175 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 167);
+	yy_is_jam = (yy_current_state == 174);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -2217,7 +2227,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 191 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/lex.l"
+#line 193 "/root/works/PASCAL-S-compiler/build/../scripts/lex.l"
 
 void wrap()
 {
@@ -2274,7 +2284,11 @@ void to_str()
 {
     std::string str = std::string(yytext);
     std::transform(str.begin(),str.end(),str.begin(),::tolower);
-    yylval.token_info.value.set(str);
+
+    if(str == "true") yylval.token_info.value.set_bool(true);
+    else if(str == "false") yylval.token_info.value.set_bool(false);
+    else yylval.token_info.value.set_string(str);
+    
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;
@@ -2286,7 +2300,7 @@ void to_str_case_sensitive()
 {
     std::string str = std::string(yytext);
     str = str.substr(1, str.length() - 2);  
-    yylval.token_info.value.set(str);
+    yylval.token_info.value.set_string(str);
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;
@@ -2296,7 +2310,7 @@ void to_str_case_sensitive()
 
 void to_int()
 {
-    yylval.token_info.value.set(std::stoi(yytext));
+    yylval.token_info.value.set_int(std::stoi(yytext));
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;
@@ -2307,7 +2321,7 @@ void to_int()
 void to_float()
 {
     //yylval.token_info.value.set(std::stof(yytext));
-    yylval.token_info.value.set(yytext);
+    yylval.token_info.value.set_float(yytext);
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;
@@ -2317,7 +2331,7 @@ void to_float()
 
 void to_char()
 {
-    yylval.token_info.value.set(yytext[1]);
+    yylval.token_info.value.set_char(yytext[1]);
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;

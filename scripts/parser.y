@@ -256,18 +256,18 @@ const_value : PLUS INT_NUM
     | PLUS REAL_NUM
     {   
         // const_value -> REAL_NUM
-        $$ = new ConstValue($2.value,ConstValue::ValueType::REAL);
+        $$ = new ConstValue($2.value);
     }
     | UMINUS REAL_NUM
     {   
         // const_value -> REAL_NUM
-        $$ = new ConstValue($2.value,ConstValue::ValueType::REAL);
+        $$ = new ConstValue($2.value);
         $$->set_uminus();
     }
     | REAL_NUM
     {   
         // const_value -> REAL_NUM
-        $$ = new ConstValue($1.value,ConstValue::ValueType::REAL);
+        $$ = new ConstValue($1.value);
     }
     | BOOL
     {
@@ -277,7 +277,7 @@ const_value : PLUS INT_NUM
     | STRING_
     {
         // const_variable -> string
-        $$ = new ConstValue($1.value,ConstValue::ValueType::STRING);
+        $$ = new ConstValue($1.value);
     }
     | CHAR
     {

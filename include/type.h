@@ -158,10 +158,22 @@ public:
         value_type =  ConstvalueType::INTEGER;
         C_INT = v;
     }
-    ConstValue(std::string &v,ConstvalueType type) { 
-        value_type =  type;
+    ConstValue(std::string &v) { 
         C_STRING = v;
+        if(isValidFloat(v))
+            value_type =  ConstvalueType::REAL;
+        else    value_type =  ConstvalueType::STRING;
     }
+
+    bool isValidFloat(const std::string& str) {
+    try {
+        std::size_t pos = 0;
+        std::stof(str, &pos);
+        return pos == str.size();  // Make sure the entire string was converted
+    } catch (const std::exception&) {
+        return false;
+    }
+}
 
     // get by type
     template <typename T>

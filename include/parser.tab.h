@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_HOME_LM_SHARED_COMPILER_PASCAL_S_COMPILER_BUILD_INCLUDE_PARSER_TAB_H_INCLUDED
-# define YY_YY_HOME_LM_SHARED_COMPILER_PASCAL_S_COMPILER_BUILD_INCLUDE_PARSER_TAB_H_INCLUDED
+#ifndef YY_YY_ROOT_WORKS_PASCAL_S_COMPILER_BUILD_INCLUDE_PARSER_TAB_H_INCLUDED
+# define YY_YY_ROOT_WORKS_PASCAL_S_COMPILER_BUILD_INCLUDE_PARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 1
@@ -90,7 +90,8 @@ extern int yydebug;
     STRING_ = 291,                 /* STRING_  */
     VAR = 292,                     /* VAR  */
     SUBCATALOG = 293,              /* SUBCATALOG  */
-    ASSIGNOP = 294                 /* ASSIGNOP  */
+    BOOL = 294,                    /* BOOL  */
+    ASSIGNOP = 295                 /* ASSIGNOP  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -104,4 +105,4 @@ extern YYSTYPE yylval;
 int yyparse (ast::AST *Ast);
 
 
-#endif /* !YY_YY_HOME_LM_SHARED_COMPILER_PASCAL_S_COMPILER_BUILD_INCLUDE_PARSER_TAB_H_INCLUDED  */
+#endif /* !YY_YY_ROOT_WORKS_PASCAL_S_COMPILER_BUILD_INCLUDE_PARSER_TAB_H_INCLUDED  */
