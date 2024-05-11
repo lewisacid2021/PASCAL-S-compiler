@@ -307,6 +307,18 @@ void GenerationVisitor::visit(ProgramBody *programbody)
     fprintf(fs,"}\n");
 }
 
+void GenerationVisitor::visit(RecordDeclaration *recorddeclaration)
+{
+    if(recorddeclaration->GetGrammarType()==RecordDeclaration::GrammarType::MULTI_DECLARATION)
+        recorddeclaration->get(0)->accept(this);
+    
+    fprintf(fs, "struct ");
+    recorddeclaration->get(-2)->accept(this);  //id
+    fprintf(fs, "{\n");
+    recorddeclaration->get(-1)->accept(this);  //field_decl_list
+    fprintf(fs, "};\n");
+}
+
 std::vector<LeafNode *> IdList::Lists()
 {
     std::vector<LeafNode *> lists;

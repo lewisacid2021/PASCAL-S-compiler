@@ -304,7 +304,7 @@ record_declarations :
         $$->append_child($1);
     }
 
-record_declaration : TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
+record_declaration : TYPE ID CONSTASSIGNOP RECORD  var_declaration END ';'
     {
         // record_declaration -> def-record | record_declaration def-record
         $$ = new RecordDeclaration(RecordDeclaration::GrammarType::SINGLE_DECLARATION);
@@ -312,9 +312,9 @@ record_declaration : TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
         LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         $$->append_child($5);
-
+        cout<<"record"<<endl;
     }
-    | record_declaration TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
+    | record_declaration TYPE ID CONSTASSIGNOP RECORD  var_declaration END ';'
     {
         $$ = new RecordDeclaration(RecordDeclaration::GrammarType::MULTI_DECLARATION);
         $$->set_rownum(line_count);
@@ -322,6 +322,7 @@ record_declaration : TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
         LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         $$->append_child($6);
+        cout<<"record"<<endl;
     }
 
 var_declarations : 
