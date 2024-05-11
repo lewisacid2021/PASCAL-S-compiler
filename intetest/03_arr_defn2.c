@@ -1,12 +1,9 @@
 #include<stdio.h>
 #include<stdbool.h>
-int a, b;
+int a[10][10];
 int main() {
 {
-a = 3;
-b = 5;
-a = 5;
-printf("%d",a + b);
+printf("%d",0);
 }
 return 0;
 }

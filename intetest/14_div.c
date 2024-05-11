@@ -1,12 +1,11 @@
 #include<stdio.h>
 #include<stdbool.h>
 int a, b;
+float c;
 int main() {
-{
-a = 3;
+a = 10;
 b = 5;
-a = 5;
-printf("%d",a + b);
-}
+c = a / b;
+printf("%f",c);
 return 0;
 }

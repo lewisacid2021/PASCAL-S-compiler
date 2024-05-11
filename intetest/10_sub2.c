@@ -1,12 +1,11 @@
 #include<stdio.h>
 #include<stdbool.h>
-int a, b;
+const int a = 10;
+int b;
 int main() {
 {
-a = 3;
-b = 5;
-a = 5;
-printf("%d",a + b);
+b = 2;
+printf("%d",b - a);
 }
 return 0;
 }

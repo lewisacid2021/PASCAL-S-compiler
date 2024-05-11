@@ -17,12 +17,27 @@ void LeafNode::accept(Visitor *visitor)
     visitor->visit(this);
 }
 
+void ProgramHead::accept(Visitor *visitor)
+{
+    visitor->visit(this);
+}
+
+void ProgramBody::accept(Visitor *visitor)
+{
+    visitor->visit(this);
+}
+
 void IdList::accept(Visitor *visitor)
 {
     visitor->visit(this);
 }
     
 void ConstDeclaration::accept(Visitor *visitor)
+{
+    visitor->visit(this);
+}
+
+void RecordDeclaration::accept(Visitor *visitor)
 {
     visitor->visit(this);
 }

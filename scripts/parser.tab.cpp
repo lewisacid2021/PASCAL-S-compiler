@@ -164,53 +164,51 @@ enum yysymbol_kind_t
   YYSYMBOL_42_ = 42,                       /* '('  */
   YYSYMBOL_43_ = 43,                       /* ')'  */
   YYSYMBOL_44_ = 44,                       /* ','  */
-  YYSYMBOL_45_ = 45,                       /* '='  */
-  YYSYMBOL_46_ = 46,                       /* ':'  */
-  YYSYMBOL_47_ = 47,                       /* '['  */
-  YYSYMBOL_48_ = 48,                       /* ']'  */
-  YYSYMBOL_YYACCEPT = 49,                  /* $accept  */
-  YYSYMBOL_program = 50,                   /* program  */
-  YYSYMBOL_program_head = 51,              /* program_head  */
-  YYSYMBOL_program_body = 52,              /* program_body  */
-  YYSYMBOL_id_list = 53,                   /* id_list  */
-  YYSYMBOL_const_declarations = 54,        /* const_declarations  */
-  YYSYMBOL_const_declaration = 55,         /* const_declaration  */
-  YYSYMBOL_const_value = 56,               /* const_value  */
-  YYSYMBOL_record_declarations = 57,       /* record_declarations  */
-  YYSYMBOL_record_declaration = 58,        /* record_declaration  */
-  YYSYMBOL_var_declarations = 59,          /* var_declarations  */
-  YYSYMBOL_var_declaration = 60,           /* var_declaration  */
-  YYSYMBOL_type = 61,                      /* type  */
-  YYSYMBOL_array_type = 62,                /* array_type  */
-  YYSYMBOL_periods = 63,                   /* periods  */
-  YYSYMBOL_period = 64,                    /* period  */
-  YYSYMBOL_string_type = 65,               /* string_type  */
-  YYSYMBOL_subprogram_declarations = 66,   /* subprogram_declarations  */
-  YYSYMBOL_subprogram_declaration = 67,    /* subprogram_declaration  */
-  YYSYMBOL_subprogram_body = 68,           /* subprogram_body  */
-  YYSYMBOL_subprogram_head = 69,           /* subprogram_head  */
-  YYSYMBOL_formal_parameter = 70,          /* formal_parameter  */
-  YYSYMBOL_parameter_lists = 71,           /* parameter_lists  */
-  YYSYMBOL_parameter_list = 72,            /* parameter_list  */
-  YYSYMBOL_var_parameter = 73,             /* var_parameter  */
-  YYSYMBOL_value_parameter = 74,           /* value_parameter  */
-  YYSYMBOL_compound_statement = 75,        /* compound_statement  */
-  YYSYMBOL_statement_list = 76,            /* statement_list  */
-  YYSYMBOL_statement = 77,                 /* statement  */
-  YYSYMBOL_assignop_statement = 78,        /* assignop_statement  */
-  YYSYMBOL_procedure_call = 79,            /* procedure_call  */
-  YYSYMBOL_ifstatement = 80,               /* ifstatement  */
-  YYSYMBOL_else_part = 81,                 /* else_part  */
-  YYSYMBOL_loopstatement = 82,             /* loopstatement  */
-  YYSYMBOL_variable_list = 83,             /* variable_list  */
-  YYSYMBOL_variable = 84,                  /* variable  */
-  YYSYMBOL_id_varparts = 85,               /* id_varparts  */
-  YYSYMBOL_id_varpart = 86,                /* id_varpart  */
-  YYSYMBOL_expression_list = 87,           /* expression_list  */
-  YYSYMBOL_expression = 88,                /* expression  */
-  YYSYMBOL_simple_expression = 89,         /* simple_expression  */
-  YYSYMBOL_term = 90,                      /* term  */
-  YYSYMBOL_factor = 91                     /* factor  */
+  YYSYMBOL_45_ = 45,                       /* ':'  */
+  YYSYMBOL_46_ = 46,                       /* '['  */
+  YYSYMBOL_47_ = 47,                       /* ']'  */
+  YYSYMBOL_YYACCEPT = 48,                  /* $accept  */
+  YYSYMBOL_program = 49,                   /* program  */
+  YYSYMBOL_program_head = 50,              /* program_head  */
+  YYSYMBOL_program_body = 51,              /* program_body  */
+  YYSYMBOL_id_list = 52,                   /* id_list  */
+  YYSYMBOL_const_declarations = 53,        /* const_declarations  */
+  YYSYMBOL_const_declaration = 54,         /* const_declaration  */
+  YYSYMBOL_const_value = 55,               /* const_value  */
+  YYSYMBOL_record_declarations = 56,       /* record_declarations  */
+  YYSYMBOL_record_declaration = 57,        /* record_declaration  */
+  YYSYMBOL_var_declarations = 58,          /* var_declarations  */
+  YYSYMBOL_var_declaration = 59,           /* var_declaration  */
+  YYSYMBOL_type = 60,                      /* type  */
+  YYSYMBOL_array_type = 61,                /* array_type  */
+  YYSYMBOL_periods = 62,                   /* periods  */
+  YYSYMBOL_period = 63,                    /* period  */
+  YYSYMBOL_string_type = 64,               /* string_type  */
+  YYSYMBOL_subprogram_declarations = 65,   /* subprogram_declarations  */
+  YYSYMBOL_subprogram_declaration = 66,    /* subprogram_declaration  */
+  YYSYMBOL_subprogram_body = 67,           /* subprogram_body  */
+  YYSYMBOL_subprogram_head = 68,           /* subprogram_head  */
+  YYSYMBOL_formal_parameter = 69,          /* formal_parameter  */
+  YYSYMBOL_parameter_lists = 70,           /* parameter_lists  */
+  YYSYMBOL_parameter_list = 71,            /* parameter_list  */
+  YYSYMBOL_var_parameter = 72,             /* var_parameter  */
+  YYSYMBOL_value_parameter = 73,           /* value_parameter  */
+  YYSYMBOL_compound_statement = 74,        /* compound_statement  */
+  YYSYMBOL_statement_list = 75,            /* statement_list  */
+  YYSYMBOL_statement = 76,                 /* statement  */
+  YYSYMBOL_assignop_statement = 77,        /* assignop_statement  */
+  YYSYMBOL_procedure_call = 78,            /* procedure_call  */
+  YYSYMBOL_ifstatement = 79,               /* ifstatement  */
+  YYSYMBOL_else_part = 80,                 /* else_part  */
+  YYSYMBOL_loopstatement = 81,             /* loopstatement  */
+  YYSYMBOL_variable = 82,                  /* variable  */
+  YYSYMBOL_id_varparts = 83,               /* id_varparts  */
+  YYSYMBOL_id_varpart = 84,                /* id_varpart  */
+  YYSYMBOL_expression_list = 85,           /* expression_list  */
+  YYSYMBOL_expression = 86,                /* expression  */
+  YYSYMBOL_simple_expression = 87,         /* simple_expression  */
+  YYSYMBOL_term = 88,                      /* term  */
+  YYSYMBOL_factor = 89                     /* factor  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -538,16 +536,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  5
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   245
+#define YYLAST   267
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  49
+#define YYNTOKENS  48
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  43
+#define YYNNTS  42
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  102
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  218
+#define YYNSTATES  217
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   294
@@ -569,11 +567,11 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
       42,    43,     2,     2,    44,     2,    41,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,    46,    40,
-       2,    45,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    45,    40,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    47,     2,    48,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,    46,     2,    47,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -600,17 +598,17 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   139,   139,   149,   156,   160,   166,   177,   186,   195,
-     200,   208,   222,   235,   241,   247,   252,   257,   263,   268,
-     284,   291,   295,   303,   313,   324,   329,   337,   346,   355,
-     364,   370,   377,   384,   408,   423,   436,   445,   451,   459,
-     464,   473,   481,   491,   502,   514,   519,   527,   535,   543,
-     550,   558,   566,   575,   583,   591,   599,   606,   613,   620,
-     627,   635,   641,   650,   656,   661,   668,   676,   687,   692,
-     700,   709,   717,   728,   739,   746,   755,   767,   774,   786,
-     793,   803,   813,   823,   831,   839,   847,   854,   861,   868,
-     876,   884,   892,   899,   929,   938,   947,   976,   985,   993,
-    1003,  1011,  1021
+       0,   139,   139,   149,   156,   162,   170,   181,   190,   199,
+     204,   212,   226,   239,   245,   251,   256,   261,   267,   272,
+     288,   295,   299,   307,   317,   328,   333,   341,   350,   359,
+     368,   374,   381,   388,   412,   427,   440,   449,   455,   463,
+     468,   477,   485,   495,   506,   518,   523,   528,   536,   544,
+     552,   559,   567,   575,   584,   592,   600,   608,   615,   622,
+     629,   636,   644,   650,   659,   665,   670,   685,   696,   701,
+     709,   718,   726,   737,   764,   774,   785,   792,   804,   811,
+     821,   831,   841,   849,   857,   865,   872,   879,   886,   894,
+     902,   910,   917,   947,   956,   965,   973,  1002,  1011,  1019,
+    1029,  1037,  1047
 };
 #endif
 
@@ -632,7 +630,7 @@ static const char *const yytname[] =
   "UNTIL", "BEGIN_", "END", "ADDOP", "NOT", "PLUS", "CASE", "UMINUS",
   "CONSTASSIGNOP", "ID", "CHAR", "INT_NUM", "REAL_NUM", "RELOP", "MULOP",
   "STRING_", "VAR", "SUBCATALOG", "ASSIGNOP", "';'", "'.'", "'('", "')'",
-  "','", "'='", "':'", "'['", "']'", "$accept", "program", "program_head",
+  "','", "':'", "'['", "']'", "$accept", "program", "program_head",
   "program_body", "id_list", "const_declarations", "const_declaration",
   "const_value", "record_declarations", "record_declaration",
   "var_declarations", "var_declaration", "type", "array_type", "periods",
@@ -641,9 +639,8 @@ static const char *const yytname[] =
   "formal_parameter", "parameter_lists", "parameter_list", "var_parameter",
   "value_parameter", "compound_statement", "statement_list", "statement",
   "assignop_statement", "procedure_call", "ifstatement", "else_part",
-  "loopstatement", "variable_list", "variable", "id_varparts",
-  "id_varpart", "expression_list", "expression", "simple_expression",
-  "term", "factor", YY_NULLPTR
+  "loopstatement", "variable", "id_varparts", "id_varpart",
+  "expression_list", "expression", "simple_expression", "term", "factor", YY_NULLPTR
 };
 
 static const char *
@@ -653,12 +650,12 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-129)
+#define YYPACT_NINF (-112)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-78)
+#define YYTABLE_NINF (-77)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -667,28 +664,28 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-      21,    20,    29,    61,    22,  -129,    24,    37,    98,  -129,
-     -11,    69,    84,  -129,   102,    92,   130,  -129,   101,    60,
-      62,   118,   121,   137,  -129,   143,  -129,   112,   145,   122,
-     124,  -129,  -129,  -129,  -129,  -129,   131,   166,    86,   138,
-      11,   150,  -129,  -129,  -129,  -129,  -129,  -129,    62,   137,
-       6,   137,   151,   152,   123,   140,    61,  -129,   172,  -129,
-      -2,   139,   137,   141,  -129,  -129,  -129,  -129,   100,   142,
-     142,    80,    80,   155,   123,    26,  -129,    -1,  -129,  -129,
-    -129,  -129,  -129,   148,  -129,    92,  -129,   137,   149,   137,
-     158,     2,   160,     6,    -3,   147,   154,    95,    95,    95,
-     153,  -129,  -129,  -129,  -129,    80,  -129,   177,    27,   161,
-    -129,   179,   162,   -12,    44,    50,  -129,   123,    80,   176,
-       3,  -129,   164,    -4,  -129,   163,   156,  -129,   137,   103,
-       9,  -129,  -129,  -129,     6,  -129,    95,  -129,   161,   161,
-    -129,    80,   157,   123,    95,    95,    95,    80,    80,    95,
-     123,    80,    80,  -129,   115,   117,   125,  -129,   169,    80,
-    -129,  -129,  -129,  -129,   165,   174,   158,   191,  -129,  -129,
-    -129,     6,    -3,  -129,   168,  -129,   127,  -129,   194,   161,
-     161,   161,    91,    91,  -129,  -129,   159,  -129,  -129,   180,
-    -129,    80,  -129,    52,  -129,  -129,  -129,     6,  -129,  -129,
-    -129,  -129,   123,  -129,    80,    80,  -129,  -129,  -129,  -129,
-    -129,  -129,   193,   195,   123,   123,  -129,  -129
+       6,   -11,    62,    67,    93,  -112,    71,    56,    96,  -112,
+     -15,   105,   102,  -112,    98,   103,   144,  -112,   137,     4,
+      80,   150,   152,   153,  -112,   151,  -112,   145,   154,    58,
+     115,  -112,  -112,  -112,  -112,  -112,   157,   176,   120,   148,
+       9,   160,  -112,  -112,  -112,  -112,  -112,  -112,    80,   153,
+      14,   153,   161,   162,    10,   155,    67,  -112,   179,  -112,
+      -7,   147,   153,   156,  -112,  -112,  -112,  -112,   122,   158,
+     158,   113,   113,   164,    10,    34,  -112,    16,  -112,  -112,
+    -112,  -112,  -112,   159,  -112,   103,  -112,   153,   163,   153,
+     165,    31,   167,    14,    52,   166,   168,   126,   126,   126,
+     170,  -112,  -112,  -112,  -112,   113,  -112,   182,    70,   171,
+    -112,   183,   174,   -16,    27,    -3,  -112,    10,   113,   185,
+      38,  -112,   172,    63,  -112,   175,   173,  -112,   153,  -112,
+     125,    -6,  -112,  -112,  -112,    14,  -112,   126,   126,  -112,
+     171,  -112,   171,  -112,    89,   178,    10,   126,   126,   126,
+     113,   113,   126,    10,   113,   113,   177,   128,  -112,   184,
+     113,  -112,  -112,  -112,  -112,   186,   187,   165,   188,  -112,
+    -112,  -112,    14,    44,  -112,   189,  -112,  -112,  -112,   130,
+    -112,   190,   171,   171,   171,   100,   100,  -112,  -112,   169,
+    -112,  -112,   113,  -112,    83,  -112,  -112,  -112,    14,  -112,
+    -112,  -112,  -112,    10,  -112,   113,   113,  -112,  -112,  -112,
+    -112,   191,   199,    10,    10,  -112,  -112
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -701,33 +698,33 @@ static const yytype_int8 yydefact[] =
        0,    10,     0,     0,    39,     0,     4,     0,     0,     0,
        0,    20,    15,    18,    19,    12,     0,     0,     0,     0,
        0,     0,     3,     7,    13,    16,    14,    17,     0,     0,
-       0,    26,     0,     0,    61,     0,     9,     6,     0,    11,
+       0,    26,     0,     0,    62,     0,     9,     6,     0,    11,
        0,     0,     0,    38,    29,    28,    30,    32,     0,    45,
-      45,     0,     0,     0,    61,    63,    58,     0,    55,    56,
-      57,    59,    60,     0,    40,    25,    41,     0,     0,     0,
+      45,     0,     0,     0,    62,    64,    59,     0,    56,    57,
+      58,    60,    61,     0,    40,    25,    41,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-      77,    97,    94,    95,    96,     0,    98,     0,    85,    86,
-      92,     0,     0,     0,     0,    76,    53,    61,     0,     0,
-       0,    23,     0,     0,    35,     0,     0,    27,     0,     0,
-       0,    48,    49,    50,     0,    44,     0,   101,    87,    88,
-      92,     0,     0,    61,     0,     0,     0,     0,     0,     0,
-      61,     0,     0,    64,     0,    98,     0,    82,     0,     0,
-      78,    54,    62,    42,     0,     0,     0,     0,    31,    37,
-      51,     0,     0,    46,     0,   102,     0,   100,    68,    89,
-      90,    91,    84,    83,    93,    70,     0,    71,    66,     0,
-      65,     0,    80,     0,    24,    36,    34,     0,    52,    47,
-      43,    99,    61,    67,     0,     0,    77,    75,    81,    79,
-      33,    69,     0,     0,    61,    61,    73,    72
+      76,    97,    93,    94,    96,     0,    98,     0,    84,    85,
+      91,     0,     0,     0,     0,    74,    54,    62,     0,     0,
+       0,    23,     0,     0,    35,     0,     0,    27,     0,    46,
+       0,     0,    49,    50,    51,     0,    44,     0,     0,   101,
+      86,    91,    87,    91,     0,     0,    62,     0,     0,     0,
+       0,     0,     0,    62,     0,     0,    65,     0,    81,     0,
+       0,    77,    55,    63,    42,     0,     0,     0,     0,    31,
+      37,    52,     0,     0,    47,     0,    95,   102,    75,     0,
+     100,    68,    88,    89,    90,    83,    82,    92,    70,     0,
+      71,    66,     0,    79,     0,    24,    36,    34,     0,    53,
+      48,    43,    99,    62,    67,     0,     0,    80,    78,    33,
+      69,     0,     0,    62,    62,    73,    72
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -129,  -129,  -129,  -129,   -10,   167,  -129,   170,  -129,  -129,
-     129,   -42,   -88,  -129,  -129,    46,  -129,  -129,  -129,  -129,
-    -129,   146,  -129,    43,  -129,    89,   -34,   171,  -113,  -129,
-    -129,  -129,  -129,  -129,  -129,   -51,  -129,  -129,  -128,   -70,
-      25,   -87,   -89
+    -112,  -112,  -112,  -112,   -10,   180,  -112,   192,  -112,  -112,
+     133,   -42,   -89,  -112,  -112,    55,  -112,  -112,  -112,  -112,
+    -112,   181,  -112,    50,  -112,    97,   -32,   193,  -111,  -112,
+    -112,  -112,  -112,  -112,   -53,  -112,  -112,   -72,   -69,    28,
+     -81,   -87
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -735,9 +732,9 @@ static const yytype_uint8 yydefgoto[] =
 {
        0,     2,     3,     7,    38,     8,    12,    35,    15,    16,
       24,    39,    65,    66,   123,   124,    67,    40,    55,    86,
-      56,    95,   130,   131,   132,   133,    76,    77,    78,    79,
-      80,    81,   203,    82,   154,   106,   115,   160,   156,   157,
-     108,   109,   110
+      56,    95,   131,   132,   133,   134,    76,    77,    78,    79,
+      80,    81,   204,    82,   106,   115,   161,   157,   158,   108,
+     109,   110
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -745,104 +742,108 @@ static const yytype_uint8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
-      19,   107,   111,    83,   161,   127,    57,    60,   137,   152,
-     140,   138,   139,   176,    61,    52,    53,    62,    63,    17,
-      91,    88,   116,    83,     1,   125,   164,    17,   117,     5,
-     178,   193,    18,    54,   128,   142,    64,   185,    89,   117,
-     166,    68,    89,    89,   167,   120,   174,   175,   162,   172,
-       4,   144,   173,   145,    11,   146,   147,   179,   180,   181,
-     184,   148,     9,   155,    10,   -77,    83,   -77,   114,    97,
-      98,     6,    99,   -77,   100,   101,   102,   103,    13,    68,
-     104,   186,   187,   198,   129,   163,   105,   153,    29,   211,
-      30,   158,    83,    31,    32,    33,   191,   159,    34,    83,
-     209,   216,   217,    27,    28,    97,    98,    14,    99,   210,
-     100,   101,   102,   103,    20,   144,   104,   145,   129,   146,
-      97,   208,   105,   136,    21,   100,   101,   102,   103,    23,
-      28,   104,    50,    22,   212,   213,    71,   105,   207,    25,
-      72,    26,    73,    74,    28,    54,    93,    28,    36,   171,
-      37,    83,    42,    75,    44,    45,    46,    47,   188,   189,
-     -74,   -74,   129,    83,    83,   204,   205,    17,   190,   191,
-     201,   191,   182,   183,    41,    43,    48,    49,    51,    58,
-      84,    69,    70,    87,    94,   112,    90,   118,    92,   121,
-     122,   143,   126,   134,   135,   141,   149,   150,    54,   192,
-     177,   151,   165,   168,   169,   194,   195,   197,   200,   202,
-     206,   214,   196,   215,   119,   199,    96,   170,    59,     0,
-       0,     0,     0,    85,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,   113
+      19,    83,   107,   111,   127,   155,   162,    60,    57,     1,
+     139,   141,   143,    52,    53,    17,    88,   140,   142,     4,
+      91,    83,    61,    71,   117,    62,    63,    72,    18,    73,
+      74,    54,    54,    89,   173,   181,   145,   174,   159,   116,
+      75,    68,   188,   160,    64,   120,   175,    27,    28,   163,
+     176,   177,    97,    98,   125,    99,   117,   100,   101,   102,
+     103,   165,     5,   104,    83,   187,   182,   183,   184,   105,
+     156,    89,   179,   -76,    17,   -76,   114,     6,    89,    68,
+     -76,   128,    17,   199,   130,   189,   190,   164,   194,   128,
+      44,    45,   210,    83,   147,   129,   148,    13,   149,   150,
+      83,    11,   215,   216,   151,    14,    29,   167,    30,   209,
+     168,    31,    32,    33,    97,    98,    34,    99,   130,   100,
+     101,   102,   103,   207,   147,   104,   148,   192,   149,    22,
+     208,   105,   178,     9,    20,    10,   211,   212,    97,    98,
+      23,    99,    21,   100,   101,   102,   103,    46,    47,   104,
+      83,    97,   137,    25,   138,   105,   100,   101,   102,   103,
+      83,    83,   104,   130,    28,    50,    28,    93,   105,    28,
+     172,   191,   192,   202,   192,   205,   206,    26,   185,   186,
+      36,    37,    41,    17,    43,    42,    48,    49,    51,    58,
+      87,    69,    70,    90,   112,    84,   146,   122,   118,   126,
+      94,   153,    92,   121,   198,   203,   152,    54,   136,   213,
+     166,   135,   144,   154,   193,   169,   -75,   214,   119,   196,
+     170,   180,   197,   200,     0,   171,   195,     0,     0,   201,
+       0,     0,     0,     0,     0,     0,    85,     0,     0,     0,
+      59,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    96,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,   113
 };
 
 static const yytype_int16 yycheck[] =
 {
-      10,    71,    72,    54,   117,    93,    40,    49,    97,    21,
-      99,    98,    99,   141,     8,     4,     5,    11,    12,    30,
-      62,    23,    23,    74,     3,    23,    23,    30,    40,     0,
-     143,   159,    43,    22,    37,   105,    30,   150,    40,    40,
-      44,    51,    40,    40,    48,    87,   134,   136,   118,    40,
-      30,    24,    43,    26,    30,    28,    29,   144,   145,   146,
-     149,    34,    40,   114,    42,    39,   117,    41,    42,    25,
-      26,    10,    28,    47,    30,    31,    32,    33,    41,    89,
-      36,   151,   152,   171,    94,   119,    42,    43,    26,   202,
-      28,    41,   143,    31,    32,    33,    44,    47,    36,   150,
-      48,   214,   215,    43,    44,    25,    26,     9,    28,   197,
-      30,    31,    32,    33,    45,    24,    36,    26,   128,    28,
-      25,   191,    42,    28,    40,    30,    31,    32,    33,    37,
-      44,    36,    46,    31,   204,   205,    13,    42,   189,     9,
-      17,    40,    19,    20,    44,    22,    46,    44,    30,    46,
-      29,   202,    40,    30,    32,    33,    32,    33,    43,    44,
-      43,    44,   172,   214,   215,     6,     7,    30,    43,    44,
-      43,    44,   147,   148,    31,    30,    45,    11,    40,    29,
-      40,    30,    30,    11,    42,    30,    47,    39,    47,    40,
-      32,    14,    32,    46,    40,    42,    35,    18,    22,    30,
-      43,    39,    38,    40,    48,    40,    32,    16,    40,    15,
-      30,    18,   166,    18,    85,   172,    70,   128,    48,    -1,
-      -1,    -1,    -1,    56,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    74
+      10,    54,    71,    72,    93,    21,   117,    49,    40,     3,
+      97,    98,    99,     4,     5,    30,    23,    98,    99,    30,
+      62,    74,     8,    13,    40,    11,    12,    17,    43,    19,
+      20,    22,    22,    40,    40,   146,   105,    43,    41,    23,
+      30,    51,   153,    46,    30,    87,   135,    43,    44,   118,
+     137,   138,    25,    26,    23,    28,    40,    30,    31,    32,
+      33,    23,     0,    36,   117,   152,   147,   148,   149,    42,
+      43,    40,   144,    39,    30,    41,    42,    10,    40,    89,
+      46,    37,    30,   172,    94,   154,   155,   119,   160,    37,
+      32,    33,   203,   146,    24,    43,    26,    41,    28,    29,
+     153,    30,   213,   214,    34,     9,    26,    44,    28,   198,
+      47,    31,    32,    33,    25,    26,    36,    28,   128,    30,
+      31,    32,    33,   192,    24,    36,    26,    44,    28,    31,
+      47,    42,    43,    40,    29,    42,   205,   206,    25,    26,
+      37,    28,    40,    30,    31,    32,    33,    32,    33,    36,
+     203,    25,    26,     9,    28,    42,    30,    31,    32,    33,
+     213,   214,    36,   173,    44,    45,    44,    45,    42,    44,
+      45,    43,    44,    43,    44,     6,     7,    40,   150,   151,
+      30,    29,    31,    30,    30,    40,    29,    11,    40,    29,
+      11,    30,    30,    46,    30,    40,    14,    32,    39,    32,
+      42,    18,    46,    40,    16,    15,    35,    22,    40,    18,
+      38,    45,    42,    39,    30,    40,    39,    18,    85,    32,
+      47,    43,   167,   173,    -1,   128,    40,    -1,    -1,    40,
+      -1,    -1,    -1,    -1,    -1,    -1,    56,    -1,    -1,    -1,
+      48,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    70,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    74
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,    50,    51,    30,     0,    10,    52,    54,    40,
-      42,    30,    55,    41,     9,    57,    58,    30,    43,    53,
-      45,    40,    31,    37,    59,     9,    40,    43,    44,    26,
-      28,    31,    32,    33,    36,    56,    30,    29,    53,    60,
-      66,    31,    40,    30,    32,    33,    32,    33,    45,    11,
-      46,    40,     4,     5,    22,    67,    69,    75,    29,    56,
-      60,     8,    11,    12,    30,    61,    62,    65,    53,    30,
-      30,    13,    17,    19,    20,    30,    75,    76,    77,    78,
-      79,    80,    82,    84,    40,    54,    68,    11,    23,    40,
-      47,    60,    47,    46,    42,    70,    70,    25,    26,    28,
-      30,    31,    32,    33,    36,    42,    84,    88,    89,    90,
-      91,    88,    30,    76,    42,    85,    23,    40,    39,    59,
-      60,    40,    32,    63,    64,    23,    32,    61,    37,    53,
-      71,    72,    73,    74,    46,    40,    28,    91,    90,    90,
-      91,    42,    88,    14,    24,    26,    28,    29,    34,    35,
-      18,    39,    21,    43,    83,    84,    87,    88,    41,    47,
-      86,    77,    88,    75,    23,    38,    44,    48,    40,    48,
-      74,    46,    40,    43,    61,    91,    87,    43,    77,    90,
-      90,    90,    89,    89,    91,    77,    88,    88,    43,    44,
-      43,    44,    30,    87,    40,    32,    64,    16,    61,    72,
-      40,    43,    15,    81,     6,     7,    30,    84,    88,    48,
-      61,    77,    88,    88,    18,    18,    77,    77
+       0,     3,    49,    50,    30,     0,    10,    51,    53,    40,
+      42,    30,    54,    41,     9,    56,    57,    30,    43,    52,
+      29,    40,    31,    37,    58,     9,    40,    43,    44,    26,
+      28,    31,    32,    33,    36,    55,    30,    29,    52,    59,
+      65,    31,    40,    30,    32,    33,    32,    33,    29,    11,
+      45,    40,     4,     5,    22,    66,    68,    74,    29,    55,
+      59,     8,    11,    12,    30,    60,    61,    64,    52,    30,
+      30,    13,    17,    19,    20,    30,    74,    75,    76,    77,
+      78,    79,    81,    82,    40,    53,    67,    11,    23,    40,
+      46,    59,    46,    45,    42,    69,    69,    25,    26,    28,
+      30,    31,    32,    33,    36,    42,    82,    86,    87,    88,
+      89,    86,    30,    75,    42,    83,    23,    40,    39,    58,
+      59,    40,    32,    62,    63,    23,    32,    60,    37,    43,
+      52,    70,    71,    72,    73,    45,    40,    26,    28,    89,
+      88,    89,    88,    89,    42,    86,    14,    24,    26,    28,
+      29,    34,    35,    18,    39,    21,    43,    85,    86,    41,
+      46,    84,    76,    86,    74,    23,    38,    44,    47,    40,
+      47,    73,    45,    40,    43,    60,    89,    89,    43,    85,
+      43,    76,    88,    88,    88,    87,    87,    89,    76,    86,
+      86,    43,    44,    30,    85,    40,    32,    63,    16,    60,
+      71,    40,    43,    15,    80,     6,     7,    86,    47,    60,
+      76,    86,    86,    18,    18,    76,    76
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    49,    50,    51,    51,    51,    52,    53,    53,    54,
-      54,    55,    55,    56,    56,    56,    56,    56,    56,    56,
-      56,    57,    57,    58,    58,    59,    59,    60,    60,    61,
-      61,    61,    61,    62,    63,    63,    64,    65,    65,    66,
-      66,    67,    68,    69,    69,    70,    70,    71,    71,    72,
-      72,    73,    74,    75,    76,    76,    77,    77,    77,    77,
-      77,    77,    78,    79,    79,    79,    79,    80,    81,    81,
-      82,    82,    82,    82,    83,    83,    84,    85,    85,    86,
-      86,    87,    87,    88,    88,    88,    89,    89,    89,    89,
-      89,    89,    90,    90,    91,    91,    91,    91,    91,    91,
-      91,    91,    91
+       0,    48,    49,    50,    50,    50,    51,    52,    52,    53,
+      53,    54,    54,    55,    55,    55,    55,    55,    55,    55,
+      55,    56,    56,    57,    57,    58,    58,    59,    59,    60,
+      60,    60,    60,    61,    62,    62,    63,    64,    64,    65,
+      65,    66,    67,    68,    68,    69,    69,    69,    70,    70,
+      71,    71,    72,    73,    74,    75,    75,    76,    76,    76,
+      76,    76,    76,    77,    78,    78,    78,    79,    80,    80,
+      81,    81,    81,    81,    82,    82,    83,    83,    84,    84,
+      85,    85,    86,    86,    86,    87,    87,    87,    87,    87,
+      87,    88,    88,    89,    89,    89,    89,    89,    89,    89,
+      89,    89,    89
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -852,12 +853,12 @@ static const yytype_int8 yyr2[] =
        3,     5,     3,     2,     2,     1,     2,     2,     1,     1,
        1,     0,     1,     7,     8,     0,     3,     5,     3,     1,
        1,     4,     1,     6,     3,     1,     3,     4,     1,     0,
-       3,     2,     3,     6,     4,     0,     3,     3,     1,     1,
-       1,     2,     3,     3,     3,     1,     1,     1,     1,     1,
-       1,     0,     3,     1,     3,     4,     4,     5,     0,     2,
-       4,     4,     8,     8,     1,     3,     2,     0,     2,     3,
-       2,     3,     1,     3,     3,     1,     1,     2,     2,     3,
-       3,     3,     1,     3,     1,     1,     1,     1,     1,     4,
+       3,     2,     3,     6,     4,     0,     2,     3,     3,     1,
+       1,     1,     2,     3,     3,     3,     1,     1,     1,     1,
+       1,     1,     0,     3,     1,     3,     4,     5,     0,     2,
+       4,     4,     8,     8,     2,     3,     0,     2,     3,     2,
+       3,     1,     3,     3,     1,     1,     2,     2,     3,     3,
+       3,     1,     3,     1,     1,     2,     1,     1,     1,     4,
        3,     2,     2
 };
 
@@ -1333,7 +1334,7 @@ yyreduce:
 
         Ast->set_root(headnode);
     }
-#line 1337 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1338 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 3: /* program_head: PROGRAM ID '(' id_list ')' ';'  */
@@ -1342,11 +1343,11 @@ yyreduce:
         // program_head -> PROGRAM ID '(' id_list ')' ';'
         (yyval.program_head_node) = new ProgramHead();
         LeafNode* leaf_node = new LeafNode((yyvsp[-4].token_info).value, LeafNode::LeafType::NAME);
-        (yyval.program_head_node)->append_child((yyvsp[-2].idlist_node));
         (yyval.program_head_node)->append_child(leaf_node);
+        (yyval.program_head_node)->append_child((yyvsp[-2].idlist_node));
         (yyval.program_head_node)->set_rownum(line_count);
     }
-#line 1350 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1351 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 4: /* program_head: PROGRAM ID '(' ')' ';'  */
@@ -1354,23 +1355,27 @@ yyreduce:
                                 {
         // program_head -> PROGRAM ID '('  ')' ';'
         (yyval.program_head_node) = new ProgramHead();
+        LeafNode* leaf_node = new LeafNode((yyvsp[-3].token_info).value, LeafNode::LeafType::NAME);
+        (yyval.program_head_node)->append_child(leaf_node);
         (yyval.program_head_node)->set_rownum(line_count);
     }
-#line 1360 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1363 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 5: /* program_head: PROGRAM ID ';'  */
-#line 160 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 162 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
                        {
         // program_head -> PROGRAM ID ';'
         (yyval.program_head_node) = new ProgramHead();
+        LeafNode* leaf_node = new LeafNode((yyvsp[-1].token_info).value, LeafNode::LeafType::NAME);
+        (yyval.program_head_node)->append_child(leaf_node);
         (yyval.program_head_node)->set_rownum(line_count);
     }
-#line 1370 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1375 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 6: /* program_body: const_declarations record_declarations var_declarations subprogram_declarations compound_statement  */
-#line 166 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 170 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
                                                                                                                   {
         // program_body -> const_declarations type_declarations var_declarations subprogram_declarations compound_statement
         (yyval.program_body_node) = new ProgramBody();
@@ -1381,11 +1386,11 @@ yyreduce:
         (yyval.program_body_node)->append_child((yyvsp[-1].subprogram_declarations_node));
         (yyval.program_body_node)->append_child((yyvsp[0].compound_statement_node));
     }
-#line 1385 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1390 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 7: /* id_list: id_list ',' ID  */
-#line 177 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 181 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
                          { 
         // id_list -> id_list ',' ID
         // 插入idlist node以及叶子节点
@@ -1395,11 +1400,11 @@ yyreduce:
         (yyval.idlist_node)->append_child((yyvsp[-2].idlist_node));
         (yyval.idlist_node)->append_child(leaf_node);
     }
-#line 1399 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1404 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 8: /* id_list: ID  */
-#line 187 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 191 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // id_list -> ID
         (yyval.idlist_node) = new IdList(IdList::GrammarType::SINGLE_ID);
@@ -1407,32 +1412,32 @@ yyreduce:
         LeafNode* leaf_node = new LeafNode((yyvsp[0].token_info).value, LeafNode::LeafType::NAME);
         (yyval.idlist_node)->append_child(leaf_node);
     }
-#line 1411 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1416 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 9: /* const_declarations: %empty  */
-#line 195 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 199 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
                     {
         // const_declarations -> ε
         (yyval.const_declarations_node) = new ConstDeclarations(ConstDeclarations::GrammarType::EPSILON);
         (yyval.const_declarations_node)->set_rownum(line_count);
     }
-#line 1421 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1426 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 10: /* const_declarations: CONST const_declaration ';'  */
-#line 201 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 205 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // const_declarations -> CONST const_declaration ';'
         (yyval.const_declarations_node) = new ConstDeclarations(ConstDeclarations::GrammarType::DECLARATION); 
         (yyval.const_declarations_node)->set_rownum(line_count);
         (yyval.const_declarations_node)->append_child((yyvsp[-1].const_declaration_node));
     }
-#line 1432 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1437 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 11: /* const_declaration: const_declaration ';' ID '=' const_value  */
-#line 209 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 11: /* const_declaration: const_declaration ';' ID CONSTASSIGNOP const_value  */
+#line 213 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // const_declaration -> const_declaration ';' ID '=' const_value
         (yyval.const_declaration_node) = new ConstDeclaration(ConstDeclaration::GrammarType::MULTIPLE_ID, (yyvsp[0].const_value_node)->type());
@@ -1446,11 +1451,11 @@ yyreduce:
         (yyval.const_declaration_node)->append_child(leaf_node);
         
     }
-#line 1450 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1455 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 12: /* const_declaration: ID '=' const_value  */
-#line 223 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 12: /* const_declaration: ID CONSTASSIGNOP const_value  */
+#line 227 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // const_declaration -> ID '=' const_value
         (yyval.const_declaration_node) = new ConstDeclaration(ConstDeclaration::GrammarType::SINGLE_ID, (yyvsp[0].const_value_node)->type());
@@ -1462,67 +1467,67 @@ yyreduce:
         leaf_node = new LeafNode(*(yyvsp[0].const_value_node), LeafNode::LeafType::VALUE);
         (yyval.const_declaration_node)->append_child(leaf_node);
     }
-#line 1466 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1471 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 13: /* const_value: PLUS INT_NUM  */
-#line 237 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 241 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // const_value -> + INT_NUM
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
     }
-#line 1475 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1480 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 14: /* const_value: UMINUS INT_NUM  */
-#line 242 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 246 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // const_value -> - INT_NUM
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
         (yyval.const_value_node)->set_uminus();
     }
-#line 1485 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1490 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 15: /* const_value: INT_NUM  */
-#line 248 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 252 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // const_value -> INT_NUM
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
     }
-#line 1494 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1499 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 16: /* const_value: PLUS REAL_NUM  */
-#line 253 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 257 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // const_value -> REAL_NUM
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
     }
-#line 1503 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1508 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 17: /* const_value: UMINUS REAL_NUM  */
-#line 258 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 262 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // const_value -> REAL_NUM
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
         (yyval.const_value_node)->set_uminus();
     }
-#line 1513 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1518 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 18: /* const_value: REAL_NUM  */
-#line 264 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 268 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // const_value -> REAL_NUM
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
     }
-#line 1522 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1527 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 19: /* const_value: STRING_  */
-#line 269 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 273 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // const_variable -> string
         if((yyvsp[0].token_info).value.get<string>() == "TRUE"){
@@ -1538,40 +1543,40 @@ yyreduce:
             (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
         }
     }
-#line 1542 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1547 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 20: /* const_value: CHAR  */
-#line 285 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 289 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // const_variable -> CHAR | TRUE | FALSE
         (yyval.const_value_node) = new ConstValue((yyvsp[0].token_info).value);
     }
-#line 1551 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1556 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 21: /* record_declarations: %empty  */
-#line 291 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 295 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         (yyval.record_declarations_node) = new RecordDeclarations(RecordDeclarations::GrammarType::EPSILON);
         (yyval.record_declarations_node)->set_rownum(line_count);
     }
-#line 1560 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1565 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 22: /* record_declarations: record_declaration  */
-#line 296 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 300 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // record_declarations -> ε | record_declaration
         (yyval.record_declarations_node) = new RecordDeclarations(RecordDeclarations::GrammarType::DECLARATION);
         (yyval.record_declarations_node)->set_rownum(line_count);
         (yyval.record_declarations_node)->append_child((yyvsp[0].record_declaration_node));
     }
-#line 1571 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1576 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 23: /* record_declaration: TYPE CHAR CONSTASSIGNOP RECORD var_declaration END ';'  */
-#line 304 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 308 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // record_declaration -> def-record | record_declaration def-record
         (yyval.record_declaration_node) = new RecordDeclaration(RecordDeclaration::GrammarType::SINGLE_DECLARATION);
@@ -1581,11 +1586,11 @@ yyreduce:
         (yyval.record_declaration_node)->append_child((yyvsp[-2].var_declaration_node));
 
     }
-#line 1585 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1590 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 24: /* record_declaration: record_declaration TYPE CHAR CONSTASSIGNOP RECORD var_declaration END ';'  */
-#line 314 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 318 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         (yyval.record_declaration_node) = new RecordDeclaration(RecordDeclaration::GrammarType::MULTI_DECLARATION);
         (yyval.record_declaration_node)->set_rownum(line_count);
@@ -1594,32 +1599,32 @@ yyreduce:
         (yyval.record_declaration_node)->append_child(leaf_node);
         (yyval.record_declaration_node)->append_child((yyvsp[-2].var_declaration_node));
     }
-#line 1598 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1603 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 25: /* var_declarations: %empty  */
-#line 324 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 328 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // var_declarations -> ε
         (yyval.var_declarations_node) = new VarDeclarations(VarDeclarations::GrammarType::EPSILON);
         (yyval.var_declarations_node)->set_rownum(line_count);
     }
-#line 1608 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1613 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 26: /* var_declarations: VAR var_declaration ';'  */
-#line 330 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 334 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // var_declarations -> VAR var_declaration ';'
         (yyval.var_declarations_node) = new VarDeclarations(VarDeclarations::GrammarType::DECLARATION);
         (yyval.var_declarations_node)->set_rownum(line_count);
         (yyval.var_declarations_node)->append_child((yyvsp[-1].var_declaration_node));
     }
-#line 1619 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1624 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 27: /* var_declaration: var_declaration ';' id_list ':' type  */
-#line 338 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 342 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // var_declaration -> var_declaration ';' id_list ':' type
         (yyval.var_declaration_node) = new VarDeclaration(VarDeclaration::GrammarType::MULTIPLE_DECL);
@@ -1628,11 +1633,11 @@ yyreduce:
         (yyval.var_declaration_node)->append_child((yyvsp[-2].idlist_node));
         (yyval.var_declaration_node)->append_child((yyvsp[0].type_node));
     }
-#line 1632 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1637 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 28: /* var_declaration: id_list ':' type  */
-#line 347 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 351 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // var_declaration -> id_list ':' type
         (yyval.var_declaration_node) = new VarDeclaration(VarDeclaration::GrammarType::SINGLE_DECL);
@@ -1640,11 +1645,11 @@ yyreduce:
         (yyval.var_declaration_node)->append_child((yyvsp[-2].idlist_node));
         (yyval.var_declaration_node)->append_child((yyvsp[0].type_node));
     }
-#line 1644 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1649 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 29: /* type: ID  */
-#line 356 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 360 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // type -> ID
         // 由于我们将integer等都设为保留字，都识别为ID（integer char boolean string real）
@@ -1653,42 +1658,42 @@ yyreduce:
         //IdTypeNode* idnode = new IdTypeNode($1.value.get());
         //$$->append_child(idnode);
     }
-#line 1657 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1662 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 30: /* type: array_type  */
-#line 365 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 369 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         (yyval.type_node) = new TypeNode(TypeNode::VarType::ARRAY_TYPE, "array");
         (yyval.type_node)->set_rownum(line_count);
         (yyval.type_node)->append_child((yyvsp[0].array_node));
     }
-#line 1667 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1672 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 31: /* type: RECORD var_declaration END ';'  */
-#line 371 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 375 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // recordtype -> record var_declaration end;
         (yyval.type_node) = new TypeNode(TypeNode::VarType::RECORD_TYPE, "record");
         (yyval.type_node)->set_rownum(line_count);
         (yyval.type_node)->append_child((yyvsp[-2].var_declaration_node));
     }
-#line 1678 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1683 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 32: /* type: string_type  */
-#line 378 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 382 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         (yyval.type_node) = new TypeNode(TypeNode::VarType::STRING_TYPE, "string");
         (yyval.type_node)->set_rownum(line_count);
         (yyval.type_node)->append_child((yyvsp[0].string_node));
     }
-#line 1688 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1693 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 33: /* array_type: ARRAY '[' periods ']' OF type  */
-#line 385 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 389 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         (yyval.array_node) = new ArrayTypeNode();
         (yyval.array_node)->set_rownum(line_count);
@@ -1711,11 +1716,11 @@ yyreduce:
         (yyval.array_node)->append_child((yyvsp[-3].periods_node));
         (yyval.array_node)->append_child((yyvsp[0].type_node));
     }
-#line 1715 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1720 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 34: /* periods: periods ',' period  */
-#line 409 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 413 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // periods -> periods ',' period
         (yyval.periods_node) = new PeriodsNode(PeriodsNode::PeriodType::MULTI);
@@ -1730,11 +1735,11 @@ yyreduce:
         (yyval.periods_node)->append_child((yyvsp[-2].periods_node));
         (yyval.periods_node)->append_child((yyvsp[0].period_node));
     }
-#line 1734 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1739 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 35: /* periods: period  */
-#line 424 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 428 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // periods -> period
         (yyval.periods_node) = new PeriodsNode(PeriodsNode::PeriodType::SINGLE);
@@ -1746,11 +1751,11 @@ yyreduce:
         (yyval.periods_node)->set_dm(dim);
         (yyval.periods_node)->append_child((yyvsp[0].period_node));
     }
-#line 1750 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1755 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 36: /* period: INT_NUM SUBCATALOG INT_NUM  */
-#line 437 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 441 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {     
         // period -> INT_NUM SUBCATALOG INT_NUMe
         (yyval.period_node) = new PeriodNode((yyvsp[-2].token_info).value.get<int>(), (yyvsp[0].token_info).value.get<int>());
@@ -1758,41 +1763,41 @@ yyreduce:
         (yyval.period_node)->append_child(new LeafNode((yyvsp[-2].token_info).value.get<int>(), LeafNode::LeafType::VALUE));
         (yyval.period_node)->append_child(new LeafNode((yyvsp[0].token_info).value.get<int>(), LeafNode::LeafType::VALUE));
     }
-#line 1762 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1767 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 37: /* string_type: STRING '[' INT_NUM ']'  */
-#line 446 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 450 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         StringType* string_info = new StringType(StringType::GrammarType::LIMIT, (yyvsp[-1].token_info).value.get<int>());
         (yyval.string_node) = new StringTypeNode(string_info);
         (yyval.string_node)->set_rownum(line_count);
     }
-#line 1772 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1777 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 38: /* string_type: STRING  */
-#line 452 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 456 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         StringType* string_info = new StringType(StringType::GrammarType::NOLIMIT, 0);
         (yyval.string_node) = new StringTypeNode(string_info);
         (yyval.string_node)->set_rownum(line_count);
     }
-#line 1782 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1787 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 39: /* subprogram_declarations: %empty  */
-#line 459 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 463 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // subprogram_declarations -> ε
         (yyval.subprogram_declarations_node) = new SubprogramDeclarations();
         (yyval.subprogram_declarations_node)->set_rownum(line_count);
     }
-#line 1792 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1797 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 40: /* subprogram_declarations: subprogram_declarations subprogram_declaration ';'  */
-#line 465 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 469 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // subprogram_declarations -> subprogram_declarations subprogram_declaration ';'
         (yyval.subprogram_declarations_node) = new SubprogramDeclarations();
@@ -1800,11 +1805,11 @@ yyreduce:
         (yyval.subprogram_declarations_node)->append_child((yyvsp[-2].subprogram_declarations_node));
         (yyval.subprogram_declarations_node)->append_child((yyvsp[-1].subprogram_declaration_node));
     }
-#line 1804 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1809 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 41: /* subprogram_declaration: subprogram_head subprogram_body  */
-#line 474 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 478 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // subprogram_declaration -> subprogram_head subprogram_body
         (yyval.subprogram_declaration_node) = new SubprogramDeclaration();
@@ -1812,11 +1817,11 @@ yyreduce:
         (yyval.subprogram_declaration_node)->append_child((yyvsp[-1].subprogram_head_node));
         (yyval.subprogram_declaration_node)->append_child((yyvsp[0].subprogram_body_node));
     }
-#line 1816 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1821 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 42: /* subprogram_body: const_declarations var_declarations compound_statement  */
-#line 482 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 486 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // subprogram_body -> const_declarations var_declarations compound_statement
         (yyval.subprogram_body_node) = new SubprogramBody();
@@ -1825,11 +1830,11 @@ yyreduce:
         (yyval.subprogram_body_node)->append_child((yyvsp[-1].var_declarations_node));
         (yyval.subprogram_body_node)->append_child((yyvsp[0].compound_statement_node));
     }
-#line 1829 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1834 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 43: /* subprogram_head: FUNCTION ID formal_parameter ':' type ';'  */
-#line 492 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 496 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // subprogram_head -> FUNCTION ID formal_parameter ':' standrad_type ';'
         (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
@@ -1840,11 +1845,11 @@ yyreduce:
         (yyval.subprogram_head_node)->append_child((yyvsp[-3].formal_param_node));
         (yyval.subprogram_head_node)->append_child((yyvsp[-1].type_node));
     }
-#line 1844 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1849 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 44: /* subprogram_head: PROCEDURE ID formal_parameter ';'  */
-#line 503 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 507 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // subprogram_head -> PROCEDURE ID formal_parameter ';'
         (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::PROC);
@@ -1854,32 +1859,41 @@ yyreduce:
         (yyval.subprogram_head_node)->append_child(leaf_node);
         (yyval.subprogram_head_node)->append_child((yyvsp[-1].formal_param_node));
     }
-#line 1858 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1863 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 45: /* formal_parameter: %empty  */
-#line 514 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 518 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // formal_parameter -> ε
         (yyval.formal_param_node) = new FormalParam();
         (yyval.formal_param_node)->set_rownum(line_count);
     }
-#line 1868 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1873 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 46: /* formal_parameter: '(' parameter_lists ')'  */
-#line 520 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 46: /* formal_parameter: '(' ')'  */
+#line 524 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+    {
+        (yyval.formal_param_node) = new FormalParam();
+        (yyval.formal_param_node)->set_rownum(line_count);
+    }
+#line 1882 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+    break;
+
+  case 47: /* formal_parameter: '(' parameter_lists ')'  */
+#line 529 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // formal_parameter -> '(' parameter_lists ')'
         (yyval.formal_param_node) = new FormalParam();
         (yyval.formal_param_node)->set_rownum(line_count);
         (yyval.formal_param_node)->append_child((yyvsp[-1].paramlists_node));
     }
-#line 1879 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1893 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 47: /* parameter_lists: parameter_lists ';' parameter_list  */
-#line 528 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 48: /* parameter_lists: parameter_lists ';' parameter_list  */
+#line 537 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // parameter_lists -> parameter_lists ';' parameter_list
         (yyval.paramlists_node) = new ParamLists(ParamLists::GrammarType::MULTIPLE_PARAM_LIST);
@@ -1887,55 +1901,55 @@ yyreduce:
         (yyval.paramlists_node)->append_child((yyvsp[-2].paramlists_node));
         (yyval.paramlists_node)->append_child((yyvsp[0].paramlist_node));
     }
-#line 1891 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1905 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 48: /* parameter_lists: parameter_list  */
-#line 536 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 49: /* parameter_lists: parameter_list  */
+#line 545 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {  
         // parameter_lists -> parameter_list
         (yyval.paramlists_node) = new ParamLists(ParamLists::GrammarType::SINGLE_PARAM_LIST);
         (yyval.paramlists_node)->set_rownum(line_count);
         (yyval.paramlists_node)->append_child((yyvsp[0].paramlist_node));
     }
-#line 1902 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1916 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 49: /* parameter_list: var_parameter  */
-#line 544 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 50: /* parameter_list: var_parameter  */
+#line 553 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // parameter_list -> var_parameter
         (yyval.paramlist_node) = new ParamList(ParamList::ParamType::VarParam);
         (yyval.paramlist_node)->set_rownum(line_count);
         (yyval.paramlist_node)->append_child((yyvsp[0].var_param_node));
     }
-#line 1913 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1927 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 50: /* parameter_list: value_parameter  */
-#line 551 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 51: /* parameter_list: value_parameter  */
+#line 560 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // parameter_list -> value_parameter
         (yyval.paramlist_node) = new ParamList(ParamList::ParamType::ValueParam);
         (yyval.paramlist_node)->set_rownum(line_count);
         (yyval.paramlist_node)->append_child((yyvsp[0].value_param_node));
     }
-#line 1924 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1938 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 51: /* var_parameter: VAR value_parameter  */
-#line 559 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 52: /* var_parameter: VAR value_parameter  */
+#line 568 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // var_parameter -> VAR value_parameter
         (yyval.var_param_node) = new VarParam();
         (yyval.var_param_node)->set_rownum(line_count);
         (yyval.var_param_node)->append_child((yyvsp[0].value_param_node));
     }
-#line 1935 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1949 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 52: /* value_parameter: id_list ':' type  */
-#line 567 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 53: /* value_parameter: id_list ':' type  */
+#line 576 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // value_parameter -> id_list ':' standrad_type
         (yyval.value_param_node) = new ValueParam();
@@ -1943,22 +1957,22 @@ yyreduce:
         (yyval.value_param_node)->append_child((yyvsp[-2].idlist_node));
         (yyval.value_param_node)->append_child((yyvsp[0].type_node));
     }
-#line 1947 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1961 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 53: /* compound_statement: BEGIN_ statement_list END  */
-#line 576 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 54: /* compound_statement: BEGIN_ statement_list END  */
+#line 585 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // compound_statement -> Begin statement_list end
         (yyval.compound_statement_node) = new CompoundStatement();
         (yyval.compound_statement_node)->set_rownum(line_count);
         (yyval.compound_statement_node)->append_child((yyvsp[-1].statement_list_node));
     }
-#line 1958 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1972 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 54: /* statement_list: statement_list ';' statement  */
-#line 584 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 55: /* statement_list: statement_list ';' statement  */
+#line 593 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // statement_list -> statement_list ';' statement
         (yyval.statement_list_node) = new StatementList();
@@ -1966,87 +1980,87 @@ yyreduce:
         (yyval.statement_list_node)->append_child((yyvsp[-2].statement_list_node));
         (yyval.statement_list_node)->append_child((yyvsp[0].statement_node));
     }
-#line 1970 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1984 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 55: /* statement_list: statement  */
-#line 592 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 56: /* statement_list: statement  */
+#line 601 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // statement_list -> statement
         (yyval.statement_list_node) = new StatementList();
         (yyval.statement_list_node)->set_rownum(line_count);
         (yyval.statement_list_node)->append_child((yyvsp[0].statement_node));
     }
-#line 1981 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 1995 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 56: /* statement: assignop_statement  */
-#line 600 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 57: /* statement: assignop_statement  */
+#line 609 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         //statement -> AssignopStatement
         (yyval.statement_node) = new Statement(Statement::StatementType::ASSIGN_OP_STATEMENT);
         (yyval.statement_node)->set_rownum(line_count);
         (yyval.statement_node)->append_child((yyvsp[0].assignop_statement_node));
     }
-#line 1992 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2006 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 57: /* statement: procedure_call  */
-#line 607 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 58: /* statement: procedure_call  */
+#line 616 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // statement -> call_procedure_statement
         (yyval.statement_node) = new Statement(Statement::StatementType::PROCEDURE_CALL);
         (yyval.statement_node)->set_rownum(line_count);
         (yyval.statement_node)->append_child((yyvsp[0].procedure_call_node));
     }
-#line 2003 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2017 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 58: /* statement: compound_statement  */
-#line 614 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 59: /* statement: compound_statement  */
+#line 623 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // statement -> compound_statement
         (yyval.statement_node) = new Statement(Statement::StatementType::COMPOUND_STATEMENT);
         (yyval.statement_node)->set_rownum(line_count);
         (yyval.statement_node)->append_child((yyvsp[0].compound_statement_node));
     }
-#line 2014 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2028 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 59: /* statement: ifstatement  */
-#line 621 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 60: /* statement: ifstatement  */
+#line 630 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // statement -> IF expression THEN statement else_part
         (yyval.statement_node) = new Statement(Statement::StatementType::IF_STATEMENT);
         (yyval.statement_node)->set_rownum(line_count);
         (yyval.statement_node)->append_child((yyvsp[0].ifstatement_node));
     }
-#line 2025 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2039 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 60: /* statement: loopstatement  */
-#line 628 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 61: /* statement: loopstatement  */
+#line 637 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // statement -> CASE expression OF case_body END
         (yyval.statement_node) = new Statement(Statement::StatementType::LOOP_STATEMENT);
         (yyval.statement_node)->set_rownum(line_count);
         (yyval.statement_node)->append_child((yyvsp[0].loopstatement_node));
     }
-#line 2036 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2050 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 61: /* statement: %empty  */
-#line 635 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 62: /* statement: %empty  */
+#line 644 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // statement -> ε
         (yyval.statement_node) = new Statement(Statement::StatementType::EPSILON);
         (yyval.statement_node)->set_rownum(line_count);
     }
-#line 2046 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2060 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 62: /* assignop_statement: variable ASSIGNOP expression  */
-#line 642 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 63: /* assignop_statement: variable ASSIGNOP expression  */
+#line 651 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // assignop_statement -> variable ASSIGNOP expression
         (yyval.assignop_statement_node) = new AssignopStatement(AssignopStatement::LeftType::VARIABLE);
@@ -2054,52 +2068,41 @@ yyreduce:
         (yyval.assignop_statement_node)->append_child((yyvsp[-2].variable_node));
         (yyval.assignop_statement_node)->append_child((yyvsp[0].expression_node));
     }
-#line 2058 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2072 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 63: /* procedure_call: ID  */
-#line 651 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 64: /* procedure_call: ID  */
+#line 660 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // procedure_call -> id
         (yyval.procedure_call_node) = new ProcedureCall(ProcedureCall::ProcedureType::NO_LIST, (yyvsp[0].token_info).value.get<string>());
         (yyval.procedure_call_node)->set_rownum(line_count);
     }
-#line 2068 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2082 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 64: /* procedure_call: ID '(' ')'  */
-#line 657 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 65: /* procedure_call: ID '(' ')'  */
+#line 666 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         (yyval.procedure_call_node) = new ProcedureCall(ProcedureCall::ProcedureType::NO_LIST, (yyvsp[-2].token_info).value.get<string>());
         (yyval.procedure_call_node)->set_rownum(line_count);
     }
-#line 2077 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2091 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 65: /* procedure_call: ID '(' expression_list ')'  */
-#line 662 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 66: /* procedure_call: ID '(' expression_list ')'  */
+#line 671 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // procedure_call -> id ( expression_list )
         (yyval.procedure_call_node) = new ProcedureCall(ProcedureCall::ProcedureType::EXP_LIST, (yyvsp[-3].token_info).value.get<string>());
         (yyval.procedure_call_node)->set_rownum(line_count);
         (yyval.procedure_call_node)->append_child((yyvsp[-1].expression_list_node));
     }
-#line 2088 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
-    break;
-
-  case 66: /* procedure_call: ID '(' variable_list ')'  */
-#line 669 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
-    {
-        // procedure_call -> id ( expression_list )
-        (yyval.procedure_call_node) = new ProcedureCall(ProcedureCall::ProcedureType::VAR_LIST, (yyvsp[-3].token_info).value.get<string>());
-        (yyval.procedure_call_node)->set_rownum(line_count);
-        (yyval.procedure_call_node)->append_child((yyvsp[-1].variablelist_node));
-    }
-#line 2099 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2102 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 67: /* ifstatement: IF expression THEN statement else_part  */
-#line 677 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 686 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // if_statement -> if expression then statement else_part
         (yyval.ifstatement_node) = new IfStatement();
@@ -2108,32 +2111,32 @@ yyreduce:
         (yyval.ifstatement_node)->append_child((yyvsp[-1].statement_node));
         (yyval.ifstatement_node)->append_child((yyvsp[0].elsepart_node));
     }
-#line 2112 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2115 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 68: /* else_part: %empty  */
-#line 687 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 696 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // else_part -> ε | else statement
         (yyval.elsepart_node) = new ElsePart(ElsePart::ELSEType::EPSILON);
         (yyval.elsepart_node)->set_rownum(line_count);
     }
-#line 2122 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2125 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 69: /* else_part: ELSE statement  */
-#line 693 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 702 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // else_part -> else statement
         (yyval.elsepart_node) = new ElsePart(ElsePart::ELSEType::ELSE_STATEMENT);
         (yyval.elsepart_node)->set_rownum(line_count);
         (yyval.elsepart_node)->append_child((yyvsp[0].statement_node));
     }
-#line 2133 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2136 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 70: /* loopstatement: WHILE expression DO statement  */
-#line 701 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 710 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // statement -> WHILE expression DO statement
         (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::WHILE_);
@@ -2142,11 +2145,11 @@ yyreduce:
         (yyval.loopstatement_node)->append_child((yyvsp[0].statement_node));
 
     }
-#line 2146 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2149 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 71: /* loopstatement: REPEAT statement_list UNTIL expression  */
-#line 710 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 719 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // statement -> repeat statement until expression
         (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::REPEAT_);
@@ -2154,11 +2157,11 @@ yyreduce:
         (yyval.loopstatement_node)->append_child((yyvsp[-2].statement_list_node));
         (yyval.loopstatement_node)->append_child((yyvsp[0].expression_node));
     }
-#line 2158 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2161 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 72: /* loopstatement: FOR ID ASSIGNOP expression DOWNTO expression DO statement  */
-#line 718 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 727 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // statement -> FOR ID ASSIGNOP expression downto expression DO statement
         (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::FORDOWN);
@@ -2169,11 +2172,11 @@ yyreduce:
         (yyval.loopstatement_node)->append_child((yyvsp[-2].expression_node));
         (yyval.loopstatement_node)->append_child((yyvsp[0].statement_node));
     }
-#line 2173 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2176 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 73: /* loopstatement: FOR ID ASSIGNOP expression TO expression DO statement  */
-#line 729 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 738 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::FORUP);
         (yyval.loopstatement_node)->set_rownum(line_count);
@@ -2183,34 +2186,11 @@ yyreduce:
         (yyval.loopstatement_node)->append_child((yyvsp[-2].expression_node));
         (yyval.loopstatement_node)->append_child((yyvsp[0].statement_node));
     }
-#line 2187 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2190 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 74: /* variable_list: variable  */
-#line 740 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
-    { 
-        // variable_list -> variable
-        (yyval.variablelist_node) = new VariableList(VariableList::GrammarType::VAR_);
-        (yyval.variablelist_node)->set_rownum(line_count);
-        (yyval.variablelist_node)->append_child((yyvsp[0].variable_node));
-    }
-#line 2198 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
-    break;
-
-  case 75: /* variable_list: variable_list ',' variable  */
-#line 747 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
-    {
-        // variable_list -> variable_list ',' variable
-        (yyval.variablelist_node) = new VariableList(VariableList::GrammarType::VAR_LIST_VAR);
-        (yyval.variablelist_node)->set_rownum(line_count);
-        (yyval.variablelist_node)->append_child((yyvsp[-2].variablelist_node));
-        (yyval.variablelist_node)->append_child((yyvsp[0].variable_node));
-    }
-#line 2210 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
-    break;
-
-  case 76: /* variable: ID id_varparts  */
-#line 756 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 74: /* variable: ID id_varparts  */
+#line 765 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // variable -> ID id_varparts
         (yyval.variable_node) = new Variable();
@@ -2220,11 +2200,24 @@ yyreduce:
         (yyval.variable_node)->append_child(leaf_node);
         (yyval.variable_node)->append_child((yyvsp[0].idvarparts_node));
     }
-#line 2224 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2204 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 77: /* id_varparts: %empty  */
-#line 767 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 75: /* variable: ID '(' ')'  */
+#line 775 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+    {
+        // variable -> ID id_varparts
+        (yyval.variable_node) = new Variable();
+        (yyval.variable_node)->set_rownum(line_count);
+        LeafNode *leaf_node = new LeafNode((yyvsp[-2].token_info).value, LeafNode::LeafType::NAME);
+        // 变量的类型需要符号表来进行判断
+        (yyval.variable_node)->append_child(leaf_node);
+    }
+#line 2217 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+    break;
+
+  case 76: /* id_varparts: %empty  */
+#line 785 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // id_varparts -> ε.
         (yyval.idvarparts_node) = new IDVarParts();
@@ -2232,11 +2225,11 @@ yyreduce:
         std::vector<std::string> *name_list = new std::vector<std::string>;
         (yyval.idvarparts_node)->set_pointer(name_list);
     }
-#line 2236 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2229 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 78: /* id_varparts: id_varparts id_varpart  */
-#line 775 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 77: /* id_varparts: id_varparts id_varpart  */
+#line 793 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // id_varparts -> id_varparts id_varpart.
         (yyval.idvarparts_node) = new IDVarParts();
@@ -2247,22 +2240,22 @@ yyreduce:
         (yyval.idvarparts_node)->append_child((yyvsp[-1].idvarparts_node));
         (yyval.idvarparts_node)->append_child((yyvsp[0].idvarpart_node));
     }
-#line 2251 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2244 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 79: /* id_varpart: '[' expression_list ']'  */
-#line 787 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 78: /* id_varpart: '[' expression_list ']'  */
+#line 805 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // id_varpart -> [expression_list].
         (yyval.idvarpart_node) = new IDVarPart(IDVarPart::GrammarType::EXP_LIST);
         (yyval.idvarpart_node)->set_rownum(line_count);
         (yyval.idvarpart_node)->append_child((yyvsp[-1].expression_list_node));
     }
-#line 2262 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2255 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 80: /* id_varpart: '.' ID  */
-#line 794 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 79: /* id_varpart: '.' ID  */
+#line 812 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // id_varpart -> .id.
         (yyval.idvarpart_node) = new IDVarPart(IDVarPart::GrammarType::_ID);
@@ -2271,11 +2264,11 @@ yyreduce:
         (yyval.idvarpart_node)->set_part_name((yyvsp[0].token_info).value.get<string>());
         (yyval.idvarpart_node)->append_child(leaf_node);
     }
-#line 2275 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2268 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 81: /* expression_list: expression_list ',' expression  */
-#line 804 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 80: /* expression_list: expression_list ',' expression  */
+#line 822 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // expression_list -> expression_list ',' expression
         
@@ -2285,11 +2278,11 @@ yyreduce:
         (yyval.expression_list_node)->append_child((yyvsp[-2].expression_list_node));
         (yyval.expression_list_node)->append_child((yyvsp[0].expression_node));
     }
-#line 2289 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2282 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 82: /* expression_list: expression  */
-#line 814 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 81: /* expression_list: expression  */
+#line 832 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // expression_list -> expression
         std::string type = (yyvsp[0].expression_node)->GetExpType();
@@ -2298,11 +2291,11 @@ yyreduce:
         (yyval.expression_list_node) = new ExpressionList(ExpressionList::ExpressionType::SINGLE, type_list);
         (yyval.expression_list_node)->append_child((yyvsp[0].expression_node));
     }
-#line 2302 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2295 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 83: /* expression: simple_expression RELOP simple_expression  */
-#line 824 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 82: /* expression: simple_expression RELOP simple_expression  */
+#line 842 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // expression -> simple_expression RELOP simple_expression.
         (yyval.expression_node) = new Expression(Expression::GrammarType::DOUBLE, (yyvsp[-1].token_info).value.get<string>(), "unkown");
@@ -2310,11 +2303,11 @@ yyreduce:
         (yyval.expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.expression_node)->append_child((yyvsp[0].simple_expression_node));
     }
-#line 2314 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2307 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 84: /* expression: simple_expression CONSTASSIGNOP simple_expression  */
-#line 832 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 83: /* expression: simple_expression CONSTASSIGNOP simple_expression  */
+#line 850 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // expression -> simple_expression '=' simple_expression.
         (yyval.expression_node) = new Expression(Expression::GrammarType::DOUBLE, "=", "unknown");
@@ -2322,55 +2315,55 @@ yyreduce:
         (yyval.expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.expression_node)->append_child((yyvsp[0].simple_expression_node));
     }
-#line 2326 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2319 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 85: /* expression: simple_expression  */
-#line 840 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 84: /* expression: simple_expression  */
+#line 858 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // expression -> simple_expression.
         (yyval.expression_node) = new Expression(Expression::GrammarType::SINGLE, " ", (yyvsp[0].simple_expression_node)->GetExpType());
         (yyval.expression_node)->set_rownum(line_count);
         (yyval.expression_node)->append_child((yyvsp[0].simple_expression_node));
     }
-#line 2337 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2330 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 86: /* simple_expression: term  */
-#line 848 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 85: /* simple_expression: term  */
+#line 866 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // simple_expression -> term.
         (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::SINGLE, (yyvsp[0].term_node)->GetTerType());
         (yyval.simple_expression_node)->set_rownum(line_count);
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
     }
-#line 2348 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2341 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 87: /* simple_expression: PLUS term  */
-#line 855 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 86: /* simple_expression: PLUS term  */
+#line 873 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // simple_expression -> + term.
         (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::PLUS_, (yyvsp[0].term_node)->GetTerType());
         (yyval.simple_expression_node)->set_rownum(line_count);
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
     }
-#line 2359 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2352 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 88: /* simple_expression: UMINUS term  */
-#line 862 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 87: /* simple_expression: UMINUS term  */
+#line 880 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // simple_expression -> - term.
         (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::MINUS_, (yyvsp[0].term_node)->GetTerType());
         (yyval.simple_expression_node)->set_rownum(line_count);
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
     }
-#line 2370 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2363 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 89: /* simple_expression: simple_expression ADDOP term  */
-#line 869 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 88: /* simple_expression: simple_expression ADDOP term  */
+#line 887 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // simple_expression -> simple_expression or term.、
         (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::OR_, "unknown");
@@ -2378,11 +2371,11 @@ yyreduce:
         (yyval.simple_expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
     }
-#line 2382 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2375 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 90: /* simple_expression: simple_expression PLUS term  */
-#line 877 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 89: /* simple_expression: simple_expression PLUS term  */
+#line 895 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { 
         // simple_expression -> simple_expression + term.
         (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::PLUS_, "unknown");
@@ -2390,33 +2383,33 @@ yyreduce:
         (yyval.simple_expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
     }
-#line 2394 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2387 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 91: /* simple_expression: simple_expression UMINUS term  */
-#line 885 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 90: /* simple_expression: simple_expression UMINUS term  */
+#line 903 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         (yyval.simple_expression_node) = new SimpleExpression(SimpleExpression::SymbolType::MINUS_, "unknown");
         (yyval.simple_expression_node)->set_rownum(line_count);
         (yyval.simple_expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.simple_expression_node)->append_child((yyvsp[0].term_node));
     }
-#line 2405 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2398 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 92: /* term: factor  */
-#line 893 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 91: /* term: factor  */
+#line 911 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // term -> factor.
         (yyval.term_node) = new Term(Term::SymbolType::SINGLE, (yyvsp[0].factor_node)->GetFacType());
         (yyval.term_node)->set_rownum(line_count);
         (yyval.term_node)->append_child((yyvsp[0].factor_node));
     }
-#line 2416 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2409 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 93: /* term: term MULOP factor  */
-#line 900 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 92: /* term: term MULOP factor  */
+#line 918 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {  
         // term -> term mulop factor. 
         (yyval.term_node) = new Term;
@@ -2445,11 +2438,11 @@ yyreduce:
         (yyval.term_node)->append_child((yyvsp[-2].term_node));
         (yyval.term_node)->append_child((yyvsp[0].factor_node));
     }
-#line 2449 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2442 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 94: /* factor: INT_NUM  */
-#line 930 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 93: /* factor: INT_NUM  */
+#line 948 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // factor -> num
         (yyval.factor_node) = new Factor(Factor::GrammerType::NUM);
@@ -2458,11 +2451,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType("integer");
         (yyval.factor_node)->append_child(leaf_node);
     }
-#line 2462 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2455 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
-  case 95: /* factor: REAL_NUM  */
-#line 939 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+  case 94: /* factor: REAL_NUM  */
+#line 957 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // factor -> num
         (yyval.factor_node) = new Factor(Factor::GrammerType::NUM);
@@ -2471,11 +2464,23 @@ yyreduce:
         (yyval.factor_node)->SetFacType("real");
         (yyval.factor_node)->append_child(leaf_node);
     }
-#line 2475 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2468 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+    break;
+
+  case 95: /* factor: PLUS factor  */
+#line 966 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+    {
+        // factor -> num
+        (yyval.factor_node) = new Factor(Factor::GrammerType::UPLUS);
+        (yyval.factor_node)->set_rownum(line_count);
+        (yyval.factor_node)->SetFacType((yyvsp[0].factor_node)->GetFacType());
+        (yyval.factor_node)->append_child((yyvsp[0].factor_node));
+    }
+#line 2480 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 96: /* factor: STRING_  */
-#line 948 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 974 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // factor -> STRING
         if((yyvsp[0].token_info).value.get<string>() == "true"){
@@ -2504,11 +2509,11 @@ yyreduce:
             (yyval.factor_node)->append_child(leaf_node);
         }
     }
-#line 2508 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2513 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 97: /* factor: CHAR  */
-#line 977 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1003 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // factor -> char
         (yyval.factor_node) = new Factor(Factor::GrammerType::CHAR_);
@@ -2517,11 +2522,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType("char");
         (yyval.factor_node)->append_child(leaf_node);
     }
-#line 2521 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2526 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 98: /* factor: variable  */
-#line 986 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1012 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // factor -> variable.
         (yyval.factor_node) = new Factor(Factor::GrammerType::VARIABLE);
@@ -2529,11 +2534,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType("unknown");
         (yyval.factor_node)->append_child((yyvsp[0].variable_node));
     }
-#line 2533 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2538 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 99: /* factor: ID '(' expression_list ')'  */
-#line 994 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1020 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         (yyval.factor_node) = new Factor(Factor::GrammerType::ID_EXP_LIST);
         (yyval.factor_node)->set_rownum(line_count);
@@ -2543,11 +2548,11 @@ yyreduce:
         (yyval.factor_node)->append_child(leaf_node);
         (yyval.factor_node)->append_child((yyvsp[-1].expression_list_node));
     }
-#line 2547 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2552 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 100: /* factor: '(' expression ')'  */
-#line 1004 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1030 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // factor -> (expression).
         (yyval.factor_node) = new Factor(Factor::GrammerType::EXP);
@@ -2555,11 +2560,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType((yyvsp[-1].expression_node)->GetExpType());
         (yyval.factor_node)->append_child((yyvsp[-1].expression_node));
     }
-#line 2559 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2564 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 101: /* factor: NOT factor  */
-#line 1012 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1038 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // factor -> not factor.
         // 类型检查
@@ -2569,11 +2574,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType((yyvsp[0].factor_node)->GetFacType());
         (yyval.factor_node)->append_child((yyvsp[0].factor_node));
     }
-#line 2573 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2578 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 102: /* factor: UMINUS factor  */
-#line 1022 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1048 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // factor -> not factor.
         // 类型检查
@@ -2583,11 +2588,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType((yyvsp[0].factor_node)->GetFacType());
         (yyval.factor_node)->append_child((yyvsp[0].factor_node));
     }
-#line 2587 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2592 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
 
-#line 2591 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2596 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
 
       default: break;
     }
@@ -2780,7 +2785,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 1037 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1063 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
 
  
 

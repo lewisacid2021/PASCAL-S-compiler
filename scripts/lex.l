@@ -1,4 +1,3 @@
-%option case-insensitive 
 %{   
 #include "parser.h"
 //#include "log.h"
@@ -83,10 +82,12 @@ INT_NUM                 {digits}
 REAL_NUM                {digits}{fraction}
 
 /* 注释 */
-ANNO                    (\{|\(\*)[^\{\}(\(\*)(\*\))]*(\}|\*\))
+/*ANNO_MUL                (\{|\(\*)[^\{\}(\(\*)(\*\))]*(\}|\*\))*/
+ANNO_MUL                ((\{)[^\{\}]*(\}))|((\(\*)[^(\(\*)(\*\))]*(\*\)))
+ANNO_SIG                (\/\/[^\n]+\n)
 
 /* 标识符 */
-ID                      {letter}({letter}|{digit})*
+ID                      ({letter}|_)({letter}|{digit}|_)*
 
 /* 字符 */
 CHAR                    ('[^'\n]')
@@ -135,7 +136,8 @@ SUBCATALOG              ".."
 {INT_NUM}                       { write_cache(); to_int(); return INT_NUM; }
 {REAL_NUM}                      { write_cache(); to_float(); return REAL_NUM; }
         
-{ANNO}                          { skip_anno(); }
+{ANNO_MUL}                      { skip_anno(); }
+{ANNO_SIG}                      { skip_anno(); }    
         
 {CHAR}                          { write_cache(); to_char(); return CHAR; }
 {STRING_}                       { write_cache(); to_str_case_sensitive(); return STRING_; }
@@ -147,7 +149,7 @@ SUBCATALOG              ".."
         
 {ID}                            { write_cache(); to_str(); return ID; }
         
-{CONSTASSIGNOP}                 { write_cache(); to_str(); return yytext[0]; }
+{CONSTASSIGNOP}                 { write_cache(); to_str(); return CONSTASSIGNOP; }
 {SEP}                           { write_cache(); to_str(); return yytext[0]; }
 {SUBCATALOG}                    { write_cache(); to_str(); return SUBCATALOG; }
         
@@ -179,7 +181,8 @@ SUBCATALOG              ".."
 ('[^'\n][^']*(\n)[^']*')        { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
 ('[^']*(\n)[^']*[^'\n]')        { write_cache(); print_lex_error("illegal string constant"); skip_error_token(); }
               
-(\{|(\(\*)[^\{\}(\(\*)(\*\))]*)  { write_cache(); print_lex_error("unclosed comment"); skip_error_token(); }
+
+(\{[^\{\}]*)|((\(\*)[^(\(\*)(\*\))]*)  { write_cache(); print_lex_error("unclosed comment"); skip_error_token(); }
 ('[^']*)                        { write_cache(); print_lex_error("unclosed string constant"); skip_error_token(); }
 
 .                               { write_cache(); print_lex_error("illegal character"); char_count++; }
@@ -239,7 +242,6 @@ void print_syntax_error(const char *msg)
 void to_str()
 {
     std::string str = std::string(yytext);
-    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
     yylval.token_info.value.set(str);
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;

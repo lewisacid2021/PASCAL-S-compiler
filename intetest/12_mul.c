@@ -2,11 +2,8 @@
 #include<stdbool.h>
 int a, b;
 int main() {
-{
-a = 3;
+a = 10;
 b = 5;
-a = 5;
-printf("%d",a + b);
-}
+printf("%d",a * b);
 return 0;
 }

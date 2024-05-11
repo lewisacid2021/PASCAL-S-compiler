@@ -138,6 +138,8 @@ class ProgramStruct: public AstNode
 class ProgramHead: public AstNode
 {
     // program_head -> program id ( idlist ) | program id
+  public:
+    void accept(Visitor *visitor) override;  //访问者接口
 };
 
 class ProgramBody: public AstNode
@@ -148,6 +150,8 @@ class ProgramBody: public AstNode
     //                 subprogram_declarations
     //                 compound_statement
     // 共四个子节点
+  public:
+    void accept(Visitor *visitor) override;  //访问者接口
 };
 
 class IdList: public AstNode
@@ -270,6 +274,7 @@ class RecordDeclaration: public AstNode
     {
         return grammar_type;
     };
+    void accept(Visitor *visitor) override;  //访问者接口
 
   private:
     GrammarType grammar_type;
@@ -736,7 +741,7 @@ class VariableList: public AstNode
 
 class Variable: public AstNode
 {
-    // 子节点为 ID叶子节点 与 IDVarParts节点
+    // 子节点为 ID叶子节点 与 IDVarParts节点 或单独 ID叶子节点
     // variable -> id id_varparts
   public:
     Variable() {}
@@ -758,6 +763,7 @@ class IDVarParts: public AstNode
     void set_pointer(std::vector<std::string> *pn) { parts_name = pn; }
     std::vector<std::string> *get_pointer() { return parts_name; }
     void accept(Visitor *visitor) override;
+    vector<AstNode* > Lists();
 
   private:
     std::vector<std::string> *parts_name;
@@ -917,6 +923,7 @@ class Factor: public AstNode
         ID_EXP_LIST,  // factor -> id ( expression_list ) 子节点为叶子节点和 expression_list节点
         NOT_,         // factor -> not factor 子节点为factor节点
         UMINUS_,      // factor -> - factor 子节点为factor节点
+        UPLUS,        // factor -> + factor 子节点为factor节点
         CHAR_,        // factor -> ′ letter ′ 子节点为叶子节点
         STR,          // 子节点为叶子节点
         BOOL          // 子节点为叶子节点
@@ -989,7 +996,7 @@ class GenerationVisitor: public Visitor
     void visit(AST *AST) override;
     void visit(AstNode *astnode) override;
     void visit(LeafNode *leafnode) override;
-    void visit(ProgramHead *programhead) override { visitchild(programhead);};
+    void visit(ProgramHead *programhead) override {return;};
     void visit(IdList *idlist) override;
     void visit(ConstDeclaration *constdeclaration) override;
     void visit(TypeNode *typenode) override;
@@ -1011,8 +1018,8 @@ class GenerationVisitor: public Visitor
     void visit(LoopStatement *loopStatement) override;
     void visit(Variable *variable) override;
     void visit(VariableList *variableList) override;
-    void visit(IDVarPart *idVarPart) override;
-    void visit(IDVarParts *idVarParts) override;
+    void visit(IDVarPart *idVarPart) override { visitchild(idVarPart);};
+    void visit(IDVarParts *idVarParts) override { visitchild(idVarParts);};
     void visit(Term *term) override;
     void visit(Factor *factor) override;
     void visit(Expression *expression) override;

@@ -150,16 +150,20 @@ program_head : PROGRAM ID '(' id_list ')' ';' {
         // program_head -> PROGRAM ID '(' id_list ')' ';'
         $$ = new ProgramHead();
         LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
-        $$->append_child($4);
         $$->append_child(leaf_node);
+        $$->append_child($4);
         $$->set_rownum(line_count);
     } | PROGRAM ID '('  ')' ';' {
         // program_head -> PROGRAM ID '('  ')' ';'
         $$ = new ProgramHead();
+        LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
         $$->set_rownum(line_count);
     } | PROGRAM ID ';' {
         // program_head -> PROGRAM ID ';'
         $$ = new ProgramHead();
+        LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
+        $$->append_child(leaf_node);
         $$->set_rownum(line_count);
     }
 
@@ -205,7 +209,7 @@ const_declarations :{
         $$->append_child($2);
     };
 
-const_declaration : const_declaration ';' ID '=' const_value
+const_declaration : const_declaration ';' ID CONSTASSIGNOP const_value
     {
         // const_declaration -> const_declaration ';' ID '=' const_value
         $$ = new ConstDeclaration(ConstDeclaration::GrammarType::MULTIPLE_ID, $5->type());
@@ -219,7 +223,7 @@ const_declaration : const_declaration ';' ID '=' const_value
         $$->append_child(leaf_node);
         
     }
-    | ID '=' const_value
+    | ID CONSTASSIGNOP const_value
     {   
         // const_declaration -> ID '=' const_value
         $$ = new ConstDeclaration(ConstDeclaration::GrammarType::SINGLE_ID, $3->type());
@@ -516,6 +520,11 @@ formal_parameter :
         $$ = new FormalParam();
         $$->set_rownum(line_count);
     }
+    | '(' ')'
+    {
+        $$ = new FormalParam();
+        $$->set_rownum(line_count);
+    }
     | '(' parameter_lists ')'
     {
         // formal_parameter -> '(' parameter_lists ')'
@@ -665,13 +674,13 @@ procedure_call : ID
         $$->set_rownum(line_count);
         $$->append_child($3);
     }
-    | ID '(' variable_list ')'
+    /* | ID '(' variable_list ')'
     {
         // procedure_call -> id ( expression_list )
         $$ = new ProcedureCall(ProcedureCall::ProcedureType::VAR_LIST, $1.value.get<string>());
         $$->set_rownum(line_count);
         $$->append_child($3);
-    };
+    }; */
 
 ifstatement : IF expression THEN statement else_part
     {
@@ -761,6 +770,15 @@ variable : ID id_varparts
         // 变量的类型需要符号表来进行判断
         $$->append_child(leaf_node);
         $$->append_child($2);
+    }
+    | ID '(' ')'
+    {
+        // variable -> ID id_varparts
+        $$ = new Variable();
+        $$->set_rownum(line_count);
+        LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::NAME);
+        // 变量的类型需要符号表来进行判断
+        $$->append_child(leaf_node);
     };
 
 id_varparts :
@@ -943,6 +961,14 @@ factor : INT_NUM
         LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
         $$->SetFacType("real");
         $$->append_child(leaf_node);
+    }
+    | PLUS factor
+    {
+        // factor -> num
+        $$ = new Factor(Factor::GrammerType::UPLUS);
+        $$->set_rownum(line_count);
+        $$->SetFacType($2->GetFacType());
+        $$->append_child($2);
     }
     | STRING_
     {
