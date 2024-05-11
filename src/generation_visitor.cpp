@@ -85,10 +85,10 @@ void ConstDeclaration::print_type()
             fprintf(fs, "double ");
             break;
         case ConstValue::ConstvalueType::CHAR:
-            fprintf(fs, "char ");
-            break;
         case ConstValue::ConstvalueType::STRING:
-            fprintf(fs, "string ");
+            fprintf(fs, "char ");
+            if(type == ConstValue::ConstvalueType::STRING)
+                fprintf(fs, "*");
             break;
         default:
             break;
