@@ -139,16 +139,16 @@ void GenerationVisitor::visit(TypeNode *typenode)
         }
         case TypeNode::VarType::ID_TYPE:
         {
-            if(typenode->get_type_name()=="integer"&&true)   //todo 查类型表 预定义标识符是否没被覆盖
+            if(typenode->get_type_name()=="integer"&&TheTypeTable->findID("integer")->RecordTable==nullptr)   //todo 查类型表 预定义标识符是否没被覆盖
                 fprintf(fs, "int");
-            else if(typenode->get_type_name()=="boolean"&&true) 
+            else if(typenode->get_type_name()=="boolean"&&TheTypeTable->findID("boolean")->RecordTable==nullptr) 
                 fprintf(fs, "bool");
-            else if(typenode->get_type_name()=="real"&&true) 
+            else if(typenode->get_type_name()=="real"&&TheTypeTable->findID("real")->RecordTable==nullptr) 
                 fprintf(fs, "float");
             else 
             {
                 //todo 查询类型表判断是否为record
-                if(false) fprintf(fs,"struct ");
+                if(TheTypeTable->findID(typenode->get_type_name())->RecordTable!=nullptr) fprintf(fs,"struct ");
                 fprintf(fs, "%s", typenode->get_type_name().c_str());
             }
             break;
