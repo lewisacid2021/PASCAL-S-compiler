@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <iostream>
 #include <set>
+#include <string>
 #include <sys/types.h>
 #include <tuple>
 #include <utility>
@@ -14,6 +15,7 @@ using std::vector;
 
 extern SymbolTable *MainTable;
 extern SymbolTable *CurrentTable;
+extern TypeTable *TheTypeTable;
 
 void addDuplicateNameError()
 {
@@ -174,7 +176,7 @@ void SemanticVisitor::visit(RecordDeclaration *recorddeclaration)
 
     SymbolTable *subTable = new SymbolTable();
 
-    CurrentTable->addRecord(id, rn, subTable);
+    TheTypeTable->addType(id, false, subTable);
 
     SymbolTable *PreviousTable = CurrentTable;
     CurrentTable               = subTable;
@@ -289,6 +291,12 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
     } else if (typenode->GetVarType() == TypeNode::VarType::RECORD_TYPE)
     {
         SymbolTable *subTable = new SymbolTable();
+        string recordname = std::to_string(TheTypeTable->records.size());
+        while(findID(CurrentTable, recordname, 1) != NULL)
+        {
+            recordname.append("_");
+        }
+        TheTypeTable->addType(recordname, false, subTable);
 
         for (auto i : idlist->Lists())
         {
@@ -305,7 +313,7 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
                 return;
             }
 
-            CurrentTable->addRecord(id, rn, subTable);
+            CurrentTable->addRecord(id,recordname, rn, subTable);
         }
 
         SymbolTable *PreviousTable = CurrentTable;

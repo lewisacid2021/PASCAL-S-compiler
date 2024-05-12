@@ -13,13 +13,6 @@ void SymbolTable::addPara(string id, int rowNumber, string type)
     temp->setPara(id, rowNumber, type);
     this->records.push_back(temp);
     this->idLoc[id] = int(records.size() - 1);
-    if (this->idCount.count(id))
-    {
-        this->idCount[id]++;
-    } else
-    {
-        this->idCount[id] = 1;
-    }
 }
 
 //添加引用参数
@@ -29,13 +22,6 @@ void SymbolTable::addVarPara(string id, int rowNumber, string type)
     temp->setVarPara(id, rowNumber, type);
     this->records.push_back(temp);
     this->idLoc[id] = int(records.size() - 1);
-    if (this->idCount.count(id))
-    {
-        this->idCount[id]++;
-    } else
-    {
-        this->idCount[id] = 1;
-    }
 }
 
 //添加变量
@@ -75,10 +61,10 @@ void SymbolTable::addString(string id, int rowNumber,string type,int amount)
 }
 
 //添加record
-void SymbolTable::addRecord(string id,int rowNumber,SymbolTable *subSymbolTable)
+void SymbolTable::addRecord(string id, string recordName, int rowNumber, SymbolTable *subSymbolTable)
 {
     TableRecord *temp = new TableRecord;
-    temp->setRecord(id, rowNumber, subSymbolTable);
+    temp->setRecord(id, recordName,rowNumber, subSymbolTable);
     this->records.push_back(temp);
     this->idLoc[id] = int(records.size() - 1);
 }
@@ -129,13 +115,6 @@ void SymbolTable::addProgramName(string id, int rowNumber, string programInfo, i
     temp->setProgramName(id, rowNumber, programInfo, amount, returnType);
     this->records.push_back(temp);
     this->idLoc[id] = int(records.size() - 1);
-    if (this->idCount.count(id))
-    {
-        this->idCount[id]++;
-    } else
-    {
-        this->idCount[id] = 1;
-    }
 }
 
 //添加程序参数
@@ -145,13 +124,6 @@ void SymbolTable::addVoidPara(string id, int rowNumber)
     temp->setVoidPara(id, rowNumber);
     this->records.push_back(temp);
     this->idLoc[id] = int(records.size() - 1);
-    if (this->idCount.count(id))
-    {
-        this->idCount[id]++;
-    } else
-    {
-        this->idCount[id] = 1;
-    }
 }
 
 //构造函数
@@ -220,11 +192,11 @@ void TableRecord::setString(string id_para, int rowNumber_para, string type_para
 
 }
 
-void TableRecord::setRecord(string id_para, int rowNumber_para, SymbolTable *subSymbolTable_para)
+void TableRecord::setRecord(string id_para, string recordName, int rowNumber_para, SymbolTable *subSymbolTable_para)
 {
     flag             = "record";
     this->id         = id_para;
-    this->type       = "a";
+    this->type       = recordName;
     this->rowNumber  = rowNumber_para;
     this->subSymbolTable = subSymbolTable_para;
 
@@ -266,6 +238,23 @@ void TableRecord::setVoidPara(string id_para, int rowNumber_para)
     this->rowNumber = rowNumber_para;
 }
 
+void TypeTable::addType(string id, bool isCoverd, SymbolTable *RecordTable)
+{
+    TypeTableRecord *temp = new TypeTableRecord;
+    if(id == "integer" || id == "char" || id == "real" || id == "boolean")
+        isCoverd = true;
+    temp->setType(id, isCoverd, RecordTable);
+    this->records.push_back(temp);
+    this->idLoc[id] = int(records.size() - 1);
+}
+
+void TypeTableRecord::setType(string id, bool isCoverd, SymbolTable *RecordTable)
+{
+    this->id        = id;
+    this->isCoverd = isCoverd;
+    this->RecordTable = RecordTable;
+}
+
 //找出标识符在符号表中的位置
 TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode)
 {
@@ -281,3 +270,4 @@ TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode)
     }
     return NULL;
 }
+

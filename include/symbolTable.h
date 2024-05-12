@@ -30,7 +30,7 @@ class TableRecord
     void setConst(string id_para, int rowNumber_para, string type_para, bool isMinus_para, string value_para);
     void setArray(string id_para, int rowNumber_para, string type_para, int amount_para, vector<pair<int, int>> arrayRange_para);
     void setString(string id_para, int rowNumber_para, string type_para, int amount_para);
-    void setRecord(string id_para, int rowNumber_para, SymbolTable *subSymbolTable_para);
+    void setRecord(string id_para, string recordName, int rowNumber_para, SymbolTable *subSymbolTable_para);
     void setProcedure(string id_para, int rowNumber_para, int amount_para, SymbolTable *subSymbolTable_para);
     void setFunction(string id_para, int rowNumber_para, string type_para, int amount_para, SymbolTable *subSymbolTable_para);
     void setProgramName(string id_para, int rowNumber_para, string programInfo_para, int amount_para, string returnType_para);
@@ -54,7 +54,6 @@ class SymbolTable
     string tableType;               //类型，主符号表或子符号表
     vector<TableRecord *> records;  //指向record成员的指针
     unordered_map<string, int> idLoc;         //存储标识符在records中的下标，加快查询速度
-    unordered_map<string, int> idCount;
 
     void addPara(string id, int rowNumber, string type);
     void addVarPara(string id, int rowNumber, string type);
@@ -62,7 +61,7 @@ class SymbolTable
     void addConst(string id, int rowNumber, string type, bool isMinus, string value);
     void addArray(string id, int rowNumber, string type, int amount, vector<pair<int, int>> arrayRange);
     void addString(string id, int rowNumber,string type,int amount);
-    void addRecord(string id, int rowNumber,SymbolTable *subSymbolTable);
+    void addRecord(string id,string recordName, int rowNumber,SymbolTable *subSymbolTable);
     void addProcedure(string id, int rowNumber, int amount, SymbolTable *subSymbolTable);
     void addFunction(string id, int rowNumber, string type, int amount, SymbolTable *subSymbolTable);
     void addSubSymbolTable(string id, SymbolTable *subSymbolTable);
@@ -71,6 +70,32 @@ class SymbolTable
 
     SymbolTable(string type = "sub");
     ~SymbolTable() {}
+};
+
+class TypeTableRecord
+{
+  public:
+  string id;
+  bool isCoverd = false;
+  SymbolTable* RecordTable;
+
+  void setType(string id, bool isCoverd, SymbolTable *RecordTable);
+
+  TypeTableRecord(){}
+  ~TypeTableRecord(){}
+};
+
+class TypeTable
+{
+  public:
+  vector<TypeTableRecord *> records;
+  unordered_map<string, int> idLoc;
+
+  void addType(string id,bool isCoverd,SymbolTable* RecordTable);
+  TypeTable *findID(string id);
+
+  TypeTable(){}
+  ~TypeTable(){}
 };
 
 extern TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode);
