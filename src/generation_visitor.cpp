@@ -13,6 +13,7 @@ using std::vector;
 
 extern SymbolTable* MainTable;
 extern SymbolTable* CurrentTable;
+extern TypeTable* TheTypeTable;
 
 namespace ast {
 
@@ -123,7 +124,9 @@ void GenerationVisitor::visit(TypeNode *typenode)
     switch (typenode->GetVarType()) {
         case TypeNode::VarType::RECORD_TYPE:
             fprintf(fs, "struct ");
+            break;
         case TypeNode::VarType::ARRAY_TYPE:{
+            cout << typenode->get(0)->DynamicCast<ArrayTypeNode>()->type() << "a" << endl;
             string type = typenode->get(0)->DynamicCast<ArrayTypeNode>()->type();
             if(type=="integer"&&true)   //todo 查符号表 预定义标识符是否没被覆盖
                 fprintf(fs, "int");
@@ -136,13 +139,18 @@ void GenerationVisitor::visit(TypeNode *typenode)
         }
         case TypeNode::VarType::ID_TYPE:
         {
-            if(typenode->get_type_name()=="integer"&&true)   //todo 查符号表 预定义标识符是否没被覆盖
+            if(typenode->get_type_name()=="integer"&&true)   //todo 查类型表 预定义标识符是否没被覆盖
                 fprintf(fs, "int");
             else if(typenode->get_type_name()=="boolean"&&true) 
                 fprintf(fs, "bool");
             else if(typenode->get_type_name()=="real"&&true) 
                 fprintf(fs, "float");
-            else  fprintf(fs, "%s", typenode->get_type_name().c_str());
+            else 
+            {
+                //todo 查询类型表判断是否为record
+                if(false) fprintf(fs,"struct ");
+                fprintf(fs, "%s", typenode->get_type_name().c_str());
+            }
             break;
         }
         case TypeNode::VarType::STRING_TYPE:
@@ -168,6 +176,7 @@ void GenerationVisitor::visit(StringTypeNode *stringtypenode)
 }
 
 void GenerationVisitor::visit(VarDeclaration *vardeclaration)
+// 缺少对record的处理
 {
     //check if it is a array type
     auto type_node    = vardeclaration->get(-1)->DynamicCast<TypeNode>();
@@ -194,7 +203,7 @@ void GenerationVisitor::visit(VarDeclaration *vardeclaration)
             else
                 fprintf(fs, ";\n");
         }
-    } else {
+    }else {
         //idlist
         vardeclaration->get(-2)->accept(this);
         fprintf(fs, ";\n");
@@ -285,9 +294,12 @@ void GenerationVisitor::visit(ValueParam *valueparam)
         fprintf(fs, " %s",list[i]->id_ref().c_str());
         if(type->GetVarType() == TypeNode::VarType::ARRAY_TYPE)
         {
-            auto dim = type->get(0)->DynamicCast<ArrayTypeNode>()->info()->GetDimsum();
-            for(size_t i=0;i<dim;i++)
-                fprintf(fs, "[]");
+            auto dim_info=type->get(0)->DynamicCast<ArrayTypeNode>()->info();
+            auto dim_size = dim_info->GetDimsum();  //获取数组维数
+            for(size_t i=0;i<dim_size;i++)
+                if(i!=dim_size-1)
+                    fprintf(fs,"[]");     //除了最后一维，打印[]
+                else fprintf(fs,"[%d]",dim_info->GetDimension(i).upbound-dim_info->GetDimension(i).lowbound+1); //最后一维打印长度
         }
 
         if(i<n-1)
@@ -299,6 +311,7 @@ void GenerationVisitor::visit(ProgramBody *programbody)
 {
     programbody->get(0)->accept(this);  //const declaration
     //to do record declaration
+    programbody->get(1)->accept(this);  //record declaration
     programbody->get(2)->accept(this);  //var declaration
     programbody->get(3)->accept(this);  //subprogram declarations
 

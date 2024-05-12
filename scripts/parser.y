@@ -306,9 +306,8 @@ record_declaration : TYPE ID CONSTASSIGNOP RECORD  var_declaration END ';'
         LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         $$->append_child($5);
-        cout<<"record"<<endl;
     }
-    | record_declaration TYPE ID CONSTASSIGNOP RECORD  var_declaration END ';'
+    | record_declaration TYPE ID CONSTASSIGNOP RECORD var_declaration END ';'
     {
         $$ = new RecordDeclaration(RecordDeclaration::GrammarType::MULTI_DECLARATION);
         $$->set_rownum(line_count);
@@ -316,7 +315,6 @@ record_declaration : TYPE ID CONSTASSIGNOP RECORD  var_declaration END ';'
         LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         $$->append_child($6);
-        cout<<"record"<<endl;
     }
 
 var_declarations : 
@@ -325,7 +323,7 @@ var_declarations :
         $$ = new VarDeclarations(VarDeclarations::GrammarType::EPSILON);
         $$->set_rownum(line_count);
     }
-    | VAR var_declaration ';'
+    | VAR var_declaration 
     {
         // var_declarations -> VAR var_declaration ';'
         $$ = new VarDeclarations(VarDeclarations::GrammarType::DECLARATION);
@@ -333,16 +331,16 @@ var_declarations :
         $$->append_child($2);
     };
 
-var_declaration : var_declaration ';' id_list ':' type 
+var_declaration : var_declaration  id_list ':' type ';'
     {
         // var_declaration -> var_declaration ';' id_list ':' type
         $$ = new VarDeclaration(VarDeclaration::GrammarType::MULTIPLE_DECL);
         $$->set_rownum(line_count);
         $$->append_child($1);
-        $$->append_child($3);
-        $$->append_child($5);
+        $$->append_child($2);
+        $$->append_child($4);
     }
-    | id_list ':' type 
+    | id_list ':' type ';'
     {
         // var_declaration -> id_list ':' type
         $$ = new VarDeclaration(VarDeclaration::GrammarType::SINGLE_DECL);
@@ -366,7 +364,7 @@ type : ID
         $$->set_rownum(line_count);
         $$->append_child($1);
     }
-    | RECORD var_declaration END ';'
+    | RECORD var_declaration END 
     {
         // recordtype -> record var_declaration end;
         $$ = new TypeNode(TypeNode::VarType::RECORD_TYPE, "record");
