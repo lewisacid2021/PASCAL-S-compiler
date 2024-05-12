@@ -1000,7 +1000,7 @@ class GenerationVisitor: public Visitor
     void visit(IdList *idlist) override;
     void visit(ConstDeclaration *constdeclaration) override;
     void visit(TypeNode *typenode) override;
-    void visit(RecordDeclaration *recorddeclaration) override { visitchild(recorddeclaration);};
+    void visit(RecordDeclaration *recorddeclaration) override;
     void visit(StringTypeNode *stringtypenode) override;
     void visit(VarDeclaration *vardeclaration) override;
     void visit(PeriodsNode *periodsnode) override;

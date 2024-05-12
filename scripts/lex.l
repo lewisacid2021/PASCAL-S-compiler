@@ -1,3 +1,4 @@
+%option case-insensitive
 %{   
 #include "parser.h"
 //#include "log.h"
@@ -44,6 +45,7 @@ digits                  {digit}+
 fraction                (\.{digits})
 
 /* 保留字 */
+BOOL                    "true"|"false"
 ARRAY                   "array"
 BEGIN_                  "begin"
 CASE                    "case"
@@ -148,7 +150,8 @@ SUBCATALOG              ".."
 {ASSIGNOP}                      { write_cache(); to_str(); return ASSIGNOP; }
         
 {ID}                            { write_cache(); to_str(); return ID; }
-        
+{BOOL}                          { write_cache(); to_str(); return BOOL; }
+
 {CONSTASSIGNOP}                 { write_cache(); to_str(); return CONSTASSIGNOP; }
 {SEP}                           { write_cache(); to_str(); return yytext[0]; }
 {SUBCATALOG}                    { write_cache(); to_str(); return SUBCATALOG; }
@@ -242,7 +245,12 @@ void print_syntax_error(const char *msg)
 void to_str()
 {
     std::string str = std::string(yytext);
-    yylval.token_info.value.set(str);
+    std::transform(str.begin(),str.end(),str.begin(),::tolower);
+
+    if(str == "true") yylval.token_info.value.set_bool(true);
+    else if(str == "false") yylval.token_info.value.set_bool(false);
+    else yylval.token_info.value.set_string(str);
+    
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;
@@ -254,7 +262,7 @@ void to_str_case_sensitive()
 {
     std::string str = std::string(yytext);
     str = str.substr(1, str.length() - 2);  
-    yylval.token_info.value.set(str);
+    yylval.token_info.value.set_string(str);
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;
@@ -264,7 +272,7 @@ void to_str_case_sensitive()
 
 void to_int()
 {
-    yylval.token_info.value.set(std::stoi(yytext));
+    yylval.token_info.value.set_int(std::stoi(yytext));
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;
@@ -274,7 +282,8 @@ void to_int()
 
 void to_float()
 {
-    yylval.token_info.value.set(std::stof(yytext));
+    //yylval.token_info.value.set(std::stof(yytext));
+    yylval.token_info.value.set_float(yytext);
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;
@@ -284,7 +293,7 @@ void to_float()
 
 void to_char()
 {
-    yylval.token_info.value.set(yytext[1]);
+    yylval.token_info.value.set_char(yytext[1]);
     yylval.token_info.line_num = line_count;
     yylval.token_info.column_num = char_count;
     yylval.token_info.length = yyleng;

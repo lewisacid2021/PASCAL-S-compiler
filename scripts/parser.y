@@ -82,7 +82,7 @@ void yyerror(AST* Ast,const char *msg);
 %token ARRAY TYPE CONST RECORD STRING
 %token IF THEN ELSE OF WHILE DO FOR REPEAT UNTIL BEGIN_ END
 %token ADDOP NOT PLUS CASE UMINUS CONSTASSIGNOP  
-%token <token_info> ID CHAR INT_NUM REAL_NUM RELOP MULOP STRING_ VAR SUBCATALOG
+%token <token_info> ID CHAR INT_NUM REAL_NUM RELOP MULOP STRING_ VAR SUBCATALOG BOOL
 %token <token_info> ASSIGNOP ';'
 
 %type <program_head_node> program_head
@@ -269,25 +269,19 @@ const_value : PLUS INT_NUM
         // const_value -> REAL_NUM
         $$ = new ConstValue($1.value);
     }
+    | BOOL
+    {
+        // const_value -> BOOL
+        $$ = new ConstValue($1.value);
+    }
     | STRING_
     {
         // const_variable -> string
-        if($1.value.get<string>() == "TRUE"){
-            //boolean true
-            $$ = new ConstValue(true);
-        }
-        else if($1.value.get<string>() == "FALSE"){
-            //boolean false
-            $$ = new ConstValue(false);
-        }
-        else {
-            //字符
-            $$ = new ConstValue($1.value);
-        }
+        $$ = new ConstValue($1.value);
     }
     | CHAR
     {
-        // const_variable -> CHAR | TRUE | FALSE
+        // const_variable -> CHAR 
         $$ = new ConstValue($1.value);
     }
 
@@ -304,7 +298,7 @@ record_declarations :
         $$->append_child($1);
     }
 
-record_declaration : TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
+record_declaration : TYPE ID CONSTASSIGNOP RECORD  var_declaration END ';'
     {
         // record_declaration -> def-record | record_declaration def-record
         $$ = new RecordDeclaration(RecordDeclaration::GrammarType::SINGLE_DECLARATION);
@@ -312,9 +306,9 @@ record_declaration : TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
         LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         $$->append_child($5);
-
+        cout<<"record"<<endl;
     }
-    | record_declaration TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
+    | record_declaration TYPE ID CONSTASSIGNOP RECORD  var_declaration END ';'
     {
         $$ = new RecordDeclaration(RecordDeclaration::GrammarType::MULTI_DECLARATION);
         $$->set_rownum(line_count);
@@ -322,6 +316,7 @@ record_declaration : TYPE CHAR CONSTASSIGNOP RECORD  var_declaration END ';'
         LeafNode* leaf_node = new LeafNode($3.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         $$->append_child($6);
+        cout<<"record"<<endl;
     }
 
 var_declarations : 
@@ -970,34 +965,24 @@ factor : INT_NUM
         $$->SetFacType($2->GetFacType());
         $$->append_child($2);
     }
+    | BOOL
+    {
+        // factor -> BOOL
+        $$ = new Factor(Factor::GrammerType::BOOL);
+        $$->set_rownum(line_count);
+        LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
+        $$->SetFacType("boolean");
+        $$->append_child(leaf_node);
+    }
     | STRING_
     {
-        // factor -> STRING
-        if($1.value.get<string>() == "true"){
-            //boolean true
-            $$ = new Factor(Factor::GrammerType::BOOL);
-            $$->set_rownum(line_count);
-            LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
-            $$->SetFacType("boolean");
-            $$->append_child(leaf_node);
-            
-        }
-        else if($1.value.get<string>() == "false"){
-            //boolean false
-            $$ = new Factor(Factor::GrammerType::BOOL);
-            $$->set_rownum(line_count);
-            LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
-            $$->SetFacType("boolean");
-            $$->append_child(leaf_node);
-        }
-        else {
-            //字符
-            $$ = new Factor(Factor::GrammerType::STR);
-            $$->set_rownum(line_count);
-            LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
-            $$->SetFacType("string");
-            $$->append_child(leaf_node);
-        }
+    // factor -> STRING
+        //字符
+        $$ = new Factor(Factor::GrammerType::STR);
+        $$->set_rownum(line_count);
+        LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::VALUE);
+        $$->SetFacType("string");
+        $$->append_child(leaf_node);
     }
     | CHAR
     {
