@@ -13,6 +13,7 @@ using std::vector;
 
 extern SymbolTable* MainTable;
 extern SymbolTable* CurrentTable;
+extern TypeTable* TheTypeTable;
 
 namespace ast {
 
@@ -136,8 +137,6 @@ void GenerationVisitor::visit(TypeNode *typenode)
             else  fprintf(fs, "%s", type.c_str());
             break;
         }
-        case TypeNode::VarType::RECORD_TYPE:
-            fprintf(fs, "struct ");
         case TypeNode::VarType::ID_TYPE:
         {
             if(typenode->get_type_name()=="integer"&&true)   //todo 查类型表 预定义标识符是否没被覆盖
@@ -146,7 +145,12 @@ void GenerationVisitor::visit(TypeNode *typenode)
                 fprintf(fs, "bool");
             else if(typenode->get_type_name()=="real"&&true) 
                 fprintf(fs, "float");
-            else  fprintf(fs, "%s", typenode->get_type_name().c_str());
+            else 
+            {
+                //todo 查询类型表判断是否为record
+                if(false) fprintf(fs,"struct ");
+                fprintf(fs, "%s", typenode->get_type_name().c_str());
+            }
             break;
         }
         case TypeNode::VarType::STRING_TYPE:
