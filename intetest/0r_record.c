@@ -3,8 +3,8 @@
 struct books{
 int title;
 };
-struct books b;
-int test(struct books a)
+books b;
+int test(books a)
 {
 int _test_;
 _test_ = a.title;
