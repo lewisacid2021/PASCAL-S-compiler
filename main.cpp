@@ -10,13 +10,15 @@ extern FILE *yyin;
 FILE * fs;
 SymbolTable * MainTable;
 SymbolTable* CurrentTable;
+TypeTable* TheTypeTable;
 
 int main(int argc, char *argv[]){
     ast::AST *ast = new ast::AST();
     ast::GenerationVisitor* Codegen_Visitor=new ast::GenerationVisitor();
     ast::SemanticVisitor* Semantic_Visitor = new ast::SemanticVisitor();
-    MainTable=new SymbolTable();
+    MainTable=new SymbolTable("main");
     CurrentTable = MainTable;
+    TheTypeTable = new TypeTable();
     
     if (argc < 3){
         std::cerr << "Usage: " << argv[0] << "-i <filename>" << std::endl;
