@@ -149,12 +149,19 @@ void SemanticVisitor::visit(ConstDeclaration *constdeclaration)
 }
 
 void SemanticVisitor::visit(RecordDeclaration *recorddeclaration)
-{
-    recorddeclaration->get(0)->accept(this);
+{   
+    string id;
+    int rn;
+    if(recorddeclaration->GetGrammarType() == RecordDeclaration::GrammarType::MULTI_DECLARATION){
+        recorddeclaration->get(0)->accept(this);
 
-    string id           = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_value<string>();
-    int rn              = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_rownum();
-
+        id           = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_value<string>();
+        rn              = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_rownum();
+    }
+    else{
+        id           = recorddeclaration->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+        rn              = recorddeclaration->get(0)->DynamicCast<LeafNode>()->get_rownum();
+    }
     TableRecord *record = findID(CurrentTable, id, 1);
     if (checkDuplicateNameError(id, rn))
     {
@@ -172,8 +179,11 @@ void SemanticVisitor::visit(RecordDeclaration *recorddeclaration)
     SymbolTable *PreviousTable = CurrentTable;
     CurrentTable               = subTable;
 
-    recorddeclaration->get(2)->accept(this);
-
+    if(recorddeclaration->GetGrammarType() == RecordDeclaration::GrammarType::MULTI_DECLARATION){
+        recorddeclaration->get(2)->accept(this);
+    }
+    else
+        recorddeclaration->get(1)->accept(this);
     CurrentTable = PreviousTable;
 }
 
