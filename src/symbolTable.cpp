@@ -52,10 +52,10 @@ void SymbolTable::addArray(string id, int rowNumber, string type, int amount, ve
 }
 
 //添加字符串
-void SymbolTable::addString(string id, int rowNumber,string type,int amount)
+void SymbolTable::addString(string id, int rowNumber, string type, int amount)
 {
-     TableRecord *temp = new TableRecord;
-    temp->setString(id, rowNumber,type,amount);
+    TableRecord *temp = new TableRecord;
+    temp->setString(id, rowNumber, type, amount);
     this->records.push_back(temp);
     this->idLoc[id] = int(records.size() - 1);
 }
@@ -64,7 +64,7 @@ void SymbolTable::addString(string id, int rowNumber,string type,int amount)
 void SymbolTable::addRecord(string id, string recordName, int rowNumber, SymbolTable *subSymbolTable)
 {
     TableRecord *temp = new TableRecord;
-    temp->setRecord(id, recordName,rowNumber, subSymbolTable);
+    temp->setRecord(id, recordName, rowNumber, subSymbolTable);
     this->records.push_back(temp);
     this->idLoc[id] = int(records.size() - 1);
 }
@@ -105,7 +105,7 @@ void SymbolTable::addProgramName(string id, int rowNumber, string programInfo, i
 {
     if (records.size() != 0)
     {
-        for(auto i : records){
+        for (auto i : records) {
             cout << i->flag << i->type << i->id << endl;
         }
         cout << "[addProgramName Error]:records is not null";
@@ -184,22 +184,20 @@ void TableRecord::setArray(string id_para, int rowNumber_para, string type_para,
 
 void TableRecord::setString(string id_para, int rowNumber_para, string type_para, int amount_para)
 {
-    flag             = "string";
-    this->id         = id_para;
-    this->rowNumber  = rowNumber_para;
-    this->type       = type_para;
-    this->amount     = amount_para;
-
+    flag            = "string";
+    this->id        = id_para;
+    this->rowNumber = rowNumber_para;
+    this->type      = type_para;
+    this->amount    = amount_para;
 }
 
 void TableRecord::setRecord(string id_para, string recordName, int rowNumber_para, SymbolTable *subSymbolTable_para)
 {
-    flag             = "record";
-    this->id         = id_para;
-    this->type       = recordName;
-    this->rowNumber  = rowNumber_para;
+    flag                 = "record";
+    this->id             = id_para;
+    this->type           = recordName;
+    this->rowNumber      = rowNumber_para;
     this->subSymbolTable = subSymbolTable_para;
-
 }
 
 void TableRecord::setProcedure(string id_para, int rowNumber_para, int amount_para, SymbolTable *subSymbolTable_para)
@@ -241,7 +239,7 @@ void TableRecord::setVoidPara(string id_para, int rowNumber_para)
 void TypeTable::addType(string id, bool isCoverd, SymbolTable *RecordTable)
 {
     TypeTableRecord *temp = new TypeTableRecord;
-    if(id == "integer" || id == "char" || id == "real" || id == "boolean")
+    if (id == "integer" || id == "char" || id == "real" || id == "boolean")
         isCoverd = true;
     temp->setType(id, isCoverd, RecordTable);
     this->records.push_back(temp);
@@ -250,9 +248,19 @@ void TypeTable::addType(string id, bool isCoverd, SymbolTable *RecordTable)
 
 void TypeTableRecord::setType(string id, bool isCoverd, SymbolTable *RecordTable)
 {
-    this->id        = id;
-    this->isCoverd = isCoverd;
+    this->id          = id;
+    this->isCoverd    = isCoverd;
     this->RecordTable = RecordTable;
+}
+
+TypeTableRecord *TypeTable::findID(string id)
+{
+    if (this->idLoc.count(id))
+    {
+        size_t loc = static_cast<size_t>(this->idLoc[id]);
+        return this->records[loc];
+    }
+    return NULL;
 }
 
 //找出标识符在符号表中的位置
@@ -270,4 +278,3 @@ TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode)
     }
     return NULL;
 }
-

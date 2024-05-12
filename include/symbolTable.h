@@ -92,7 +92,7 @@ class TypeTable
   unordered_map<string, int> idLoc;
 
   void addType(string id,bool isCoverd,SymbolTable* RecordTable);
-  TypeTable *findID(string id);
+  TypeTableRecord *findID(string id);
 
   TypeTable(){}
   ~TypeTable(){}
