@@ -1,8 +1,8 @@
 #include<stdio.h>
 #include<stdbool.h>
-int a;
+char a;
 int main() {
-a = 60;
-printf("%d",~a);
+a = 'a';
+printf("%c",a);
 return 0;
 }

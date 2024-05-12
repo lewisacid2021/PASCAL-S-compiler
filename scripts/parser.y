@@ -1054,6 +1054,15 @@ void yyerror(ast::AST* Ast,const char *msg){
     
 }
 
+/* void yyerror(const char *s){
+	haveSemanticError = true;//错误标志，含有语法错误
+	string errorInformation;//定义错误信息
+	errorInformation += string(s);//添加错误信息
+	errorInformation += ", location: " + itos(yylineno-1) + "." + itos(yycolumn-yyleng);//添加错误位置
+	syntaxErrorInformation.push_back(errorInformation);//存放错误信息
+} */
+
+
 /*void yynote(std::string msg ,int line){
     fprintf(stderr,"%d:\033[01;32m \tnote\033[0m : previous definition of \"%s\" was here\n", line, msg.c_str());
 }

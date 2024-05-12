@@ -1,8 +1,6 @@
 /*--紧急恢复--*/
 program : error
     {
-        location_pointer_refresh();
-        new_line_flag=false;
         yyerror(real_ast,"unrecoverable errors occurred");
         while (new_line_flag==false && yychar!= YYEOF){
             yychar = yylex();
@@ -391,149 +389,122 @@ var_parameter: 	VAR value_parameter
         $$=new Type;
         $$->token="var_parameter";
         $$->children.push_back($1);$$->children.push_back($2);
-    }|VAR error{ //ERROR 不完整的引用参数列表 checked
+    }
+    | VAR error
+    { //ERROR 不完整的引用参数列表 checked
         $$=new Type;
         $$->token="var_parameter";
         yyerror("incomplete refereced parameter list", &@$);
     };
 
-id_varpart: '[' error 
-    {
-        location_pointer_refresh();
-        new_line_flag=false;
-        if(yychar==';'){
-            yyerror(real_ast,"expected ']' before ';'");
-        }else if(yychar == ASSIGNOP){
-            yyerror(real_ast,"expected ']' before ':='");
-        }else
-            yyerror(real_ast,"invalid expression");
-        int left_num = 1;   // 括号匹配
-        while (yychar!=';' && yychar!=ASSIGNOP && new_line_flag==false && yychar!= YYEOF ){
-            if(yychar=='[') left_num++;
-            if(yychar==']'&& left_num == 1) break; 
-            yychar = yylex();
-        }
-        if(yychar==']'){
-            yychar=yylex();
-            fprintf(stderr,"%d:\t| %s\n",line_count,cur_line_info.c_str());
-            fprintf(stderr,"\t| %s",location_pointer);
-        }
-        else if(yychar==ASSIGNOP){
-            fprintf(stderr,"%d:\t| %s\n",line_count,cur_line_info.c_str());
-            fprintf(stderr,"\t| %s",location_pointer);
-        }
-        else if(yychar==';'){
-            fprintf(stderr,"%d:\t| %s\n",line_count,cur_line_info.c_str());
-            fprintf(stderr,"\t| %s",location_pointer);
-        }
-        else if(new_line_flag){
-            fprintf(stderr,"%d:\t| %s\n",last_line_count,last_line_info.c_str());
-            fprintf(stderr,"\t| %s",location_pointer);
-        }
+formal_parameter: '(' error
+    { //ERROR 不完整的形参列表
+        $$=new Type;
+        $$->token="formal_parameter";
+        yyerror("incomplete formal parameter list", &@$);
+    }
+    |'(' parameter_list error
+    { //ERROR 右括号缺失
+        $$=new Type;
+        $$->token="formal_parameter";
+        yyerror("missing a right bracket here", @2.last_line, @2.last_column+1);
     };
 
-type: ARRAY '[' periods ']' OF ID
-    {
-        yyerror(real_ast,"unsupported definition of array using customized type");
-        location_pointer_refresh();
-        fprintf(stderr,"%d:\t| %s\n",line_count,cur_line_info.c_str());
-        fprintf(stderr,"\t| %s",location_pointer);
-    }; 
+parameter_list: parameter_list ';' parameter{ //正常
+					$$=new Type;
+					$$->token="parameter_list";
+					$$->children.push_back($1);$$->children.push_back($2);$$->children.push_back($3);
+				}|parameter_list error parameter{ //ERROR 缺少分号 checked
+					$$=new Type;
+					$$->token="parameter_list";
+					yyerror("missing a semicolon here", @1.last_line, @1.last_column+1);
+				}|parameter{ //正常
+					$$=new Type;
+					$$->token="parameter_list";
+					$$->children.push_back($1);
+				};
 
-factor: '(' error 
-    {
-        location_pointer_refresh();
-        new_line_flag=false;
-        if(yychar==';')
-            yyerror(real_ast,"expected ')' before ';'");
-        else
-            yyerror(real_ast,"invalid expression");
-        int left_num = 1;   // 括号匹配
-        while (yychar!=';' && new_line_flag==false && yychar!= YYEOF ){
-            if(yychar=='(') left_num++;
-            if(yychar==')'&& left_num == 1) break; 
-            yychar = yylex();
-        }
-        if(yychar==')'){
-            yychar=yylex();
-            fprintf(stderr,"%d:\t| %s\n",line_count,cur_line_info.c_str());
-            fprintf(stderr,"\t| %s",location_pointer);
-        }
-        else if(yychar==';'){
-            fprintf(stderr,"%d:\t| %s\n",line_count,cur_line_info.c_str());
-            fprintf(stderr,"\t| %s",location_pointer);
-        }
-        else if(new_line_flag){
-            fprintf(stderr,"%d:\t| %s\n",last_line_count,last_line_info.c_str());
-            fprintf(stderr,"\t| %s",location_pointer);
-        }
-    };
+var_parameter: 	VAR error{ //ERROR 不完整的引用参数列表 checked
+					$$=new Type;
+					$$->token="var_parameter";
+					yyerror("incomplete refereced parameter list", &@$);
+				};
 
-subprogram_head: FUNCTION ID formal_parameter ':' error
-    {
-        new_line_flag=false;
-        location_pointer_refresh();
-        if(yychar==ARRAY||yychar==RECORD||yychar==ID)
-        {
-            yyerror(real_ast,"return type of function should be integer, real, boolean or char");
-        }
-        while(yychar!=';'&&!new_line_flag)
-            yychar=yylex();
-        if(yychar==';'){
-            fprintf(stderr,"%d:\t| %s\n",line_count,cur_line_info.c_str());
-            fprintf(stderr,"\t| %s",location_pointer);
-            yychar=yylex();
-        }
-    }    
+value_parameter: 	idlist error TYPE{ //ERROR 缺少分号 checked
+						$$=new Type;
+						$$->token="value_parameter";
+						yyerror("missing a colon here", @1.first_line, @1.last_column+1);
+					}|idlist ':' error{ //ERROR 缺少基本类型关键字 checked
+						$$=new Type;
+						$$->token="value_parameter";
+						yyerror("missing a base type keyword here", @2.last_line, @2.last_column+1);
+					}|idlist error{ //ERROR 缺少基本类型关键字 checked
+						$$=new Type;
+						$$->token="value_parameter";
+						yyerror("missing a base type keyword here", @1.last_line, @1.last_column+1);
+					};
 
 
 /*statement相关*/
 // compound_statement: BEGIN_ statement_list END
 // IF expression THEN statement else_part
-statement: IF error
-    {
-        new_line_flag=false;
-        location_pointer_refresh();
-        while(yychar!=THEN && !new_line_flag&&yychar!=';')
-            yychar=yylex();
-        if(yychar==THEN){
-            yyerror(real_ast,"invalid expression");
-            fprintf(stderr,"%d:\t| %s\n",line_count,cur_line_info.c_str());
-            fprintf(stderr,"\t| %s",location_pointer);
-            yychar=yylex();
-        }
-        else if(yychar==';'){
-            char msg[] = "'THEN' might be missing";
-            int length = last_line_info.size();
-            fprintf(stderr,"%d,%d:\033[01;31m \terror\033[0m : %s\n", last_line_count,length,msg);   
-            memset(location_pointer,' ',length);
-            memcpy(location_pointer+length,"^\n\0",3);
-            fprintf(stderr,"%d:\t| %s\n",last_line_count,last_line_info.c_str());
-            fprintf(stderr,"\t| %s",location_pointer);
-        }
-        else{
-            yyerror(real_ast,"Syntax error");
-            fprintf(stderr,"%d:\t| %s\n",line_count,cur_line_info.c_str());
-            fprintf(stderr,"\t| %s",location_pointer);
-        }
-        while(yychar!=';'&&yychar!=END)
-            yychar=yylex();
-    }
-    ;
+compound_statement: _BEGIN statement_list error{ //ERROR 缺少END关键字 checked
+						$$=new Type;
+						$$->token="compound_statement";
+						yyerror("missing keyword \"end\"", @2.last_line, @2.last_column+1);
+					};
+
+statement_list: statement_list error statement
+    { //ERROR 缺失分号 这里引发了3个规约规约冲突 checked
+					$$=new Type;
+					$$->token="statement_list";
+					yyerror("missing a semicolon here", @1.last_line, @1.last_column+1);
+				}
+ifstatement : IF expression error statement else_part
+    { //ERROR 缺少then关键字 checked
+        $$=new Type;
+        $$->token="statement";
+        yyerror("missing keyword \"then\"", @2.last_line, @2.last_column+1);
+	}
+loopstatement : FOR IDENTIFIER error expression TO expression DO statement{ //ERROR 缺少赋值号 checked
+				$$=new Type;
+				$$->token="statement";
+				yyerror("missing assignop \":=\"", @2.last_line, @2.last_column+1);
+			}|FOR IDENTIFIER ASSIGNOP expression error expression DO statement{ //ERROR 缺少关键字to checked
+				$$=new Type;
+				$$->token="statement";
+				yyerror("missing keywrod \"to\"", @4.last_line, @4.last_column+1);
+			}|FOR IDENTIFIER ASSIGNOP expression TO expression error statement{ //ERROR 缺少关键字do checked
+				$$=new Type;
+				$$->token="statement";
+				yyerror("missing keywrod \"do\"", @6.last_line, @4.last_column+1);
+			}|WHILE expression error statement{ //ERROR 缺少关键字do checked
+				$$=new Type;
+				$$->token="statement";
+				yyerror("missing keywrod \"do\"", @2.last_line, @2.last_column+1);
+			}|REPEAT statement error expression{ //ERROR 缺少关键字until checked
+				$$=new Type;
+				$$->token="statement";
+				yyerror("missing keywrod \"until\"", @4.first_line, @4.first_column);
+			}
+
+procedure_call: IDENTIFIER{ //正常
+				$$=new Type;
+				$$->token="procedure_call";
+				$$->children.push_back($1);
+			}|IDENTIFIER '(' expression_list ')'{ //正常
+				$$=new Type;
+				$$->token="procedure_call";
+				$$->children.push_back($1);$$->children.push_back($2);
+				$$->children.push_back($3);$$->children.push_back($4);
+			}|IDENTIFIER '(' expression_list error{ //ERROR 缺少右括号 checked
+				$$=new Type;
+				$$->token="procedure_call";
+				yyerror("missing a right bracket here", @3.last_line, @3.last_column+1);
+			};
 // REPEAT statement_list UNTIL expression
-statement: REPEAT error 
-    {
-        new_line_flag=false;
-        if(yychar=='='||yychar==RELOP||yychar==END)
-            yyerror(real_ast,"'UNTIL' might be missing");
-        else
-            yyerror(real_ast,"Syntax error");
-        location_pointer_refresh();
-        while(yychar!=';'&&!new_line_flag && yychar!=END)
-            yychar=yylex();
-        fprintf(stderr,"%d:\t| %s\n",line_count,cur_line_info.c_str());
-        fprintf(stderr,"\t| %s",location_pointer);
-    };
+
+    
 
 // statement:FOR ID ASSIGNOP expression updown expression DO statement 
 

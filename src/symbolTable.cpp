@@ -165,11 +165,6 @@ void TableRecord::setConst(string id_para, int rowNumber_para, string type_para,
     this->rowNumber = rowNumber_para;
     this->type      = type_para;
     this->isMinus   = isMinus_para;
-    if (type_para == "char")
-        this->value += "'";
-    this->value += value_para;
-    if (type_para == "char")
-        this->value += "'";
 }
 
 void TableRecord::setArray(string id_para, int rowNumber_para, string type_para, int amount_para, vector< pair<int, int> > arrayRange_para)

@@ -3,6 +3,7 @@
 #include "parser.tab.h"
 #include "symbolTable.h"
 #include "type.h"
+#include <cstddef>
 #include <cstdio>
 #include <iostream>
 
@@ -60,6 +61,9 @@ int main(int argc, char *argv[]){
                     else fs = stdout;
                     //lexical and grammar analysis
                     yyparse(ast);
+                    if(ast == NULL){
+                        std::cout << "unrecoverable errors occurred" << endl;
+                    }
                     //std::cout<<"Parsing finished"<<std::endl;
                     Semantic_Visitor->visit(ast);
                    // std::cout<<"Semantic analysis finished"<<std::endl;
