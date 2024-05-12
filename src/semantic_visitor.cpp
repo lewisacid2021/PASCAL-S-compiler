@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <iostream>
 #include <set>
+#include <string>
 #include <sys/types.h>
 #include <tuple>
 #include <utility>
@@ -14,6 +15,7 @@ using std::vector;
 
 extern SymbolTable *MainTable;
 extern SymbolTable *CurrentTable;
+extern TypeTable *TheTypeTable;
 
 void addDuplicateNameError()
 {
@@ -149,12 +151,19 @@ void SemanticVisitor::visit(ConstDeclaration *constdeclaration)
 }
 
 void SemanticVisitor::visit(RecordDeclaration *recorddeclaration)
-{
-    recorddeclaration->get(0)->accept(this);
+{   
+    string id;
+    int rn;
+    if(recorddeclaration->GetGrammarType() == RecordDeclaration::GrammarType::MULTI_DECLARATION){
+        recorddeclaration->get(0)->accept(this);
 
-    string id           = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_value<string>();
-    int rn              = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_rownum();
-
+        id           = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_value<string>();
+        rn              = recorddeclaration->get(1)->DynamicCast<LeafNode>()->get_rownum();
+    }
+    else{
+        id           = recorddeclaration->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+        rn              = recorddeclaration->get(0)->DynamicCast<LeafNode>()->get_rownum();
+    }
     TableRecord *record = findID(CurrentTable, id, 1);
     if (checkDuplicateNameError(id, rn))
     {
@@ -167,13 +176,16 @@ void SemanticVisitor::visit(RecordDeclaration *recorddeclaration)
 
     SymbolTable *subTable = new SymbolTable();
 
-    CurrentTable->addRecord(id, rn, subTable);
+    TheTypeTable->addType(id, false, subTable);
 
     SymbolTable *PreviousTable = CurrentTable;
     CurrentTable               = subTable;
 
-    recorddeclaration->get(2)->accept(this);
-
+    if(recorddeclaration->GetGrammarType() == RecordDeclaration::GrammarType::MULTI_DECLARATION){
+        recorddeclaration->get(2)->accept(this);
+    }
+    else
+        recorddeclaration->get(1)->accept(this);
     CurrentTable = PreviousTable;
 }
 
@@ -279,6 +291,12 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
     } else if (typenode->GetVarType() == TypeNode::VarType::RECORD_TYPE)
     {
         SymbolTable *subTable = new SymbolTable();
+        string recordname = std::to_string(TheTypeTable->records.size());
+        while(findID(CurrentTable, recordname, 1) != NULL)
+        {
+            recordname.append("_");
+        }
+        TheTypeTable->addType(recordname, false, subTable);
 
         for (auto i : idlist->Lists())
         {
@@ -295,7 +313,7 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
                 return;
             }
 
-            CurrentTable->addRecord(id, rn, subTable);
+            CurrentTable->addRecord(id,recordname, rn, subTable);
         }
 
         SymbolTable *PreviousTable = CurrentTable;

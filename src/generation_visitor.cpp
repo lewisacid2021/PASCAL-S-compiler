@@ -121,7 +121,11 @@ void GenerationVisitor::visit(ConstDeclaration *constdeclaration)
 void GenerationVisitor::visit(TypeNode *typenode)
 {
     switch (typenode->GetVarType()) {
+        case TypeNode::VarType::RECORD_TYPE:
+            fprintf(fs, "struct ");
+            break;
         case TypeNode::VarType::ARRAY_TYPE:{
+            cout << typenode->get(0)->DynamicCast<ArrayTypeNode>()->type() << "a" << endl;
             string type = typenode->get(0)->DynamicCast<ArrayTypeNode>()->type();
             if(type=="integer"&&true)   //todo 查符号表 预定义标识符是否没被覆盖
                 fprintf(fs, "int");
@@ -168,6 +172,7 @@ void GenerationVisitor::visit(StringTypeNode *stringtypenode)
 }
 
 void GenerationVisitor::visit(VarDeclaration *vardeclaration)
+// 缺少对record的处理
 {
     //check if it is a array type
     auto type_node    = vardeclaration->get(-1)->DynamicCast<TypeNode>();
@@ -194,7 +199,7 @@ void GenerationVisitor::visit(VarDeclaration *vardeclaration)
             else
                 fprintf(fs, ";\n");
         }
-    } else {
+    }else {
         //idlist
         vardeclaration->get(-2)->accept(this);
         fprintf(fs, ";\n");
@@ -302,6 +307,7 @@ void GenerationVisitor::visit(ProgramBody *programbody)
 {
     programbody->get(0)->accept(this);  //const declaration
     //to do record declaration
+    programbody->get(1)->accept(this);  //record declaration
     programbody->get(2)->accept(this);  //var declaration
     programbody->get(3)->accept(this);  //subprogram declarations
 
