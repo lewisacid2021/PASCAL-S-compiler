@@ -21,7 +21,8 @@ int main(int argc, char *argv[]){
     TheTypeTable = new TypeTable();
     
     if (argc < 3){
-        std::cerr << "Usage: " << argv[0] << "-i <filename>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << "-option <filename>" << std::endl;
+        std::cout<<"\t-i: output to file\n\t-o: output to terminal\n";
         return 1;
     }
 
