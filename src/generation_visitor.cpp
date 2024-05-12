@@ -850,9 +850,7 @@ void GenerationVisitor::visit(VariableList *variableList )   {
             fprintf(fs, ")");
             break;
         case Factor::GrammerType::CHAR_:
-            fprintf(fs, "'");
             factor->get(0)-> accept(this); // 'letter'
-            fprintf(fs, "'");
             break;
         case Factor::GrammerType::STR:
         case Factor::GrammerType::BOOL:
