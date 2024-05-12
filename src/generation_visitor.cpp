@@ -121,8 +121,6 @@ void GenerationVisitor::visit(ConstDeclaration *constdeclaration)
 void GenerationVisitor::visit(TypeNode *typenode)
 {
     switch (typenode->GetVarType()) {
-        case TypeNode::VarType::RECORD_TYPE:
-            fprintf(fs, "struct ");
         case TypeNode::VarType::ARRAY_TYPE:{
             string type = typenode->get(0)->DynamicCast<ArrayTypeNode>()->type();
             if(type=="integer"&&true)   //todo 查符号表 预定义标识符是否没被覆盖
@@ -134,9 +132,11 @@ void GenerationVisitor::visit(TypeNode *typenode)
             else  fprintf(fs, "%s", type.c_str());
             break;
         }
+        case TypeNode::VarType::RECORD_TYPE:
+            fprintf(fs, "struct ");
         case TypeNode::VarType::ID_TYPE:
         {
-            if(typenode->get_type_name()=="integer"&&true)   //todo 查符号表 预定义标识符是否没被覆盖
+            if(typenode->get_type_name()=="integer"&&true)   //todo 查类型表 预定义标识符是否没被覆盖
                 fprintf(fs, "int");
             else if(typenode->get_type_name()=="boolean"&&true) 
                 fprintf(fs, "bool");
@@ -285,9 +285,12 @@ void GenerationVisitor::visit(ValueParam *valueparam)
         fprintf(fs, " %s",list[i]->id_ref().c_str());
         if(type->GetVarType() == TypeNode::VarType::ARRAY_TYPE)
         {
-            auto dim = type->get(0)->DynamicCast<ArrayTypeNode>()->info()->GetDimsum();
-            for(size_t i=0;i<dim;i++)
-                fprintf(fs, "[]");
+            auto dim_info=type->get(0)->DynamicCast<ArrayTypeNode>()->info();
+            auto dim_size = dim_info->GetDimsum();  //获取数组维数
+            for(size_t i=0;i<dim_size;i++)
+                if(i!=dim_size-1)
+                    fprintf(fs,"[]");     //除了最后一维，打印[]
+                else fprintf(fs,"[%d]",dim_info->GetDimension(i).upbound-dim_info->GetDimension(i).lowbound+1); //最后一维打印长度
         }
 
         if(i<n-1)
