@@ -175,7 +175,6 @@ void GenerationVisitor::visit(StringTypeNode *stringtypenode)
 }
 
 void GenerationVisitor::visit(VarDeclaration *vardeclaration)
-// 缺少对record的处理
 {
     //check if it is a array type
     auto type_node    = vardeclaration->get(-1)->DynamicCast<TypeNode>();
@@ -730,12 +729,16 @@ void GenerationVisitor::visit(Variable *variable )  {
     // 访问第二个子节点
     if(variable->getCnodeList().size() == 2){
         std::vector<AstNode *> list = variable->get(1)->DynamicCast<IDVarParts>()->Lists();
-
+        SymbolTable * curTable=CurrentTable;
         // 遍历子节点列表并逐个访问
         for (auto i : list) {
             IDVarPart *idvarpart = i->DynamicCast<IDVarPart>();
             if (idvarpart->get_type() == IDVarPart::GrammarType::_ID)
             {
+                auto info=findID(curTable,i->get(0)->DynamicCast<LeafNode>()->get_value<string>(),1);
+                if(info!=nullptr){
+                    
+                }
                 fprintf(fs, ".");
                 idvarpart->get(0)->accept(this);// 访问 id
             }
@@ -744,7 +747,7 @@ void GenerationVisitor::visit(Variable *variable )  {
                 auto exp_list = idvarpart->get(0)->DynamicCast<ExpressionList>()->Lists();
                 auto record_info = findID(CurrentTable, id, 0, "array");
                 if(record_info == NULL){
-                    // 错误处理
+                    
                     cout << "notfound" <<endl;
                     return;
                 }

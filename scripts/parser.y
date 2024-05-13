@@ -13,69 +13,14 @@ extern "C"
 }
 extern std::string cur_line_info;
 extern std::string last_line_info;
-extern int lex_error_flag;
 
-int error_flag=0;
+int error_flag = 0;
 
 void yyerror(const char *s, int line);
 void yyerror(ast::AST* Ast,const char *msg);
 
 %}
 
-/* %union {
-    Token token_info;
-    //主程序
-    //ast::ProgramStruct* program;
-    ast::ProgramHead* program_head_node;
-    ast::ProgramBody* program_body_node;
-    ast::IdList* idlist_node;
-    ast::RecordDelcarations* record_declarations_node;
-    ast::RecordDelcaration* record_declaration_node;
-    ast::ConstDeclarations* const_declarations_node;
-    ast::ConstDeclaration* const_declaration_node;
-    ast::VarDeclarations* var_declarations_node;
-    ast::VarDeclaration* var_declaration_node;
-    //类型
-    ast::TypeNode* type_node;
-    ast::ArrayTypeNode array_node;
-    ast::RecordNode* record_node; 
-    ast::StringTypeNode* string_node;
-    ast::PeriodsNode* periods_node;
-    ast::PeriodNode* period_node;
-    //子程序
-    ast::SubprogramDeclarations* subprogram_declarations_node;
-    ast::SubprogramDeclaration* subprogram_declaration_node;
-    ast::SubprogramHead* subprogram_head_node;
-    ast::SubprogramBody* subprogram_body_node;
-    //子程序声明中的参数
-    ast::FormalParam* formal_param_node;
-    ast::ParamLists* paramlists_node;
-    ast::ParamList* paramlist_node;
-    ast::VarParam* var_param_node;
-    ast::ValueParam* value_param_node;
-    //语句
-    ast::CompoundStatement* compound_statement_node;
-    ast::StatementList* statement_list_node;
-    ast::Statement* statement_node;
-    ast::AssignopStatement* assignop_statement_node;
-    ast::ProcedureCall* procedure_call_node;
-    ast::IfStatement* ifstatement_node;
-    ast::LoopStatement* loopstatement_node;
-    ast::ElsePart* elsepart_node;
-    //函数与过程的参数
-    ast::VariableList* variablelist_node;
-    ast::Variable* variable_node;
-    ast::IDVarParts* idvarparts_node;
-    ast::IDVarPart* idvarpart_node;
-    //表达式
-    ast::ExpressionList* expression_list_node;
-    ast::Expression* expression_node;
-    ast::SimpleExpression* simple_expression_node;
-    ast::Term* term_node;
-    ast::Factor* factor_node;
-
-    ConstValue* const_value_node;
-}; */
 %parse-param {ast::AST *Ast}
 %start program
 %token PROGRAM FUNCTION PROCEDURE TO DOWNTO 
@@ -355,8 +300,6 @@ type : ID
         // 由于我们将integer等都设为保留字，都识别为ID（integer char boolean string real）
         $$ = new TypeNode(TypeNode::VarType::ID_TYPE, $1.value.get<string>());
         $$->set_rownum(line_count);
-        //IdTypeNode* idnode = new IdTypeNode($1.value.get());
-        //$$->append_child(idnode);
     }
     | array_type
     {
@@ -1579,24 +1522,6 @@ void yyerror(const char *s, int line){
 	cout << errorInformation << " at line " << line << endl;
 }
 
-
-/*void yynote(std::string msg ,int line){
-    fprintf(stderr,"%d:\033[01;32m \tnote\033[0m : previous definition of \"%s\" was here\n", line, msg.c_str());
-}
-
-void yyerror_var(AST* real_ast,int line){
-    fprintf(stderr,"%d:\033[01;31m \terror\033[0m : %s\n", line, "redifinition of variable");
-    error_flag = 1;
-    real_ast->set_root(nullptr);
-}
-
-void location_pointer_refresh(){
-    int length = cur_line_info.size()-yyleng;
-    if(length<0)
-        length=0;
-    memset(location_pointer,' ',length);
-    memcpy(location_pointer+length,"^\n\0",3);
-} */
 int yywrap(){
     return 1;
 } 
