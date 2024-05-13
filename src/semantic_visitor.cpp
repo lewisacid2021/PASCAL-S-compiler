@@ -17,13 +17,15 @@ using std::vector;
 extern SymbolTable *MainTable;
 extern SymbolTable *CurrentTable;
 extern TypeTable *TheTypeTable;
+extern int math_flag;
 
-//检查是否与主程序名，主程序参数，库函数重名
+//检查是否与库函数重名
 bool checkDuplicateNameError(string id, int lineNumber)
 {
     for (int i = 0; i < 4; i++) {
         if (id == MainTable->records[i]->id) {
             //与库函数同名
+            std::cout << "Error: Same name as library function. Line: " << lineNumber << std::endl;
             return true;
         }
     }
@@ -55,14 +57,16 @@ void SemanticVisitor::visit(ProgramHead *programhead)
     if (lib.count(id))
     {
         //错误处理
+        std::cout << "Error: Same name as library function. Line: " << programhead->get_rownum() << std::endl;
     }
 
+    //添加read过程
     MainTable->addProcedure("read", -1, -1, NULL);
-    //添加write过程，该过程变参
+    //添加write过程
     MainTable->addProcedure("write", -1, -1, NULL);
-    //添加writeln过程，该过程变参
+    //添加writeln过程
     MainTable->addProcedure("writeln", -1, -1, NULL);
-    //添加exit过程，该过程的参数个数需要分情况讨论，程序里会有特判，这里指定为0没有特殊含义
+    //添加exit过程
     MainTable->addProcedure("exit", -1, 0, NULL);
 }
 
@@ -81,6 +85,7 @@ void SemanticVisitor::visit(ConstDeclaration *constdeclaration)
         } else if (record != NULL)
         {
             //重定义错误
+            std::cout << "Error: Redefine. Line: " << constdeclaration->get_rownum() << std::endl;
             return;
         }
 
@@ -141,6 +146,7 @@ void SemanticVisitor::visit(RecordDeclaration *recorddeclaration)
     } else if (record != NULL)
     {
         //重定义错误
+        std::cout << "Error: Redefine. Line: " << recorddeclaration->get_rownum() << std::endl;
         return;
     }
 
@@ -189,6 +195,7 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
             } else if (record != NULL)
             {
                 //重定义错误
+                std::cout << "Error: Redefine. Line: " << vardeclaration->get_rownum() << std::endl;
                 return;
             }
 
@@ -228,6 +235,7 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
             } else if (record != NULL)
             {
                 //重定义错误
+                std::cout << "Error: Redefine. Line: " << vardeclaration->get_rownum() << std::endl;
                 return;
             }
 
@@ -252,6 +260,7 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
             } else if (record != NULL)
             {
                 //重定义错误
+                std::cout << "Error: Redefine. Line: " << vardeclaration->get_rownum() << std::endl;
                 return;
             }
 
@@ -279,6 +288,7 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
             } else if (record != NULL)
             {
                 //重定义错误
+                std::cout << "Error: Redefine. Line: " << vardeclaration->get_rownum() << std::endl;
                 return;
             }
 
@@ -311,6 +321,7 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
     if (record != NULL)
     {
         //重定义错误,返回主表检查
+        std::cout << "Error: Redefine. Line: " << subprogramhead->get_rownum() << std::endl;
         return;
     }
 
@@ -346,6 +357,7 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
                     if (para_record != NULL)
                     {
                         //重定义错误
+                        std::cout << "Error: Redefine. Line: " << subprogramhead->get_rownum() << std::endl;
                         return;
                     }
                     CurrentTable->addVarPara(id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
@@ -362,6 +374,7 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
                     if (para_record != NULL)
                     {
                         //重定义错误
+                        std::cout << "Error: Redefine. Line: " << subprogramhead->get_rownum() << std::endl;
                         return;
                     }
                     CurrentTable->addPara(id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
@@ -423,6 +436,7 @@ void SemanticVisitor::visit(Variable *variable)
                             auto r = findID(curtable, p, 1);
                             if (r == NULL) {
                                 //错误处理，record没有该子成员
+                                std::cout << "Error: Record does not have this child member. Line: " << variable->get_rownum() << std::endl;
                             } else {
                                 variable->set_vn(r->type);
                                 curtable = r->subSymbolTable;
@@ -430,6 +444,7 @@ void SemanticVisitor::visit(Variable *variable)
                         }   
                         else{
                             //错误处理,不是record类型
+                            std::cout << "Error: Not a record type. Line: " << variable->get_rownum() << std::endl;
                         } 
                     }
                 }
@@ -447,6 +462,7 @@ void SemanticVisitor::visit(AssignopStatement *assignstatement)
     auto record_info    = findID(CurrentTable, leaf_node->get_value<string>(), 0);
     if(record_info == NULL){
         //错误处理，未找到定义
+        std::cout << "Error: Definition not found. Line: " << assignstatement->get_rownum() << std::endl;
         return;
     }
     string left_type = record_info->type;
@@ -459,6 +475,7 @@ void SemanticVisitor::visit(AssignopStatement *assignstatement)
 
     if (record_info->flag == "constant") {
         //错误处理，左值不能为常量
+        std::cout << "Error: Lvalue cannot be constant. Line: " << assignstatement->get_rownum() << std::endl;
         return ;
     }
     if (record_info->flag == "function" || record_info->flag == "procedure" ){
@@ -468,6 +485,7 @@ void SemanticVisitor::visit(AssignopStatement *assignstatement)
     if (record_info->flag == "(sub)program name") {
         if(record_info->type == ""){
             //错误处理，过程无返回值
+            std::cout << "Error: The procedure has no return value. Line: " << assignstatement->get_rownum() << std::endl;
             return;
         }
 
@@ -475,6 +493,7 @@ void SemanticVisitor::visit(AssignopStatement *assignstatement)
     }
     if (left_type != right_type && !(left_type == "real" && right_type == "integer")) {
         //错误处理，类型不匹配
+        std::cout << "Error: Type mismatch. Line: " << assignstatement->get_rownum() << std::endl;
     }
 }
 
@@ -484,6 +503,7 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
     auto record_info = findID(MainTable, id, 1);
     if(record_info == NULL){
         //错误处理，未定义
+        std::cout << "Error: Undefined. Line: " << procedurecall->get_rownum() << std::endl;
     }
 
     if(procedurecall->get_type() == ProcedureCall::ProcedureType::NO_LIST){
@@ -502,6 +522,7 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
         if (record_info->id == "write") {
             if (exp_types->size() == 0) {
                 //错误处理,write的参数个数不能为0
+                std::cout << "Error: The number of read() and write() arguments cannot be 0. Line: " << procedurecall->get_rownum() << std::endl;
             }
             return;
         }
@@ -525,20 +546,22 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
         }
         if (record_info->id == "read") {  //参数只能是变量或数组元素，不能是常量、表达式等
             if (exp_types->size() == 0) {
-                //错误处理,read的参数个数不能为0
+                //错误处理,read、write的参数个数不能为0
+                std::cout << "Error: The number of read() and write() arguments cannot be 0. Line: " << procedurecall->get_rownum() << std::endl;
                 return;
             }
-            
             return;
         }
         if (exp_types->size() != record_info->amount) {  //checked
             //错误处理，参数数量不匹配
+            std::cout << "Error: The number of arguments does not match. Line: " << procedurecall->get_rownum() << std::endl;
             return;
         }
         for (int i = 0; i < exp_types->size(); i++) {
             string para_type = record_info->subSymbolTable->records[i + 1]->type;
             if (para_type != (*exp_types)[i]) {
-                //错误处理   
+                //错误处理，参数类型错误
+                std::cout << "Error: Type error. Line: " << procedurecall->get_rownum() << std::endl;   
             }
         }
     }
@@ -553,6 +576,7 @@ void SemanticVisitor::visit(IfStatement *ifstatement)
     string expression_type = expression->GetExpType();
     if(expression_type != "boolean"){
         //错误处理，类型错误
+        std::cout << "Error: Type error. Line: " << ifstatement->get_rownum() << std::endl;
     }
     ifstatement->get(1)->accept(this);
     auto elsepart = ifstatement->get(2)->DynamicCast<ElsePart>();
@@ -571,15 +595,18 @@ void SemanticVisitor::visit(LoopStatement *loopstatement)
             if(record_info == NULL)
             {
                 //错误处理，循环变量未定义
+                std::cout << "Error: Loop variable undefined. Line: " << loopstatement->get_rownum() << std::endl;
                 return;
             }
             if (!(record_info->flag == "value parameter" || record_info->flag == "var parameter" || record_info->flag == "variant"))
             {
                 //错误处理，不能作为循环变量
+                std::cout << "Error: Cannot be used as a loop variable. Line: " << loopstatement->get_rownum() << std::endl;
             }
             if(record_info->type != "integer")
             {
                 //错误处理，循环变量类型错误
+                std::cout << "Error: Loop variable type error. Line: " << loopstatement->get_rownum() << std::endl;
             }
             auto expression1 = loopstatement->get(1)->DynamicCast<Expression>();
             auto expression2 = loopstatement->get(2)->DynamicCast<Expression>();
@@ -590,6 +617,7 @@ void SemanticVisitor::visit(LoopStatement *loopstatement)
             if(expression_type1 != "integer")
             {
                 //错误处理，类型错误
+                std::cout << "Error: Type error. Line: " << loopstatement->get_rownum() << std::endl;
             }
             if (expression2->GetExpType() == "unknown") {
                 expression2->accept(this);
@@ -598,6 +626,7 @@ void SemanticVisitor::visit(LoopStatement *loopstatement)
             if (expression_type2 != "integer")
             {
                 //错误处理，类型错误
+                std::cout << "Error: Type error. Line: " << loopstatement->get_rownum() << std::endl;
             }
             loopstatement->get(3)->accept(this);
             break;
@@ -611,6 +640,7 @@ void SemanticVisitor::visit(LoopStatement *loopstatement)
             string expression_type = expression->GetExpType();
             if (expression_type != "boolean") {
                 //错误处理，类型错误
+                std::cout << "Error: Type error. Line: " << loopstatement->get_rownum() << std::endl;
             }
             loopstatement->get(0)->accept(this);
             break;
@@ -624,6 +654,7 @@ void SemanticVisitor::visit(LoopStatement *loopstatement)
             string expression_type = expression->GetExpType();
             if (expression_type != "boolean") {
                 //错误处理，类型错误
+                std::cout << "Error: Type error. Line: " << loopstatement->get_rownum() << std::endl;
             }
             loopstatement->get(1)->accept(this);
             break;
@@ -700,6 +731,7 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                         sexpression->SetExpType(term_type);
                     } else {
                         //error
+                        std::cout << "Error: Type error. Line: " << sexpression->get_rownum() << std::endl;
                     }
                 } else {
                     if (sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown") {
@@ -720,6 +752,7 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                         }
                     } else {
                         //error
+                        std::cout << "Error: Type error. Line: " << sexpression->get_rownum() << std::endl;
                     }
                 }
                 break;
@@ -740,6 +773,7 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                     sexpression->SetExpType("boolean");
                 } else {
                     //error
+                    std::cout << "Error: Type error. Line: " << sexpression->get_rownum() << std::endl;
                 }
                 break;
             }
@@ -782,6 +816,7 @@ void SemanticVisitor::visit(Term *term)
                     }
                 } else {
                     //错误处理
+                    std::cout << "Error: Type error. Line: " << term->get_rownum() << std::endl;
                 }
                 break;
             }
@@ -801,6 +836,7 @@ void SemanticVisitor::visit(Term *term)
                     term->SetTerType("integer");
                 } else {
                     //错误处理
+                    std::cout << "Error: Type error. Line: " << term->get_rownum() << std::endl;
                 }
                 break;
             }
@@ -821,6 +857,7 @@ void SemanticVisitor::visit(Term *term)
                     term->SetTerType("boolean");
                 } else {
                     //错误处理
+                    std::cout << "Error: Type error. Line: " << term->get_rownum() << std::endl;
                 }
                 break;
             }
@@ -836,8 +873,24 @@ void SemanticVisitor::visit(Factor *factor)
             {
                 // 对于函数直接获取其返回值类型
                 auto id         = factor->get(0)->DynamicCast<LeafNode>()->get_value<string>();
-                TableRecord *tr = findID(MainTable, id, 0);
-                factor->SetFacType(tr->type);
+
+                if(id == "cos" || id == "sin")
+                {
+                    math_flag = 1;
+                    factor->SetFacType("real");
+                }
+                else {
+                    TableRecord *tr = findID(MainTable, id, 0);
+                    if(tr == NULL)
+                    {
+                        //错误处理
+                        std::cout << "Error: Undefined. Line: " << factor->get_rownum() << std::endl;
+                    }
+                    else{
+                        factor->SetFacType(tr->type);
+                    }
+                    
+                }                  
                 break;
             }
             case Factor::GrammerType::VARIABLE:
@@ -871,6 +924,7 @@ void SemanticVisitor::visit(Factor *factor)
                 if (fac_type == "real" || fac_type == "char" || fac_type == "integer") {
                     factor->SetFacType(fac->GetFacType());
                 } else {
+                    std::cout << "Error: Type error. Line: " << factor->get_rownum() << std::endl;
                 }
                 break;
             }
@@ -885,7 +939,7 @@ void SemanticVisitor::visit(Factor *factor)
                 if (fac_type == "boolean" || fac_type == "integer" || fac_type == "char" || fac_type == "real") {
                     factor->SetFacType("boolean");
                 } else {
-
+                    std::cout << "Error: Type error. Line: " << factor->get_rownum() << std::endl;
                 }
                 break;
             }
