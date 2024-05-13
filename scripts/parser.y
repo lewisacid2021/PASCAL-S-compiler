@@ -1426,6 +1426,142 @@ value_parameter : id_list error type
         $$->set_rownum(line_count);
         yyerror("missing a base type keyword here", line_count);
     };
+compound_statement: BEGIN_ statement_list error
+    { //ERROR 缺少END关键字  
+        $$ = new CompoundStatement();
+        $$->set_rownum(line_count);
+        $$->append_child($2);
+        yyerror("missing keyword \"end\"", line_count);
+	};
+
+statement_list : statement_list error statement
+    { //ERROR 缺失分号 这里引发了3个规约规约冲突  
+        $$ = new StatementList();
+        $$->set_rownum(line_count);
+        $$->append_child($1);
+        $$->append_child($3);
+        yyerror("missing a semicolon  ", line_count);
+    };
+
+ifstatement : IF expression error statement else_part
+    { //ERROR 缺少then关键字  
+        $$ = new IfStatement();
+        $$->set_rownum(line_count);
+        $$->append_child($2);
+        $$->append_child($4);
+        $$->append_child($5);
+        yyerror("missing keyword \"then\"", line_count);
+	}
+
+loopstatement : FOR ID error expression TO expression DO statement
+    { //ERROR 缺少赋值号  
+        $$ = new LoopStatement(LoopStatement::LoopType::FORDOWN);
+        $$->set_rownum(line_count);
+        LeafNode *leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME); 
+        $$->append_child(leaf_node);
+        $$->append_child($4);
+        $$->append_child($6);
+        $$->append_child($8);
+        yyerror("missing assignop \":=\"", line_count);
+    }
+    |FOR ID ASSIGNOP expression error expression DO statement
+    { //ERROR 缺少关键字to  
+        $$ = new LoopStatement(LoopStatement::LoopType::FORDOWN);
+        $$->set_rownum(line_count);
+        LeafNode *leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME); 
+        $$->append_child(leaf_node);
+        $$->append_child($4);
+        $$->append_child($6);
+        $$->append_child($8);
+        yyerror("missing keywrod \"to\"", line_count);
+    }
+    |FOR ID ASSIGNOP expression TO expression error statement
+    { //ERROR 缺少关键字do  
+        $$ = new LoopStatement(LoopStatement::LoopType::FORDOWN);
+        $$->set_rownum(line_count);
+        LeafNode *leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME); 
+        $$->append_child(leaf_node);
+        $$->append_child($4);
+        $$->append_child($6);
+        $$->append_child($8);
+        yyerror("missing keywrod \"do\"", line_count);
+    }
+    | WHILE expression error statement
+    { //ERROR 缺少关键字do  
+        $$ = new LoopStatement(LoopStatement::LoopType::WHILE_);
+        $$->set_rownum(line_count);
+        $$->append_child($2);
+        $$->append_child($4);
+        yyerror("missing keywrod \"do\"", line_count);
+    }
+    | REPEAT statement error expression
+    { //ERROR 缺少关键字until  
+        $$ = new LoopStatement(LoopStatement::LoopType::REPEAT_);
+        $$->set_rownum(line_count);
+        $$->append_child($2);
+        $$->append_child($4);
+        yyerror("missing keywrod \"until\"", line_count);
+	}
+
+procedure_call : ID '(' expression_list error
+    { //ERROR 缺少右括号  
+        $$ = new ProcedureCall(ProcedureCall::ProcedureType::EXP_LIST, $1.value.get<string>());
+        $$->set_rownum(line_count);
+        $$->append_child($3);
+        yyerror("missing a right bracket", line_count);
+    };
+
+expression_list : expression_list error expression
+    { //ERROR 缺少逗号 这里引发了一个移进规约冲突 checked
+        std::vector<std::string> *type_list = $1->get_types();
+        type_list->emplace_back($3->GetExpType());
+        $$ = new ExpressionList(ExpressionList::ExpressionType::MULTIPLE, type_list);
+        $$->append_child($1);
+        $$->append_child($3);
+        yyerror("missing a comma", line_count);
+    };
+
+id_varpart: '[' error
+    { //ERROR 不完整的数组下标列表 checked
+        $$ = new IDVarPart(IDVarPart::GrammarType::EXP_LIST);
+        $$->set_rownum(line_count);
+        error_flag = 1;
+        yyerror("incomplete expression list of array subindex", line_count);
+    }
+    |'[' expression_list error
+    { //ERROR 缺失右中括号 checked
+		$$ = new IDVarPart(IDVarPart::GrammarType::EXP_LIST);
+        $$->set_rownum(line_count);
+        $$->append_child($2);
+        yyerror("missing a right square bracket", line_count);
+	};
+
+factor: ID '(' expression_list error
+    { //ERROR 缺少右括号 这里引发了一个移进规约冲突
+        $$ = new Factor(Factor::GrammerType::ID_EXP_LIST);
+        $$->set_rownum(line_count);
+        LeafNode *leaf_node = new LeafNode($1.value, LeafNode::LeafType::NAME);
+        // 类型需要靠符号表确认
+        $$->SetFacType("unknown");
+        $$->append_child(leaf_node);
+        $$->append_child($3);
+        yyerror("missing a right bracket here", line_count);
+	}
+    | ID '(' error
+    { //ERROR 函数调用的表达式列表缺失
+        $$ = new Factor(Factor::GrammerType::EXP);
+        $$->set_rownum(line_count);
+        error_flag = 1;
+        yyerror("missing actual parameter list of function call", line_count);
+	}
+    |'(' expression error
+    { //ERROR 缺少右括号
+        $$ = new Factor(Factor::GrammerType::EXP);
+        $$->set_rownum(line_count);
+        $$->SetFacType($2->GetExpType());
+        $$->append_child($2);
+        yyerror("missing a right bracket here", line_count);
+    };
 
 
 %%

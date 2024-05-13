@@ -450,13 +450,16 @@ std::string generateFormatString2(ExpressionList* expressionList) {
 }
 
 void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
-    //fprintf(fs, "here");
     if(procedureCall->get_id()=="break"){
         fprintf(fs, "break;\n");
         return;
     }
     if(procedureCall->get_id()=="writeln"){
         fprintf(fs, "printf(");
+        if(procedureCall->get_type() == ProcedureCall::ProcedureType::NO_LIST){
+            fprintf(fs, "\"\\n\");\n");
+            return;
+        }
         auto expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
         std::string formatString = generateFormatString2(expressionList);
 
@@ -464,7 +467,8 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
         fprintf(fs, "%s", formatString.c_str());
         procedureCall->get(0)->accept(this); // expressionlist
         fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
-        }
+        return;
+    }
     if(procedureCall->get_id()=="readln"){
         fprintf(fs, "char input[100000];\n  fgets(input, sizeof(input), stdin);sscanf(input, ");
         ExpressionList* expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
@@ -506,7 +510,8 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
             }
         }
         fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
-        }
+        return ;
+    }
     if(procedureCall->get_id()=="write"){
         fprintf(fs, "printf(");
         auto expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针

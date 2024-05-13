@@ -499,6 +499,12 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
             }
             return;
         }
+        if (record_info->id == "writeln") {
+            if (exp_types->size() == 0) {
+                //错误处理,writeln的参数个数不能为0
+            }
+            return;
+        }
         if (record_info->id == "read") {  //参数只能是变量或数组元素，不能是常量、表达式等
             if (exp_types->size() == 0) {
                 //错误处理,read的参数个数不能为0
