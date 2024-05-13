@@ -147,7 +147,7 @@ void GenerationVisitor::visit(TypeNode *typenode)
             else 
             {
                 //todo 查询类型表判断是否为record
-                if(TheTypeTable->findID(typenode->get_type_name())->RecordTable!=nullptr) fprintf(fs,"struct ");
+                if(TheTypeTable->findID(typenode->get_type_name())->RecordTable!=NULL) fprintf(fs,"struct ");
                 fprintf(fs, "%s", typenode->get_type_name().c_str());
             }
             break;

@@ -985,91 +985,100 @@ factor : INT_NUM
 | Error handler  |
 `---------------*/
 program_head : PROGRAM error '(' id_list ')' ';'
-    { //ERROR 缺少主程序名 checked
+    { //ERROR 缺少主程序名 
         $$ = new ProgramHead();
         LeafNode* leaf_node = new LeafNode();
         $$->append_child($4);
         $$->append_child(leaf_node);
         $$->set_rownum(line_count);
-        yyerror("missing program name here", line_count);
+        yyerror("Grammar Error: missing program name", line_count);
+    }
+    | PROGRAM ID '(' id_list ')' error
+    { //ERROR 缺少主程序名 
+        $$ = new ProgramHead();
+        LeafNode* leaf_node = new LeafNode();
+        $$->append_child($4);
+        $$->append_child(leaf_node);
+        $$->set_rownum(line_count);
+        yyerror("Grammar Error: missing semicolon", line_count);
     }
     | PROGRAM ID error id_list ')' ';'
-    { //ERROR 缺少左括号 checked
+    { //ERROR 缺少左括号 
         $$ = new ProgramHead();
         LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
         $$->append_child($4);
         $$->append_child(leaf_node);
         $$->set_rownum(line_count);
-        yyerror("missing a left bracket here", line_count);
+        yyerror("Grammar Error: missing a left bracket", line_count);
     }
     | PROGRAM ID '(' error ')' ';'
-    { //ERROR idlist识别失败 checked
+    { //ERROR idlist识别失败 
         $$ = new ProgramHead();
         error_flag = 1;
-        yyerror("program identifier list missing or imcomplete", line_count);
+        yyerror("Grammar Error: program identifier list missing or imcomplete", line_count);
     }
     | PROGRAM ID '(' id_list error ';'
-    { //ERROR 缺少右括号 checked
+    { //ERROR 缺少右括号 
         $$ = new ProgramHead();
         LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
         $$->append_child($4);
         $$->append_child(leaf_node);
         $$->set_rownum(line_count);
-        yyerror("missing a right bracket here", line_count);
+        yyerror("Grammar Error: missing a right bracket", line_count);
     }
     | PROGRAM error ';'
-    { //ERROR program head checked
+    { //ERROR program head 
         $$ = new ProgramHead();
         error_flag = 1;
-        yyerror("program head imcomplete", line_count);
+        yyerror("Grammar Error: program head imcomplete", line_count);
     }
     |PROGRAM ID error ';'
-    { //ERROR idlist缺失 checked
+    { //ERROR idlist缺失 
         $$ = new ProgramHead();
         error_flag = 1;
-        yyerror("program identifier list missing or imcomplete", line_count);
+        yyerror("Grammar Error: program identifier list missing or imcomplete", line_count);
     }
     |PROGRAM ID '(' error ';'
-    { //ERROR idlist缺失 checked
+    { //ERROR idlist缺失 
         $$ = new ProgramHead();
         error_flag = 1;
-        yyerror("program identifier list missing or imcomplete", line_count);
+        yyerror("Grammar Error: program identifier list missing or imcomplete", line_count);
     }
     |PROGRAM ID error
-    { //ERROR idlist缺失 checked
+    { //ERROR idlist缺失 
         $$ = new ProgramHead();
         LeafNode* leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
-        yyerror("missing a semicolon here", line_count - 1);
+        yyerror("Grammar Error: missing a semicolon", line_count - 1);
     }
 
 const_declarations : CONST error ';' 
-    { //ERROR 常量定义出现错误 checked
+    { //ERROR 常量定义出现错误 
         $$ = new ConstDeclarations(ConstDeclarations::GrammarType::EPSILON);
         $$->set_rownum(line_count);
         error_flag = 1;
-        yyerror("fatal error in const declarations", line_count);
+        yyerror("Grammar Error: fatal error in const declarations", line_count);
     }
     | CONST const_declaration error 
-    { //ERROR 缺少分号 checked
+    { //ERROR 缺少分号 
         $$ = new ConstDeclarations(ConstDeclarations::GrammarType::DECLARATION); 
         $$->set_rownum(line_count);
         $$->append_child($2);
-        yyerror("missing a semicolon here", line_count);
+        yyerror("Grammar Error: missing a semicolon", line_count);
     };
 
 const_declaration : const_declaration ';' ID CONSTASSIGNOP error
-    { //常数初始化右值缺失 checked
+    { //常数初始化右值缺失 
         error_flag = 1;
-        yyerror("constant definition missing initial r-value", line_count);
+        yyerror("Grammar Error: constant definition missing initial r-value", line_count);
     }
     | ID CONSTASSIGNOP error
-    { //常数初始化右值缺失 checked
+    { //常数初始化右值缺失 
         error_flag = 1;
-        yyerror("constant definition missing initial r-value", line_count);
+        yyerror("Grammar Error: constant definition missing initial r-value", line_count);
     }
     | const_declaration error ID '=' const_value
-    { //ERROR 缺少分号 checked
+    { //ERROR 缺少分号 
         $$ = new ConstDeclaration(ConstDeclaration::GrammarType::MULTIPLE_ID, $5->type());
         $$->set_rownum(line_count);
         $$->append_child($1);
@@ -1077,10 +1086,10 @@ const_declaration : const_declaration ';' ID CONSTASSIGNOP error
         $$->append_child(leaf_node);
         leaf_node = new LeafNode(*$5, LeafNode::LeafType::VALUE);
         $$->append_child(leaf_node);
-        yyerror("missing a semicolon here", line_count);
+        yyerror("Grammar Error: missing a semicolon", line_count);
     }
     | const_declaration ';' ID error const_value
-    { //ERROR 缺少等号（常量的初始化用的是等号，而不是赋值号） checked
+    { //ERROR 缺少等号（常量的初始化用的是等号，而不是赋值号） 
         $$ = new ConstDeclaration(ConstDeclaration::GrammarType::MULTIPLE_ID, $5->type());
         $$->set_rownum(line_count);
         $$->append_child($1);
@@ -1088,80 +1097,81 @@ const_declaration : const_declaration ';' ID CONSTASSIGNOP error
         $$->append_child(leaf_node);
         leaf_node = new LeafNode(*$5, LeafNode::LeafType::VALUE);
         $$->append_child(leaf_node);
-        yyerror("missing a equal sign here",line_count);
+        yyerror("Grammar Error: missing a equal sign",line_count);
     }
     | ID error const_value
-    { //ERROR 缺少等号（常量的初始化用的是等号，而不是赋值号） checked
+    { //ERROR 缺少等号（常量的初始化用的是等号，而不是赋值号） 
         $$ = new ConstDeclaration(ConstDeclaration::GrammarType::SINGLE_ID, $3->type());
         $$->set_rownum(line_count);
         LeafNode* leaf_node = new LeafNode($1.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         leaf_node = new LeafNode(*$3, LeafNode::LeafType::VALUE);
         $$->append_child(leaf_node);
-        yyerror("missing a equal sign here", line_count);
+        yyerror("Grammar Error: missing a equal sign", line_count);
     };
 
 var_declarations : VAR error
-    { //ERROR 变量定义出现错误 checked
+    { //ERROR 变量定义出现错误 
         $$ = new VarDeclarations(VarDeclarations::GrammarType::DECLARATION);
         $$->set_rownum(line_count);
         error_flag = 1;
-        yyerror("fatal error in variant declarations", line_count);
+        yyerror("Grammar Error: fatal error in variant declarations", line_count);
     }
 
 var_declaration: var_declaration id_list ':' type error
-    { //ERROR 缺少分号 checked
+    { //ERROR 缺少分号 
         $$ = new VarDeclaration(VarDeclaration::GrammarType::MULTIPLE_DECL);
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($2);
         $$->append_child($4);
-        yyerror("missing a semicolon here", line_count);
+        yyerror("Grammar Error: missing a semicolon", line_count);
     }
     | var_declaration id_list error type ';'
-    { //ERROR 缺少冒号 checked
+    { //ERROR 缺少冒号 
         $$ = new VarDeclaration(VarDeclaration::GrammarType::MULTIPLE_DECL);
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($2);
         $$->append_child($4);
-        yyerror("missing a colon here", line_count);
+        yyerror("Grammar Error: missing a colon", line_count);
     }
     | var_declaration id_list ':' error 
-    { //ERROR type识别失败 checked
+    { //ERROR type识别失败 
         $$ = new VarDeclaration(VarDeclaration::GrammarType::MULTIPLE_DECL);
         $$->set_rownum(line_count);
         error_flag = 1;
-        yyerror("missing a type here", line_count);
+        yyerror("Grammar Error: missing a type", line_count);
     }
     | id_list ':' error ';'
-    { //ERROR type识别失败 checked
+    { //ERROR type识别失败 
         $$ = new VarDeclaration(VarDeclaration::GrammarType::SINGLE_DECL);
         $$->set_rownum(line_count);
         $$->append_child($1);
-        yyerror("missing a type here", line_count);
+        error_flag = 1;
+        yyerror("missing a type", line_count);
     }
     | id_list error type ';'
-    { //ERROR 缺少冒号 checked
+    { //ERROR 缺少冒号 
         $$ = new VarDeclaration(VarDeclaration::GrammarType::SINGLE_DECL);
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($3);
-        yyerror("missing a colon here", line_count);
+        yyerror("Grammar Error: missing a colon", line_count);
     }
     | id_list ':' type error
-    { //ERROR 缺少分号 checked
+    { //ERROR 缺少分号 
         $$ = new VarDeclaration(VarDeclaration::GrammarType::SINGLE_DECL);
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($3);
-        yyerror("missing a semicolon here", line_count - 1);
+        yyerror("Grammar Error: missing a semicolon", line_count - 1);
     };
 
 /*其他*/
 
 array_type : ARRAY error periods ']' OF type
-    { //ERROR 缺少左中括号 checked
+    { //ERROR 缺少左中括号 
         $$ = new ArrayTypeNode();
         $$->set_rownum(line_count);
         if($6->GetVarType() == TypeNode::VarType::ID_TYPE){
@@ -1172,10 +1182,10 @@ array_type : ARRAY error periods ']' OF type
         $$->set_info(at);
         $$->append_child($3);
         $$->append_child($6);
-        yyerror("missing a left square bracket", line_count);
+        yyerror("Grammar Error: missing a left square bracket", line_count);
     }
     | ARRAY '[' periods ']' error type
-    { //ERROR 缺少OF关键字 checked
+    { //ERROR 缺少OF关键字 
         $$ = new ArrayTypeNode();
         $$->set_rownum(line_count);
         if($6->GetVarType() == TypeNode::VarType::ID_TYPE){
@@ -1186,37 +1196,37 @@ array_type : ARRAY error periods ']' OF type
         $$->set_info(at);
         $$->append_child($3);
         $$->append_child($6);
-        yyerror("missing keyword \"OF\" ", line_count);
+        yyerror("Grammar Error: missing keyword \"OF\" ", line_count);
     } 
     | ARRAY '[' periods ']' OF error
-    { //ERROR 数组元素类型识别失败 checked
+    { //ERROR 数组元素类型识别失败 
         $$ = new ArrayTypeNode();
         error_flag = 1;
-        yyerror("missing a base type keyword", line_count);
+        yyerror("Grammar Error: missing a base type keyword", line_count);
     }
     | ARRAY error
-    { //ERROR 不完整的数组类型 checked
+    { //ERROR 不完整的数组类型 
         $$ = new ArrayTypeNode();
         error_flag = 1;
-        yyerror("incomplete array type", line_count);
+        yyerror("Grammar Error: incomplete array type", line_count);
     }
     | ARRAY '[' error
-    { //ERROR 不完整的数组类型 checked
+    { //ERROR 不完整的数组类型 
         $$ = new ArrayTypeNode();
         $$->set_rownum(line_count);
         error_flag = 1;
-        yyerror("incomplete array type", line_count);
+        yyerror("Grammar Error: incomplete array type", line_count);
     }
     | ARRAY '[' periods error
-    { //ERROR 不完整的数组类型 checked
+    { //ERROR 不完整的数组类型 
         $$ = new ArrayTypeNode();
         $$->set_rownum(line_count);
         error_flag = 1;
-        yyerror("incomplete array type",line_count);
+        yyerror("Grammar Error: incomplete array type",line_count);
     };
 
 periods : periods error period
-    { //ERROR 缺少逗号 checked
+    { //ERROR 缺少逗号 
         $$ = new PeriodsNode(PeriodsNode::PeriodType::MULTI);
         $$->set_rownum(line_count);
         std::vector<ArrayType::Dimension> dim;
@@ -1226,7 +1236,7 @@ periods : periods error period
         $$->set_dm(dim);
         $$->append_child($1);
         $$->append_child($3);
-        yyerror("missing a comma ", line_count);
+        yyerror("Grammar Error: missing a comma ", line_count);
     }
 
 period : INT_NUM error INT_NUM
@@ -1236,20 +1246,20 @@ period : INT_NUM error INT_NUM
         $$->set_rownum(line_count);
         $$->append_child(new LeafNode($1.value.get<int>(), LeafNode::LeafType::VALUE));
         $$->append_child(new LeafNode($3.value.get<int>(), LeafNode::LeafType::VALUE));
-        yyerror("missing range dot .. ", line_count);
+        yyerror("Grammar Error: missing range dot .. ", line_count);
     };
 
 subprogram_declarations : subprogram_declarations subprogram_declaration error
-    { //ERROR 缺少分号 checked
+    { //ERROR 缺少分号 
         $$ = new SubprogramDeclarations();
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($2);
-        yyerror("missing a semicolon", line_count);
+        yyerror("Grammar Error: missing a semicolon", line_count);
     }
 
 subprogram_head : FUNCTION ID formal_parameter ':' type error
-    { //ERROR 缺少分号 checked
+    { //ERROR 缺少分号 
         $$ = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         $$->set_rownum(line_count);
         $$->set_id($2.value.get<string>());
@@ -1257,17 +1267,17 @@ subprogram_head : FUNCTION ID formal_parameter ':' type error
         $$->append_child(leaf_node);
         $$->append_child($3);
         $$->append_child($5);
-         yyerror("missing semicolon", line_count);
+         yyerror("Grammar Error: missing semicolon", line_count);
     }
     | FUNCTION error formal_parameter ':' type ';'
-    { //ERROR 函数名缺失 checked
+    { //ERROR 函数名缺失 
         $$ = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         $$->set_rownum(line_count);
         error_flag = 1;
-        yyerror("missing function name", line_count);
+        yyerror("Grammar Error: missing function name", line_count);
     }
     | FUNCTION ID formal_parameter error type ';'
-    { //ERROR 缺少冒号 checked
+    { //ERROR 缺少冒号 
         $$ = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         $$->set_rownum(line_count);
         $$->set_id($2.value.get<string>());
@@ -1275,106 +1285,106 @@ subprogram_head : FUNCTION ID formal_parameter ':' type error
         $$->append_child(leaf_node);
         $$->append_child($3);
         $$->append_child($5);
-        yyerror("missing a colon", line_count);
+        yyerror("Grammar Error: missing a colon", line_count);
     }
     | FUNCTION ID formal_parameter ':' error ';'
-    { //ERROR 缺少基本类型关键字 checked
+    { //ERROR 缺少基本类型关键字 
         $$ = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         $$->set_rownum(line_count);
         error_flag = 1;
-        yyerror("missing a base type keyword here", line_count);
+        yyerror("Grammar Error: missing a base type keyword", line_count);
     }
     | FUNCTION ID formal_parameter error
-    { //ERROR 缺少基本类型关键字 checked
+    { //ERROR 缺少基本类型关键字 
         $$ = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         $$->set_rownum(line_count);
         error_flag =1 ;
-        yyerror("missing a base type keyword here", line_count);
+        yyerror("Grammar Error: missing a base type keyword", line_count);
     }
     | PROCEDURE ID formal_parameter error
-    { //ERROR 缺少分号 checked
+    { //ERROR 缺少分号 
         $$ = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         $$->set_rownum(line_count);
         $$->set_id($2.value.get<string>());
         LeafNode *leaf_node = new LeafNode($2.value, LeafNode::LeafType::NAME);
         $$->append_child(leaf_node);
         $$->append_child($3);
-        yyerror("missing a semicolon", line_count);
+        yyerror("Grammar Error: missing a semicolon", line_count);
     }
     | FUNCTION error 
-    { //ERROR 不完整的函数头 checked
+    { //ERROR 不完整的函数头 
         $$ = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         $$->set_rownum(line_count);
         error_flag = 1;
-        yyerror("incomplete function head", line_count);
+        yyerror("Grammar Error: incomplete function head", line_count);
     }
     | PROCEDURE error 
-    { //ERROR 不完整的过程头 checked
+    { //ERROR 不完整的过程头 
         $$ = new SubprogramHead(SubprogramHead::SubprogramType::PROC);
         $$->set_rownum(line_count);
         error_flag = 1;
-        yyerror("incomplete procedure head", line_count);
+        yyerror("Grammar Error: incomplete procedure head", line_count);
     };
 
 formal_parameter: '(' error
     { //ERROR 不完整的形参列表
         $$ = new FormalParam();
         $$->set_rownum(line_count);
-        yyerror("incomplete formal parameter list", line_count);
+        yyerror("Grammar Error: incomplete formal parameter list", line_count);
     }
     |'(' parameter_lists error
     { //ERROR 右括号缺失
         $$ = new FormalParam();
         $$->set_rownum(line_count);
         $$->append_child($2);
-        yyerror("missing a right bracket here", line_count);
+        yyerror("Grammar Error: missing a right bracket", line_count);
     };
 
 parameter_lists : parameter_lists error parameter_list
-    { //ERROR 缺少分号 checked
+    { //ERROR 缺少分号 
         $$ = new ParamLists(ParamLists::GrammarType::MULTIPLE_PARAM_LIST);
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($3);
-		yyerror("missing a semicolon here", line_count);
+		yyerror("Grammar Error: missing a semicolon", line_count);
 	}
 
 var_parameter : VAR error
-    { //ERROR 不完整的引用参数列表 checked
+    { //ERROR 不完整的引用参数列表 
         $$ = new VarParam();
         $$->set_rownum(line_count);
         error_flag = 1;
-        yyerror("incomplete refereced parameter list", line_count);
+        yyerror("Grammar Error: incomplete refereced parameter list", line_count);
 	};
 
 value_parameter : id_list error type
-    { //ERROR 缺少分号 checked
+    { //ERROR 缺少分号 
        $$ = new ValueParam();
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($3);
-        yyerror("missing a colon here", line_count);
+        yyerror("Grammar Error: missing a colon", line_count);
     }
     | id_list ':' error
-    { //ERROR 缺少基本类型关键字 checked
+    { //ERROR 缺少基本类型关键字 
         $$ = new ValueParam();
         $$->set_rownum(line_count);
         error_flag = 1;
-        yyerror("missing a base type keyword here", line_count);
+        yyerror("Grammar Error: missing a base type keyword", line_count);
     }
     | id_list error
-    { //ERROR 缺少基本类型关键字 checked
+    { //ERROR 缺少基本类型关键字 
         $$ = new ValueParam();
         error_flag = 1;
         $$->set_rownum(line_count);
-        yyerror("missing a base type keyword here", line_count);
+        yyerror("Grammar Error: missing a base type keyword", line_count);
     };
 compound_statement: BEGIN_ statement_list error
     { //ERROR 缺少END关键字  
         $$ = new CompoundStatement();
         $$->set_rownum(line_count);
         $$->append_child($2);
-        yyerror("missing keyword \"end\"", line_count);
+        yyerror("Grammar Error: missing keyword \"end\"", line_count);
 	};
 
 statement_list : statement_list error statement
@@ -1383,7 +1393,7 @@ statement_list : statement_list error statement
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($3);
-        yyerror("missing a semicolon  ", line_count);
+        yyerror("Grammar Error: missing a semicolon  ", line_count);
     };
 
 ifstatement : IF expression error statement else_part
@@ -1393,7 +1403,7 @@ ifstatement : IF expression error statement else_part
         $$->append_child($2);
         $$->append_child($4);
         $$->append_child($5);
-        yyerror("missing keyword \"then\"", line_count);
+        yyerror("Grammar Error: missing keyword \"then\"", line_count);
 	}
 
 loopstatement : FOR ID error expression TO expression DO statement
@@ -1405,7 +1415,7 @@ loopstatement : FOR ID error expression TO expression DO statement
         $$->append_child($4);
         $$->append_child($6);
         $$->append_child($8);
-        yyerror("missing assignop \":=\"", line_count);
+        yyerror("Grammar Error: missing assignop \":=\"", line_count);
     }
     |FOR ID ASSIGNOP expression error expression DO statement
     { //ERROR 缺少关键字to  
@@ -1416,7 +1426,7 @@ loopstatement : FOR ID error expression TO expression DO statement
         $$->append_child($4);
         $$->append_child($6);
         $$->append_child($8);
-        yyerror("missing keywrod \"to\"", line_count);
+        yyerror("Grammar Error: missing keywrod \"to\"", line_count);
     }
     |FOR ID ASSIGNOP expression TO expression error statement
     { //ERROR 缺少关键字do  
@@ -1427,7 +1437,7 @@ loopstatement : FOR ID error expression TO expression DO statement
         $$->append_child($4);
         $$->append_child($6);
         $$->append_child($8);
-        yyerror("missing keywrod \"do\"", line_count);
+        yyerror("Grammar Error: missing keywrod \"do\"", line_count);
     }
     | WHILE expression error statement
     { //ERROR 缺少关键字do  
@@ -1435,7 +1445,7 @@ loopstatement : FOR ID error expression TO expression DO statement
         $$->set_rownum(line_count);
         $$->append_child($2);
         $$->append_child($4);
-        yyerror("missing keywrod \"do\"", line_count);
+        yyerror("Grammar Error: missing keywrod \"do\"", line_count);
     }
     | REPEAT statement error expression
     { //ERROR 缺少关键字until  
@@ -1443,7 +1453,7 @@ loopstatement : FOR ID error expression TO expression DO statement
         $$->set_rownum(line_count);
         $$->append_child($2);
         $$->append_child($4);
-        yyerror("missing keywrod \"until\"", line_count);
+        yyerror("Grammar Error: missing keywrod \"until\"", line_count);
 	}
 
 procedure_call : ID '(' expression_list error
@@ -1451,32 +1461,32 @@ procedure_call : ID '(' expression_list error
         $$ = new ProcedureCall(ProcedureCall::ProcedureType::EXP_LIST, $1.value.get<string>());
         $$->set_rownum(line_count);
         $$->append_child($3);
-        yyerror("missing a right bracket", line_count);
+        yyerror("Grammar Error: missing a right bracket", line_count);
     };
 
 expression_list : expression_list error expression
-    { //ERROR 缺少逗号 这里引发了一个移进规约冲突 checked
+    { //ERROR 缺少逗号 这里引发了一个移进规约冲突 
         std::vector<std::string> *type_list = $1->get_types();
         type_list->emplace_back($3->GetExpType());
         $$ = new ExpressionList(ExpressionList::ExpressionType::MULTIPLE, type_list);
         $$->append_child($1);
         $$->append_child($3);
-        yyerror("missing a comma", line_count);
+        yyerror("Grammar Error: missing a comma", line_count);
     };
 
 id_varpart: '[' error
-    { //ERROR 不完整的数组下标列表 checked
+    { //ERROR 不完整的数组下标列表 
         $$ = new IDVarPart(IDVarPart::GrammarType::EXP_LIST);
         $$->set_rownum(line_count);
         error_flag = 1;
-        yyerror("incomplete expression list of array subindex", line_count);
+        yyerror("Grammar Error: incomplete expression list of array subindex", line_count);
     }
     |'[' expression_list error
-    { //ERROR 缺失右中括号 checked
+    { //ERROR 缺失右中括号 
 		$$ = new IDVarPart(IDVarPart::GrammarType::EXP_LIST);
         $$->set_rownum(line_count);
         $$->append_child($2);
-        yyerror("missing a right square bracket", line_count);
+        yyerror("Grammar Error: missing a right square bracket", line_count);
 	};
 
 factor: ID '(' expression_list error
@@ -1488,14 +1498,14 @@ factor: ID '(' expression_list error
         $$->SetFacType("unknown");
         $$->append_child(leaf_node);
         $$->append_child($3);
-        yyerror("missing a right bracket here", line_count);
+        yyerror("Grammar Error: missing a right bracket", line_count);
 	}
     | ID '(' error
     { //ERROR 函数调用的表达式列表缺失
         $$ = new Factor(Factor::GrammerType::EXP);
         $$->set_rownum(line_count);
         error_flag = 1;
-        yyerror("missing actual parameter list of function call", line_count);
+        yyerror("Grammar Error: missing actual parameter list of function call", line_count);
 	}
     |'(' expression error
     { //ERROR 缺少右括号
@@ -1503,7 +1513,7 @@ factor: ID '(' expression_list error
         $$->set_rownum(line_count);
         $$->SetFacType($2->GetExpType());
         $$->append_child($2);
-        yyerror("missing a right bracket here", line_count);
+        yyerror("Grammar Error: missing a right bracket", line_count);
     };
 
 

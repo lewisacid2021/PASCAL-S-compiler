@@ -898,6 +898,7 @@ void SemanticVisitor::visit(Factor *factor)
                 // 对于变量直接获取其类型
                 factor->get(0)->accept(this);
                 Variable *var = factor->get(0)->DynamicCast<Variable>();
+                cout << var->get_vn() << endl;
                 factor->SetFacType(var->get_vn());
                 break;
             }
