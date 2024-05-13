@@ -17,6 +17,6 @@ return _test_;
 }
 int main() {
 b.title[0] = d;
-d = c.bo.title;
+d = c.bo.title[1];
 return 0;
 }
