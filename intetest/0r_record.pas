@@ -15,6 +15,5 @@ end;
 begin
     b.title[0]:=d;
     d:=c.bo.title[1];
-    {write(b.title[0]);
-    write(test(b));}
+    write(b.title[0]);
 end.

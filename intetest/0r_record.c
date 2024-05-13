@@ -18,5 +18,6 @@ return _test_;
 int main() {
 b.title[0] = d;
 d = c.bo.title[1];
+printf("%d",b.title[0]);
 return 0;
 }
