@@ -64,7 +64,6 @@ class SymbolTable
     void addRecord(string id,string recordName, int rowNumber,SymbolTable *subSymbolTable);
     void addProcedure(string id, int rowNumber, int amount, SymbolTable *subSymbolTable);
     void addFunction(string id, int rowNumber, string type, int amount, SymbolTable *subSymbolTable);
-    void addSubSymbolTable(string id, SymbolTable *subSymbolTable);
     void addProgramName(string id, int rowNumber, string programInfo, int amount, string returnType);
     void addVoidPara(string id, int rowNumber);
 
@@ -103,5 +102,5 @@ class TypeTable
 };
 
 extern TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode);
-
+extern TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode, string type);
 #endif
