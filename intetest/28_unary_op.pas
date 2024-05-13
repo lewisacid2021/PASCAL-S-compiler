@@ -1,6 +1,6 @@
 program main;
-var a: integer;
+var a: char;
 begin
-  a := 60;
-  write(not a);
+  a := 'a';
+  write(a);
 end.
