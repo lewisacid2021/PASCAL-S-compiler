@@ -728,8 +728,9 @@ class VariableList: public AstNode
     {}
     std::string FormatString();
     vector<AstNode * > Lists();
-    void set_types(std::vector<string> *type_list){
-      variable_type_list = type_list; 
+    void set_types(std::vector<string> *type_list)
+    {
+        variable_type_list = type_list;
     }
     GrammarType get_type() { return grammar_type; }
 
@@ -763,7 +764,7 @@ class IDVarParts: public AstNode
     void set_pointer(std::vector<std::string> *pn) { parts_name = pn; }
     std::vector<std::string> *get_pointer() { return parts_name; }
     void accept(Visitor *visitor) override;
-    vector<AstNode* > Lists();
+    vector<AstNode * > Lists();
 
   private:
     std::vector<std::string> *parts_name;
@@ -996,7 +997,7 @@ class GenerationVisitor: public Visitor
     void visit(AST *AST) override;
     void visit(AstNode *astnode) override;
     void visit(LeafNode *leafnode) override;
-    void visit(ProgramHead *programhead) override {return;};
+    void visit(ProgramHead *programhead) override { return; };
     void visit(IdList *idlist) override;
     void visit(ConstDeclaration *constdeclaration) override;
     void visit(TypeNode *typenode) override;
@@ -1018,8 +1019,8 @@ class GenerationVisitor: public Visitor
     void visit(LoopStatement *loopStatement) override;
     void visit(Variable *variable) override;
     void visit(VariableList *variableList) override;
-    void visit(IDVarPart *idVarPart) override { visitchild(idVarPart);};
-    void visit(IDVarParts *idVarParts) override { visitchild(idVarParts);};
+    void visit(IDVarPart *idVarPart) override { visitchild(idVarPart); };
+    void visit(IDVarParts *idVarParts) override { visitchild(idVarParts); };
     void visit(Term *term) override;
     void visit(Factor *factor) override;
     void visit(Expression *expression) override;
@@ -1034,33 +1035,33 @@ class SemanticVisitor: public Visitor
   public:
     void visit(AST *AST) override;
     void visit(AstNode *astnode) override;
-    void visit(LeafNode *leafnode) override { visitchild(leafnode);};
-    void visit(IdList *idlist) override { visitchild(idlist);};
-    void visit(ProgramBody *programbody) override { visitchild(programbody);};
+    void visit(LeafNode *leafnode) override { visitchild(leafnode); };
+    void visit(IdList *idlist) override { visitchild(idlist); };
+    void visit(ProgramBody *programbody) override { visitchild(programbody); };
     void visit(ProgramHead *programhead) override;
     void visit(ConstDeclaration *constdeclaration) override;
     void visit(RecordDeclaration *recorddeclaration) override;
-    void visit(TypeNode *typenode) override { visitchild(typenode);};
-    void visit(StringTypeNode *stringtypenode) override { visitchild(stringtypenode);};
+    void visit(TypeNode *typenode) override { visitchild(typenode); };
+    void visit(StringTypeNode *stringtypenode) override { visitchild(stringtypenode); };
     void visit(VarDeclaration *vardeclaration) override;
-    void visit(PeriodsNode *periodsnode) override { visitchild(periodsnode);};
+    void visit(PeriodsNode *periodsnode) override { visitchild(periodsnode); };
     void visit(SubprogramDeclaration *subprogramdeclaration) override;
     void visit(SubprogramHead *subprogramhead) override;
-    void visit(ParamLists *paramlists) override { visitchild(paramlists);};
-    void visit(ValueParam *valueparam) override { visitchild(valueparam);};
+    void visit(ParamLists *paramlists) override { visitchild(paramlists); };
+    void visit(ValueParam *valueparam) override { visitchild(valueparam); };
 
-    void visit(CompoundStatement *compoundStatement) override { visitchild(compoundStatement);};
-    void visit(StatementList *statementList) override { visitchild(statementList);};
-    void visit(Statement *statement) override { visitchild(statement);};
+    void visit(CompoundStatement *compoundStatement) override { visitchild(compoundStatement); };
+    void visit(StatementList *statementList) override { visitchild(statementList); };
+    void visit(Statement *statement) override { visitchild(statement); };
     void visit(IfStatement *ifStatement) override;
-    void visit(ElsePart *elseNode) override { visitchild(elseNode);};
+    void visit(ElsePart *elseNode) override { visitchild(elseNode); };
     void visit(ProcedureCall *procedureCall) override;
     void visit(AssignopStatement *assignopStatement) override;
     void visit(LoopStatement *loopStatement) override;
     void visit(Variable *variable) override;
     void visit(VariableList *variableList) override;
-    void visit(IDVarPart *idVarPart) override { visitchild(idVarPart);};
-    void visit(IDVarParts *idVarParts) override { visitchild(idVarParts);};
+    void visit(IDVarPart *idVarPart) override { visitchild(idVarPart); };
+    void visit(IDVarParts *idVarParts) override { visitchild(idVarParts); };
     void visit(ExpressionList *expressionList) override;
     void visit(Expression *expression) override;
     void visit(SimpleExpression *simpleExpression) override;
