@@ -182,7 +182,6 @@ void GenerationVisitor::visit(VarDeclaration *vardeclaration)
 
     if (grammar_type == VarDeclaration::GrammarType::MULTIPLE_DECL)
         vardeclaration->get(0)->accept(this);  //vardeclaration
-
     //type
     vardeclaration->get(-1)->accept(this);
     fprintf(fs, " ");
