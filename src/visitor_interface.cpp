@@ -1,6 +1,6 @@
 #include "ast.h"
 
-namespace ast{
+namespace ast {
 
 void AST::accept(Visitor *visitor)
 {
@@ -31,7 +31,7 @@ void IdList::accept(Visitor *visitor)
 {
     visitor->visit(this);
 }
-    
+
 void ConstDeclaration::accept(Visitor *visitor)
 {
     visitor->visit(this);
@@ -82,89 +82,88 @@ void ValueParam::accept(Visitor *visitor)
     visitor->visit(this);
 }
 
-void CompoundStatement::accept(Visitor *visitor )
+void CompoundStatement::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void Statement::accept(Visitor *visitor )
+void Statement::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void StatementList::accept(Visitor *visitor )
+void StatementList::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void IfStatement::accept(Visitor *visitor )
+void IfStatement::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void ProcedureCall::accept(Visitor *visitor )
+void ProcedureCall::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void AssignopStatement::accept(Visitor *visitor )
+void AssignopStatement::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void ElsePart::accept(Visitor *visitor )
+void ElsePart::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void LoopStatement::accept(Visitor *visitor )
+void LoopStatement::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void VariableList::accept(Visitor *visitor )
+void VariableList::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void Variable::accept(Visitor *visitor )
+void Variable::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void IDVarPart::accept(Visitor *visitor )
+void IDVarPart::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void IDVarParts::accept(Visitor *visitor )
+void IDVarParts::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void Expression::accept(Visitor *visitor )
+void Expression::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void SimpleExpression::accept(Visitor *visitor )
+void SimpleExpression::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void ExpressionList::accept(Visitor *visitor )
+void ExpressionList::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void Term::accept(Visitor *visitor )
+void Term::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
 
-void Factor::accept(Visitor *visitor )
+void Factor::accept(Visitor *visitor)
 {
-    visitor->visit(this );
+    visitor->visit(this);
 }
-}
-
+}  // namespace ast

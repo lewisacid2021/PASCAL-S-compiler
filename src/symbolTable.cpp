@@ -171,12 +171,12 @@ void TableRecord::setVarPara(string flag, string id_para, int rowNumber_para, st
 
 void TableRecord::setArrayVarPara(string flag, string id_para, int rowNumber_para, string type_para, vector< pair<int, int> > arrayRange)
 {
-    this->flag      = flag;
-    this->id        = id_para;
-    this->isPara    = true;
-    this->isRefered = true;
-    this->rowNumber = rowNumber_para;
-    this->type      = type_para;
+    this->flag       = flag;
+    this->id         = id_para;
+    this->isPara     = true;
+    this->isRefered  = true;
+    this->rowNumber  = rowNumber_para;
+    this->type       = type_para;
     this->arrayRange = arrayRange;
 }
 
