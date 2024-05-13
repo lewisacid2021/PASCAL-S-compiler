@@ -19,7 +19,7 @@ extern SymbolTable *CurrentTable;
 extern TypeTable *TheTypeTable;
 extern int math_flag;
 
-//检查是否与主程序名，主程序参数，库函数重名
+//检查是否与库函数重名
 bool checkDuplicateNameError(string id, int lineNumber)
 {
     for (int i = 0; i < 4; i++) {
@@ -60,12 +60,13 @@ void SemanticVisitor::visit(ProgramHead *programhead)
         std::cout << "Error: Same name as library function. Line: " << programhead->get_rownum() << std::endl;
     }
 
+    //添加read过程
     MainTable->addProcedure("read", -1, -1, NULL);
-    //添加write过程，该过程变参
+    //添加write过程
     MainTable->addProcedure("write", -1, -1, NULL);
-    //添加writeln过程，该过程变参
+    //添加writeln过程
     MainTable->addProcedure("writeln", -1, -1, NULL);
-    //添加exit过程，该过程的参数个数需要分情况讨论，程序里会有特判，这里指定为0没有特殊含义
+    //添加exit过程
     MainTable->addProcedure("exit", -1, 0, NULL);
 }
 
@@ -505,11 +506,18 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
 {
     string id = procedurecall->get_id();
     auto record_info = findID(MainTable, id, 1);
-    if(record_info == NULL)
-        record_info = findID(CurrentTable, id, 1);
     if(record_info == NULL){
         //错误处理，未定义
         std::cout << "Error: Undefined. Line: " << procedurecall->get_rownum() << std::endl;
+    }
+
+    if(procedurecall->get_type() == ProcedureCall::ProcedureType::NO_LIST){
+        if(record_info->id == "exit"){
+            if(CurrentTable->records[0]->programInfo == "function"){
+                // 错误处理，function需要参数
+                return;
+            }
+        }
     }
 
     if(procedurecall->get_type() == ProcedureCall::ProcedureType::EXP_LIST){
@@ -527,6 +535,18 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
             if (exp_types->size() == 0) {
                 //错误处理,writeln的参数个数不能为0
             }
+            return;
+        }
+        if(record_info->id == "exit"){
+            if(CurrentTable->records[0]->programInfo == "procedure"){
+                // 错误处理，procedure不需要参数
+                return;
+            }
+            if (exp_types->size() != 1) {
+                // 错误处理,exit的参数个数只能为1
+                return;
+            }
+            // 正常
             return;
         }
         if (record_info->id == "read") {  //参数只能是变量或数组元素，不能是常量、表达式等
@@ -716,6 +736,7 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                         sexpression->SetExpType(term_type);
                     } else {
                         //error
+                        std::cout << "Error: Type error. Line: " << sexpression->get_rownum() << std::endl;
                     }
                 } else {
                     if (sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown") {
@@ -736,6 +757,7 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                         }
                     } else {
                         //error
+                        std::cout << "Error: Type error. Line: " << sexpression->get_rownum() << std::endl;
                     }
                 }
                 break;
@@ -756,6 +778,7 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                     sexpression->SetExpType("boolean");
                 } else {
                     //error
+                    std::cout << "Error: Type error. Line: " << sexpression->get_rownum() << std::endl;
                 }
                 break;
             }
@@ -866,6 +889,7 @@ void SemanticVisitor::visit(Factor *factor)
                     if(tr == NULL)
                     {
                         //错误处理
+                        std::cout << "Error: Undefined. Line: " << factor->get_rownum() << std::endl;
                     }
                     else{
                         factor->SetFacType(tr->type);
@@ -905,6 +929,7 @@ void SemanticVisitor::visit(Factor *factor)
                 if (fac_type == "real" || fac_type == "char" || fac_type == "integer") {
                     factor->SetFacType(fac->GetFacType());
                 } else {
+                    std::cout << "Error: Type error. Line: " << factor->get_rownum() << std::endl;
                 }
                 break;
             }
@@ -919,7 +944,7 @@ void SemanticVisitor::visit(Factor *factor)
                 if (fac_type == "boolean" || fac_type == "integer" || fac_type == "char" || fac_type == "real") {
                     factor->SetFacType("boolean");
                 } else {
-
+                    std::cout << "Error: Type error. Line: " << factor->get_rownum() << std::endl;
                 }
                 break;
             }
