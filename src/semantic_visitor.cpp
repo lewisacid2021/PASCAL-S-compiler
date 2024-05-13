@@ -409,7 +409,7 @@ void SemanticVisitor::visit(Variable *variable)
         if(record_info->flag == "array"){
             variable->set_vn(record_info->type);
         }
-        if (record_info->flag == "record"){
+        else if (record_info->flag == "record"){
             if(variable->getCnodeList().size() == 1){
                 variable->set_vn("record");
             }
@@ -435,7 +435,7 @@ void SemanticVisitor::visit(Variable *variable)
                 }
             }
         }
-        if(record_info->flag == "variant" || record_info->flag == "constant" || record_info->flag == "function"){
+        else{
             variable->set_vn(record_info->type);
         }
     }
@@ -546,12 +546,13 @@ void SemanticVisitor::visit(LoopStatement *loopstatement)
         case LoopStatement::LoopType::FORDOWN:
         {
             string id = loopstatement->get(0)->DynamicCast<LeafNode>()->get_value<string>();
-            auto record_info = findID(CurrentTable, id, 1);
+            auto record_info = findID(CurrentTable, id, 0);
             if(record_info == NULL)
             {
                 //错误处理，循环变量未定义
+                return;
             }
-            if (!(record_info->flag != "value parameter" || record_info->flag != "var parameter" || record_info->flag != "variant"))
+            if (!(record_info->flag == "value parameter" || record_info->flag == "var parameter" || record_info->flag == "variant"))
             {
                 //错误处理，不能作为循环变量
             }
