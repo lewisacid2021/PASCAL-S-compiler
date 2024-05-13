@@ -510,11 +510,6 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
                 //错误处理,read的参数个数不能为0
                 return;
             }
-            for (int i = 0; i < exp_types->size(); i++) {
-                if (!((*exp_types)[i] == "variant" || (*exp_types)[i] == "array" || (*exp_types)[i] == "(sub)program name")) {
-                    //错误处理
-                }
-            }
             return;
         }
         if (exp_types->size() != record_info->amount) {  //checked
