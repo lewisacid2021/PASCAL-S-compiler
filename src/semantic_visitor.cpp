@@ -18,10 +18,6 @@ extern SymbolTable *MainTable;
 extern SymbolTable *CurrentTable;
 extern TypeTable *TheTypeTable;
 
-void addDuplicateNameError()
-{
-    int a;
-}  //重名错误
 //检查是否与主程序名，主程序参数，库函数重名
 bool checkDuplicateNameError(string id, int lineNumber)
 {
@@ -58,7 +54,7 @@ void SemanticVisitor::visit(ProgramHead *programhead)
     //检查主程序是否与库函数重名
     if (lib.count(id))
     {
-        addDuplicateNameError();
+        //错误处理
     }
 
     MainTable->addProcedure("read", -1, -1, NULL);
@@ -414,6 +410,7 @@ void SemanticVisitor::visit(Variable *variable)
             variable->set_vn(record_info->type);
         }
         else if (record_info->flag == "record"){
+        else if (record_info->flag == "record"){
             if(variable->getCnodeList().size() == 1){
                 variable->set_vn("record");
             }
@@ -439,7 +436,7 @@ void SemanticVisitor::visit(Variable *variable)
                 }
             }
         }
-        else {
+        else{
             variable->set_vn(record_info->type);
         }
     }
@@ -498,7 +495,13 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
 
         if (record_info->id == "write") {
             if (exp_types->size() == 0) {
-                //错误处理,read、write的参数个数不能为0
+                //错误处理,write的参数个数不能为0
+            }
+            return;
+        }
+        if (record_info->id == "writeln") {
+            if (exp_types->size() == 0) {
+                //错误处理,write的参数个数不能为0
             }
             return;
         }
@@ -510,7 +513,7 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
         }
         if (record_info->id == "read") {  //参数只能是变量或数组元素，不能是常量、表达式等
             if (exp_types->size() == 0) {
-                //错误处理,read、write的参数个数不能为0
+                //错误处理,read的参数个数不能为0
                 return;
             }
             for (int i = 0; i < exp_types->size(); i++) {
@@ -560,6 +563,7 @@ void SemanticVisitor::visit(LoopStatement *loopstatement)
             if(record_info == NULL)
             {
                 //错误处理，循环变量未定义
+                return;
             }
             if (!(record_info->flag == "value parameter" || record_info->flag == "var parameter" || record_info->flag == "variant"))
             {

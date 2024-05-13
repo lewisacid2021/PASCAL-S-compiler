@@ -36,10 +36,6 @@ class TableRecord
     void setProgramName(string id_para, int rowNumber_para, string programInfo_para, int amount_para, string returnType_para);
     void setVoidPara(string id_para, int rowNumber_para);
 
-    string findXthFormalParaType(int X);             //找到第X个形式参数的类型
-    bool isXthFormalParaRefered(int X);              //检查第X个形式参数是否是引用调用
-    bool checkArrayXthIndexRange(int X, int index);  //检查第X维下标是否越界，true表示越界，false表示未越界
-
     TableRecord()
     {
         arrayRange.clear();
