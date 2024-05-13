@@ -530,11 +530,6 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
                 std::cout << "Error: The number of read() and write() arguments cannot be 0. Line: " << procedurecall->get_rownum() << std::endl;
                 return;
             }
-            for (int i = 0; i < exp_types->size(); i++) {
-                if (!((*exp_types)[i] == "variant" || (*exp_types)[i] == "array" || (*exp_types)[i] == "(sub)program name")) {
-                    //错误处理
-                }
-            }
             return;
         }
         if (exp_types->size() != record_info->amount) {  //checked
