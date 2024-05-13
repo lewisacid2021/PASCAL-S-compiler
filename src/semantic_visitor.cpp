@@ -17,6 +17,7 @@ using std::vector;
 extern SymbolTable *MainTable;
 extern SymbolTable *CurrentTable;
 extern TypeTable *TheTypeTable;
+extern int math_flag;
 
 //检查是否与主程序名，主程序参数，库函数重名
 bool checkDuplicateNameError(string id, int lineNumber)
@@ -815,8 +816,23 @@ void SemanticVisitor::visit(Factor *factor)
             {
                 // 对于函数直接获取其返回值类型
                 auto id         = factor->get(0)->DynamicCast<LeafNode>()->get_value<string>();
-                TableRecord *tr = findID(MainTable, id, 0);
-                factor->SetFacType(tr->type);
+
+                if(id == "cos" || id == "sin")
+                {
+                    math_flag = 1;
+                    factor->SetFacType("real");
+                }
+                else {
+                    TableRecord *tr = findID(MainTable, id, 0);
+                    if(tr == NULL)
+                    {
+                        //错误处理
+                    }
+                    else{
+                        factor->SetFacType(tr->type);
+                    }
+                    
+                }                  
                 break;
             }
             case Factor::GrammerType::VARIABLE:
