@@ -728,13 +728,12 @@ void GenerationVisitor::visit(Variable *variable )  {
         }
     }
     record_info = findID(CurrentTable,id,0);
+    //cout<<id<<" "<<record_info->flag<<" "<<record_info->type<<endl;
     if(record_info != NULL){
         if (record_info->flag == "record") {
+            // cout<<id<<" "<<record_info->flag<<" "<<record_info->type<<endl;
+            // cout<<"record "<<id<<" "<<record_info->type<<endl;
             curTable = TheTypeTable->findID(record_info->type)->RecordTable;
-            // for(auto z:curTable->records)
-            // {
-            //     cout << z->flag <<" " << z->id << " " << z->type << endl;
-            // }
         }
     }
     // 访问第二个子节点
@@ -745,10 +744,6 @@ void GenerationVisitor::visit(Variable *variable )  {
             IDVarPart *idvarpart = i->DynamicCast<IDVarPart>();
             if (idvarpart->get_type() == IDVarPart::GrammarType::_ID)
             {
-                for(auto y:curTable->records)
-                {
-                    cout << y->flag << " " << y->id << " " << y->type << endl;
-                }
                 auto info = findID(curTable, i->get(0)->DynamicCast<LeafNode>()->get_value<string>(), 1);
                 if(info!=nullptr){
                     if(info->flag == "record")
@@ -767,11 +762,6 @@ void GenerationVisitor::visit(Variable *variable )  {
             {   
                 auto exp_list = idvarpart->get(0)->DynamicCast<ExpressionList>()->Lists();
                 auto record_info = findID(curTable, id, 0, "array");
-                cout<<id<<endl;
-                for (auto z : curTable->records)
-                {
-                    cout << z->flag << " " << z->id << " " << z->type << endl;
-                }
                 if(record_info == NULL){
                     
                     cout << "notfound" <<endl;

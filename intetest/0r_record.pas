@@ -7,14 +7,14 @@ type
     stu=record
     bo:books;
 end;
-var b:books;c:stu;
+var b:books;c:stu;d:integer;
 function test(a:books):integer;
 begin
     test:=a.title[0];
 end;
 begin
-    b.title[0]:=1;
-    c.bo.title[0]:=1;
-    write(b.title[0]);
-    write(test(b));
+    b.title[0]:=d;
+    d:=c.bo.title;
+    {write(b.title[0]);
+    write(test(b));}
 end.
