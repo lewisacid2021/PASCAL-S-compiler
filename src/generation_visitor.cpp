@@ -194,7 +194,7 @@ void GenerationVisitor::visit(VarDeclaration *vardeclaration)
         auto ArrayType = type_node->get(0)->DynamicCast<ArrayTypeNode>();
 
         auto id_list   = vardeclaration->get(-2)->DynamicCast<IdList>()->Lists();
-        for (uint i = 0; i < id_list.size(); i++)
+        for (unsigned int i = 0; i < id_list.size(); i++)
         {
             id_list[i]->accept(this);
             ArrayType->get(0)->accept(this);  //periods
@@ -514,6 +514,75 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
         }
         fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
     }
+        else if(procedureCall->get_id()=="sin"){
+        fprintf(fs, "sin((float)");
+        procedureCall->get(0)->accept(this);
+        fprintf(fs, ")");
+    }
+    else if(procedureCall->get_id()=="cos"){
+        fprintf(fs, "cos((float)");
+        procedureCall->get(0)->accept(this);
+        fprintf(fs, ")");
+    }
+    else if(procedureCall->get_id()=="sin"){
+        fprintf(fs, "sin((float)");
+        procedureCall->get(0)->accept(this);
+        fprintf(fs, ")");
+    }
+    else if(procedureCall->get_id()=="sqr"){
+        fprintf(fs, "(");
+        procedureCall->get(0)->accept(this);
+        fprintf(fs, "*");
+        procedureCall->get(0)->accept(this);
+        fprintf(fs, ")");
+    }
+    else if(procedureCall->get_id()=="odd"){
+        fprintf(fs, "(");
+        procedureCall->get(0)->accept(this);
+        fprintf(fs, "%2==1)");
+    }
+    else if(procedureCall->get_id()=="chr"){
+        fprintf(fs, "(char)");
+        procedureCall->get(0)->accept(this);
+    }
+    else if(procedureCall->get_id()=="ord"){
+        fprintf(fs, "(int)");
+        procedureCall->get(0)->accept(this);
+    }
+    else if(procedureCall->get_id()=="succ"){
+        fprintf(fs, "(");
+        procedureCall->get(0)->accept(this);
+        fprintf(fs, "+1)");
+    }
+    else if(procedureCall->get_id()=="pred"){
+        fprintf(fs, "(");
+        procedureCall->get(0)->accept(this);
+        fprintf(fs, "-1)");
+    }
+    else if(procedureCall->get_id()=="round"){
+        fprintf(fs, "(int)(");
+        procedureCall->get(0)->accept(this);
+        fprintf(fs, "+0.5)");
+    }
+    else if(procedureCall->get_id()=="trunc"){
+        fprintf(fs, "(int)");
+        procedureCall->get(0)->accept(this);
+    }
+    else if(procedureCall->get_id()=="exp"){
+        fprintf(fs, "exp((float)");
+        procedureCall->get(0)->accept(this);
+        fprintf(fs, ")");
+    }
+    else if(procedureCall->get_id()=="ln"){
+        fprintf(fs, "log((float)");
+        procedureCall->get(0)->accept(this);
+        fprintf(fs, ")");
+    }
+    else if(procedureCall->get_id()=="sqrt"){
+        fprintf(fs, "sqrt((float)");
+        procedureCall->get(0)->accept(this);
+        fprintf(fs, ")");
+    } 
     else{
         fprintf(fs, "%s", procedureCall->get_id().c_str());
         // 根据调用类型决定是否输出参数列表
