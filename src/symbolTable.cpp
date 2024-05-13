@@ -254,7 +254,7 @@ TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode)
     }
     if (mode != 0)
         return NULL;
-    if (currentSymbolTable->tableType == "subTable" && MainTable->idLoc.count(id)) {
+    if (MainTable->idLoc.count(id)) {
         size_t loc = static_cast<size_t>(MainTable->idLoc[id]);
         return MainTable->records[loc];
     }
