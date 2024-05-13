@@ -482,10 +482,17 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
 {
     string id = procedurecall->get_id();
     auto record_info = findID(MainTable, id, 1);
-    if(record_info == NULL)
-        record_info = findID(CurrentTable, id, 1);
     if(record_info == NULL){
         //错误处理，未定义
+    }
+
+    if(procedurecall->get_type() == ProcedureCall::ProcedureType::NO_LIST){
+        if(record_info->id == "exit"){
+            if(CurrentTable->records[0]->programInfo == "function"){
+                // 错误处理，function需要参数
+                return;
+            }
+        }
     }
 
     if(procedurecall->get_type() == ProcedureCall::ProcedureType::EXP_LIST){
@@ -504,16 +511,24 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
             }
             return;
         }
+        if(record_info->id == "exit"){
+            if(CurrentTable->records[0]->programInfo == "procedure"){
+                // 错误处理，procedure不需要参数
+                return;
+            }
+            if (exp_types->size() != 1) {
+                // 错误处理,exit的参数个数只能为1
+                return;
+            }
+            // 正常
+            return;
+        }
         if (record_info->id == "read") {  //参数只能是变量或数组元素，不能是常量、表达式等
             if (exp_types->size() == 0) {
                 //错误处理,read的参数个数不能为0
                 return;
             }
-            for (int i = 0; i < exp_types->size(); i++) {
-                if (!((*exp_types)[i] == "variant" || (*exp_types)[i] == "array" || (*exp_types)[i] == "(sub)program name")) {
-                    //错误处理
-                }
-            }
+            
             return;
         }
         if (exp_types->size() != record_info->amount) {  //checked
