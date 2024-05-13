@@ -711,6 +711,7 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                         sexpression->SetExpType(term_type);
                     } else {
                         //error
+                        std::cout << "Error: Type error. Line: " << sexpression->get_rownum() << std::endl;
                     }
                 } else {
                     if (sexpression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown") {
@@ -731,6 +732,7 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                         }
                     } else {
                         //error
+                        std::cout << "Error: Type error. Line: " << sexpression->get_rownum() << std::endl;
                     }
                 }
                 break;
@@ -751,6 +753,7 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                     sexpression->SetExpType("boolean");
                 } else {
                     //error
+                    std::cout << "Error: Type error. Line: " << sexpression->get_rownum() << std::endl;
                 }
                 break;
             }
