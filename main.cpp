@@ -8,6 +8,7 @@
 #include <iostream>
 
 extern FILE *yyin; 
+extern int error_flag;
 FILE * fs;
 SymbolTable * MainTable;
 SymbolTable* CurrentTable;
@@ -61,8 +62,9 @@ int main(int argc, char *argv[]){
                     else fs = stdout;
                     //lexical and grammar analysis
                     yyparse(ast);
-                    if(ast == NULL){
-                        std::cout << "unrecoverable errors occurred" << endl;
+                    if(error_flag == 1 || ast == NULL){
+                        std::cout << "unrecoverable errors occurred"  << endl;
+                        return 0;
                     }
                     //std::cout<<"Parsing finished"<<std::endl;
                     Semantic_Visitor->visit(ast);

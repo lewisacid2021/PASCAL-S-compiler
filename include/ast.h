@@ -639,7 +639,7 @@ class AssignopStatement: public AstNode
 
 class ProcedureCall: public AstNode
 {
-    // 其子节点为 id 叶子节点和可能存在的 ExpressionList 节点
+    // 其子节点为 可能存在的 ExpressionList 节点
   public:
     enum class ProcedureType
     {

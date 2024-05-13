@@ -238,7 +238,6 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
         {
             bound.push_back(make_pair(j.lowbound, j.upbound));
         }
-
         //数组上下界检查
         for (auto p : bound)
         {
@@ -467,7 +466,9 @@ void SemanticVisitor::visit(Variable *variable)
                 }
             }
         }
-
+        if(record_info->flag == "variant"){
+            variable->set_vn(record_info->type);
+        }
     } else {
         //子表未找到，到主表找
         record_info = findID(MainTable, id, 0);
@@ -482,9 +483,10 @@ void SemanticVisitor::visit(Variable *variable)
 void SemanticVisitor::visit(AssignopStatement *assignstatement)
 {
     LeafNode *leaf_node = assignstatement->get(0)->get(0)->DynamicCast<LeafNode>();
-    auto record_info    = findID(MainTable, leaf_node->get_value<string>(), 0);
+    auto record_info    = findID(CurrentTable, leaf_node->get_value<string>(), 0);
     if(record_info == NULL){
         //错误处理，未找到定义
+        return;
     }
     string left_type = record_info->type;
     string right_type;
@@ -496,12 +498,18 @@ void SemanticVisitor::visit(AssignopStatement *assignstatement)
 
     if (record_info->flag == "constant") {
         //错误处理，左值不能为常量
+        return ;
     }
-    if (record_info->flag == "function") {
-        if(record_info->id != CurrentTable->records[0]->id)
-        {
-            //错误处理，不能作为左值
+    if (record_info->flag == "function" || record_info->flag == "procedure" ){
+        // 使用非作用域内函数
+        return ;
+    }
+    if (record_info->flag == "(sub)program name") {
+        if(record_info->type == ""){
+            //错误处理，过程无返回值
+            return;
         }
+
         assignstatement->set_type(AssignopStatement::LeftType::FUNCID);
     }
     if (left_type != right_type && !(left_type == "real" && right_type == "integer")) {
@@ -520,30 +528,35 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
     }
 
     if(procedurecall->get_type() == ProcedureCall::ProcedureType::EXP_LIST){
-        procedurecall->get(1)->accept(this);
-        auto exp_types = procedurecall->get(1)->DynamicCast<ExpressionList>()->get_types();
+        procedurecall->get(-1)->accept(this);
+        auto exp_types = procedurecall->get(-1)->DynamicCast<ExpressionList>()->get_types();
 
-        if (record_info->id == "read" || record_info->id == "write") {
+        if (record_info->id == "write") {
             if (exp_types->size() == 0) {
                 //错误处理,read、write的参数个数不能为0
             }
+            return;
         }
         if (record_info->id == "read") {  //参数只能是变量或数组元素，不能是常量、表达式等
+            if (exp_types->size() == 0) {
+                //错误处理,read、write的参数个数不能为0
+                return;
+            }
             for (int i = 0; i < exp_types->size(); i++) {
                 if (!((*exp_types)[i] == "variant" || (*exp_types)[i] == "array" || (*exp_types)[i] == "(sub)program name")) {
                     //错误处理
                 }
             }
+            return;
         }
         if (exp_types->size() != record_info->amount) {  //checked
             //错误处理，参数数量不匹配
+            return;
         }
         for (int i = 0; i < exp_types->size(); i++) {
             string para_type = record_info->subSymbolTable->records[i + 1]->type;
             if (para_type != (*exp_types)[i]) {
-                if (!(para_type == "real" && (*exp_types)[i] == "integer")){
-                    //错误处理
-                }     
+                //错误处理   
             }
         }
     }
@@ -604,20 +617,9 @@ void SemanticVisitor::visit(LoopStatement *loopstatement)
                 //错误处理，类型错误
             }
             loopstatement->get(3)->accept(this);
+            break;
         } 
         case LoopStatement::LoopType::WHILE_:
-        {
-            auto expression = loopstatement->get(1)->DynamicCast<Expression>();
-            if (expression->GetExpType() == "unknown") {
-                expression->accept(this);
-            }
-            string expression_type = expression->GetExpType();
-            if (expression_type != "boolean") {
-                //错误处理，类型错误
-            }
-            loopstatement->get(0)->accept(this);
-        }
-        case LoopStatement::LoopType::REPEAT_:
         {
             auto expression = loopstatement->get(0)->DynamicCast<Expression>();
             if (expression->GetExpType() == "unknown") {
@@ -627,7 +629,21 @@ void SemanticVisitor::visit(LoopStatement *loopstatement)
             if (expression_type != "boolean") {
                 //错误处理，类型错误
             }
+            loopstatement->get(0)->accept(this);
+            break;
+        }
+        case LoopStatement::LoopType::REPEAT_:
+        {
+            auto expression = loopstatement->get(1)->DynamicCast<Expression>();
+            if (expression->GetExpType() == "unknown") {
+                expression->accept(this);
+            }
+            string expression_type = expression->GetExpType();
+            if (expression_type != "boolean") {
+                //错误处理，类型错误
+            }
             loopstatement->get(1)->accept(this);
+            break;
         }
     }
 }

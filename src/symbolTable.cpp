@@ -4,7 +4,7 @@
 
 using namespace std;
 
-SymbolTable *mainSymbolTable;  //主符号表
+extern SymbolTable * MainTable;;  //主符号表
 
 //添加传值参数
 void SymbolTable::addPara(string id, int rowNumber, string type)
@@ -85,19 +85,6 @@ void SymbolTable::addFunction(string id, int rowNumber, string type, int amount,
     temp->setFunction(id, rowNumber, type, amount, subSymbolTable);
     this->records.push_back(temp);
     this->idLoc[id] = int(records.size() - 1);
-}
-
-//添加子符号表
-void SymbolTable::addSubSymbolTable(string id, SymbolTable *subSymbolTable)
-{
-    if (idLoc.count(id))
-    {
-        size_t loc                   = static_cast<size_t>(idLoc[id]);
-        records[loc]->subSymbolTable = subSymbolTable;
-    } else
-    {
-        cout << "[addSubSymbolTable Error]:no such program\n";
-    }
 }
 
 //添加程序名
@@ -267,9 +254,29 @@ TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode)
     }
     if (mode != 0)
         return NULL;
-    if (currentSymbolTable->tableType == "subTable" && mainSymbolTable->idLoc.count(id)) {
-        size_t loc = static_cast<size_t>(mainSymbolTable->idLoc[id]);
-        return mainSymbolTable->records[loc];
+    if (currentSymbolTable->tableType == "subTable" && MainTable->idLoc.count(id)) {
+        size_t loc = static_cast<size_t>(MainTable->idLoc[id]);
+        return MainTable->records[loc];
+    }
+    return NULL;
+}
+
+TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode, string flag)
+{
+    if (currentSymbolTable->idLoc.count(id)) {
+        size_t loc = static_cast<size_t>(currentSymbolTable->idLoc[id]);
+        if(currentSymbolTable->records[loc]->flag == flag){
+            return currentSymbolTable->records[loc];
+        }
+    }
+    if (mode != 0)
+        return NULL;
+    if (MainTable->idLoc.count(id)) {
+        size_t loc = static_cast<size_t>(MainTable->idLoc[id]);
+        //cout << loc << endl;
+        if(MainTable->records[loc]->flag == flag){
+            return MainTable->records[loc];
+        }
     }
     return NULL;
 }

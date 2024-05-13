@@ -126,7 +126,6 @@ void GenerationVisitor::visit(TypeNode *typenode)
             fprintf(fs, "struct ");
             break;
         case TypeNode::VarType::ARRAY_TYPE:{
-            cout << typenode->get(0)->DynamicCast<ArrayTypeNode>()->type() << "a" << endl;
             string type = typenode->get(0)->DynamicCast<ArrayTypeNode>()->type();
             if(type=="integer"&&true)   //todo 查符号表 预定义标识符是否没被覆盖
                 fprintf(fs, "int");
@@ -738,12 +737,23 @@ void GenerationVisitor::visit(Variable *variable )  {
             else if (idvarpart->get_type() == IDVarPart::GrammarType::EXP_LIST)
             {   
                 auto exp_list = idvarpart->get(0)->DynamicCast<ExpressionList>()->Lists();
+                auto record_info = findID(CurrentTable, id, 0, "array");
+                if(record_info == NULL){
+                    // 错误处理
+                    cout << "notfound" <<endl;
+                    return;
+                }
+                vector< pair<int, int> > bound = record_info->arrayRange;
+                int i = 0;
                 for(auto exp : exp_list){
                     fprintf(fs, "[");
                     exp->accept(this);
-                    auto record_info = findID(CurrentTable, id, 0);
-
+                    if(bound[i].first!=0){
+                        fprintf(fs, " - ");
+                        fprintf(fs,"%d",bound[i].first);
+                    }
                     fprintf(fs, "]");
+                    i++;
                 }
             }
         }
