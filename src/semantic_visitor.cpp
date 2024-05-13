@@ -466,16 +466,8 @@ void SemanticVisitor::visit(Variable *variable)
                 }
             }
         }
-        if(record_info->flag == "variant"){
+        if(record_info->flag == "variant" || record_info->flag == "constant" || record_info->flag == "function"){
             variable->set_vn(record_info->type);
-        }
-    } else {
-        //子表未找到，到主表找
-        record_info = findID(MainTable, id, 0);
-        if (record_info != NULL) {
-            variable->set_vn(record_info->type);
-        } else {
-            //错误处理，找到未定义变量
         }
     }
 }

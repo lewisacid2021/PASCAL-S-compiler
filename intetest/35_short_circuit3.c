@@ -16,18 +16,24 @@ int a, b, d;
 int i0, i1, i2, i3, i4;
 int set_a(int val)
 {
+int _set_a_;
 a = val;
-return val;
+_set_a_ = val;
+return _set_a_;
 }
 int set_b(int val)
 {
+int _set_b_;
 b = val;
-return val;
+_set_b_ = val;
+return _set_b_;
 }
 int set_d(int val)
 {
+int _set_d_;
 d = val;
-return val;
+_set_d_ = val;
+return _set_d_;
 }
 int main() {
 a = 2;
@@ -49,7 +55,7 @@ if ((c >= 1) && (set_d(3) != 0))
 {
 }
 printf("%d",d);
-if ((c <= 1) or (set_d(4) != 0))
+if ((c <= 1) || (set_d(4) != 0))
 {
 }
 printf("%d",d);
@@ -82,11 +88,11 @@ i1 = 1;
 i2 = 2;
 i3 = 3;
 i4 = 4;
-if ((i0 != 0) or (i1 != 0))
+if ((i0 != 0) || (i1 != 0))
 {
 printf("%c",g);
 }
-if ((i0 >= i1) or (i1 <= i0))
+if ((i0 >= i1) || (i1 <= i0))
 {
 printf("%c",h);
 }
@@ -94,11 +100,11 @@ if ((i2 >= i1) && (i4 != i3))
 {
 printf("%c",i);
 }
-if ((i0 == 0) && (i3 < i3) or (i4 >= i4))
+if ((i0 == 0) && (i3 < i3) || (i4 >= i4))
 {
 printf("%c",j);
 }
-if ((i0 == 0) or (i3 < i3) && (i4 >= i4))
+if ((i0 == 0) || (i3 < i3) && (i4 >= i4))
 {
 printf("%c",k);
 }
