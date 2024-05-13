@@ -94,7 +94,11 @@ class TypeTable
   void addType(string id,bool isCoverd,SymbolTable* RecordTable);
   TypeTableRecord *findID(string id);
 
-  TypeTable(){}
+  TypeTable(){
+    addType("integer",false,NULL);
+    addType("real",false,NULL);
+    addType("boolean",false,NULL);
+  }
   ~TypeTable(){}
 };
 
