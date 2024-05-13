@@ -57,6 +57,7 @@ void SemanticVisitor::visit(ProgramHead *programhead)
     if (lib.count(id))
     {
         //错误处理
+        std::cout << "Error: Same name as library function. Line: " << programhead->get_rownum() << std::endl;
     }
 
     MainTable->addProcedure("read", -1, -1, NULL);
