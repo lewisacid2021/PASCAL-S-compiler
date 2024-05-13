@@ -54,7 +54,7 @@ void SemanticVisitor::visit(ProgramHead *programhead)
     //检查主程序是否与库函数重名
     if (lib.count(id))
     {
-        
+        //错误处理
     }
 
     MainTable->addProcedure("read", -1, -1, NULL);
