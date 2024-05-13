@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <tuple>
 #include <utility>
+#include <vector>
 
 using std::string;
 using std::vector;
@@ -437,7 +438,36 @@ void SemanticVisitor::visit(Variable *variable)
     auto record_info    = findID(CurrentTable, id, 0);
     if (record_info != NULL) {
         //暂未考虑记录型
-        variable->set_vn(record_info->type);
+        if(record_info->flag == "array"){
+            variable->set_vn(record_info->type);
+        }
+        if (record_info->flag == "record"){
+            if(variable->getCnodeList().size() == 1){
+                variable->set_vn("record");
+            }
+            else{
+                auto namelist = variable->get(1)->DynamicCast<IDVarParts>()->get_pointer();
+                SymbolTable* curtable;
+                curtable = record_info->subSymbolTable;
+                for(auto p:*namelist){
+                    if(p != "none"){
+                        if(curtable != NULL){
+                            auto r = findID(curtable, p, 1);
+                            if (r == NULL) {
+                                //错误处理，record没有该子成员
+                            } else {
+                                variable->set_vn(r->type);
+                                curtable = r->subSymbolTable;
+                            }
+                        }   
+                        else{
+                            //错误处理,不是record类型
+                        } 
+                    }
+                }
+            }
+        }
+
     } else {
         //子表未找到，到主表找
         record_info = findID(MainTable, id, 0);
@@ -453,9 +483,151 @@ void SemanticVisitor::visit(AssignopStatement *assignstatement)
 {
     LeafNode *leaf_node = assignstatement->get(0)->get(0)->DynamicCast<LeafNode>();
     auto record_info    = findID(MainTable, leaf_node->get_value<string>(), 0);
-    if (record_info != NULL) {
-        if (record_info->flag == "function") {
-            assignstatement->set_type(AssignopStatement::LeftType::FUNCID);
+    if(record_info == NULL){
+        //错误处理，未找到定义
+    }
+    string left_type = record_info->type;
+    string right_type;
+    auto expression = assignstatement->get(1)->DynamicCast<Expression>();
+    if(expression->GetExpType() == "unknown"){
+        expression->accept(this);
+    }
+    right_type = expression->GetExpType();
+
+    if (record_info->flag == "constant") {
+        //错误处理，左值不能为常量
+    }
+    if (record_info->flag == "function") {
+        if(record_info->id != CurrentTable->records[0]->id)
+        {
+            //错误处理，不能作为左值
+        }
+        assignstatement->set_type(AssignopStatement::LeftType::FUNCID);
+    }
+    if (left_type != right_type && !(left_type == "real" && right_type == "integer")) {
+        //错误处理，类型不匹配
+    }
+}
+
+void SemanticVisitor::visit(ProcedureCall *procedurecall)
+{
+    string id = procedurecall->get_id();
+    auto record_info = findID(MainTable, id, 1);
+    if(record_info == NULL)
+        record_info = findID(CurrentTable, id, 1);
+    if(record_info == NULL){
+        //错误处理，未定义
+    }
+
+    if(procedurecall->get_type() == ProcedureCall::ProcedureType::EXP_LIST){
+        procedurecall->get(1)->accept(this);
+        auto exp_types = procedurecall->get(1)->DynamicCast<ExpressionList>()->get_types();
+
+        if (record_info->id == "read" || record_info->id == "write") {
+            if (exp_types->size() == 0) {
+                //错误处理,read、write的参数个数不能为0
+            }
+        }
+        if (record_info->id == "read") {  //参数只能是变量或数组元素，不能是常量、表达式等
+            for (int i = 0; i < exp_types->size(); i++) {
+                if (!((*exp_types)[i] == "variant" || (*exp_types)[i] == "array" || (*exp_types)[i] == "(sub)program name")) {
+                    //错误处理
+                }
+            }
+        }
+        if (exp_types->size() != record_info->amount) {  //checked
+            //错误处理，参数数量不匹配
+        }
+        for (int i = 0; i < exp_types->size(); i++) {
+            string para_type = record_info->subSymbolTable->records[i + 1]->type;
+            if (para_type != (*exp_types)[i]) {
+                if (!(para_type == "real" && (*exp_types)[i] == "integer")){
+                    //错误处理
+                }     
+            }
+        }
+    }
+}
+
+void SemanticVisitor::visit(IfStatement *ifstatement)
+{
+    auto expression = ifstatement->get(0)->DynamicCast<Expression>();
+    if(expression->GetExpType() == "unknown"){
+        expression->accept(this);
+    }
+    string expression_type = expression->GetExpType();
+    if(expression_type != "boolean"){
+        //错误处理，类型错误
+    }
+    ifstatement->get(1)->accept(this);
+    auto elsepart = ifstatement->get(2)->DynamicCast<ElsePart>();
+    if(elsepart->get_type() == ElsePart::ELSEType::ELSE_STATEMENT)
+        elsepart->get(0)->accept(this);
+}
+
+void SemanticVisitor::visit(LoopStatement *loopstatement)
+{
+    switch(loopstatement->get_type()){
+        case LoopStatement::LoopType::FORUP:
+        case LoopStatement::LoopType::FORDOWN:
+        {
+            string id = loopstatement->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+            auto record_info = findID(CurrentTable, id, 1);
+            if(record_info == NULL)
+            {
+                //错误处理，循环变量未定义
+            }
+            if (!(record_info->flag != "value parameter" || record_info->flag != "var parameter" || record_info->flag != "variant"))
+            {
+                //错误处理，不能作为循环变量
+            }
+            if(record_info->type != "integer")
+            {
+                //错误处理，循环变量类型错误
+            }
+            auto expression1 = loopstatement->get(1)->DynamicCast<Expression>();
+            auto expression2 = loopstatement->get(2)->DynamicCast<Expression>();
+            if (expression1->GetExpType() == "unknown") {
+                expression1->accept(this);
+            }
+            string expression_type1 = expression1->GetExpType();
+            if(expression_type1 != "integer")
+            {
+                //错误处理，类型错误
+            }
+            if (expression2->GetExpType() == "unknown") {
+                expression2->accept(this);
+            }
+            string expression_type2 = expression1->GetExpType();
+            if (expression_type2 != "integer")
+            {
+                //错误处理，类型错误
+            }
+            loopstatement->get(3)->accept(this);
+        } 
+        case LoopStatement::LoopType::WHILE_:
+        {
+            auto expression = loopstatement->get(1)->DynamicCast<Expression>();
+            if (expression->GetExpType() == "unknown") {
+                expression->accept(this);
+            }
+            string expression_type = expression->GetExpType();
+            if (expression_type != "boolean") {
+                //错误处理，类型错误
+            }
+            loopstatement->get(0)->accept(this);
+        }
+        case LoopStatement::LoopType::REPEAT_:
+        {
+            auto expression = loopstatement->get(0)->DynamicCast<Expression>();
+            if (expression->GetExpType() == "unknown") {
+                expression->accept(this);
+            }
+            string expression_type = expression->GetExpType();
+            if (expression_type != "boolean") {
+                //错误处理，类型错误
+            }
+            loopstatement->get(1)->accept(this);
         }
     }
 }
@@ -483,7 +655,7 @@ void SemanticVisitor::visit(Expression *expression)
                     expression->get(0)->accept(this);
                 }
                 string sexpression_type1 = expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType();
-                if (expression->get(0)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown") {
+                if (expression->get(1)->DynamicCast<SimpleExpression>()->GetExpType() == "unknown") {
                     expression->get(1)->accept(this);
                 }
                 string sexpression_type2 = expression->get(1)->DynamicCast<SimpleExpression>()->GetExpType();
@@ -525,7 +697,7 @@ void SemanticVisitor::visit(SimpleExpression *sexpression)
                     }
                     string term_type = sexpression->get(0)->DynamicCast<Term>()->GetTerType();
                     //类型检查
-                    if (term_type == "real" || term_type == "integer") {
+                    if (term_type == "real" || term_type == "integer" || term_type == "char") {
                         sexpression->SetExpType(term_type);
                     } else {
                         //error

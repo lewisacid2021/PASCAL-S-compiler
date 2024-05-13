@@ -1052,11 +1052,11 @@ class SemanticVisitor: public Visitor
     void visit(CompoundStatement *compoundStatement) override { visitchild(compoundStatement);};
     void visit(StatementList *statementList) override { visitchild(statementList);};
     void visit(Statement *statement) override { visitchild(statement);};
-    void visit(IfStatement *ifStatement) override { visitchild(ifStatement);};
+    void visit(IfStatement *ifStatement) override;
     void visit(ElsePart *elseNode) override { visitchild(elseNode);};
-    void visit(ProcedureCall *procedureCall) override { visitchild(procedureCall);};
+    void visit(ProcedureCall *procedureCall) override;
     void visit(AssignopStatement *assignopStatement) override;
-    void visit(LoopStatement *loopStatement) override { visitchild(loopStatement);};
+    void visit(LoopStatement *loopStatement) override;
     void visit(Variable *variable) override;
     void visit(VariableList *variableList) override;
     void visit(IDVarPart *idVarPart) override { visitchild(idVarPart);};
