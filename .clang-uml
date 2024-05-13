@@ -6,8 +6,8 @@ diagrams:
   example_class_diagram:
     type: class
     glob:
-      - include/*.h
-      - src/*.cpp
+      - include/symbolTable.h
+      - src/symbolTable.cpp
     exclude:
       namespaces:
         - std
