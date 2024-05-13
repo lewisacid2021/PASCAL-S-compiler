@@ -18,10 +18,6 @@ extern SymbolTable *MainTable;
 extern SymbolTable *CurrentTable;
 extern TypeTable *TheTypeTable;
 
-void addDuplicateNameError()
-{
-    int a;
-}  //重名错误
 //检查是否与主程序名，主程序参数，库函数重名
 bool checkDuplicateNameError(string id, int lineNumber)
 {
@@ -58,7 +54,7 @@ void SemanticVisitor::visit(ProgramHead *programhead)
     //检查主程序是否与库函数重名
     if (lib.count(id))
     {
-        addDuplicateNameError();
+        
     }
 
     MainTable->addProcedure("read", -1, -1, NULL);
