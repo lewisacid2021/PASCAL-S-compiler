@@ -4,22 +4,39 @@
 
 using namespace std;
 
-extern SymbolTable * MainTable;;  //主符号表
+extern SymbolTable *MainTable;
+;  //主符号表
 
 //添加传值参数
-void SymbolTable::addPara(string id, int rowNumber, string type)
+void SymbolTable::addPara(string flag, string id, int rowNumber, string type)
 {
     TableRecord *temp = new TableRecord;
-    temp->setPara(id, rowNumber, type);
+    temp->setPara(flag, id, rowNumber, type);
+    this->records.push_back(temp);
+    this->idLoc[id] = int(records.size() - 1);
+}
+
+void SymbolTable::addArrayPara(string flag, string id, int rowNumber, string type, vector< pair<int, int> > arrayRange)
+{
+    TableRecord *temp = new TableRecord;
+    temp->setArrayPara(flag, id, rowNumber, type, arrayRange);
     this->records.push_back(temp);
     this->idLoc[id] = int(records.size() - 1);
 }
 
 //添加引用参数
-void SymbolTable::addVarPara(string id, int rowNumber, string type)
+void SymbolTable::addVarPara(string flag, string id, int rowNumber, string type)
 {
     TableRecord *temp = new TableRecord;
-    temp->setVarPara(id, rowNumber, type);
+    temp->setVarPara(flag, id, rowNumber, type);
+    this->records.push_back(temp);
+    this->idLoc[id] = int(records.size() - 1);
+}
+
+void SymbolTable::addArrayVarPara(string flag, string id, int rowNumber, string type, vector< pair<int, int> > arrayRange)
+{
+    TableRecord *temp = new TableRecord;
+    temp->setArrayVarPara(flag, id, rowNumber, type, arrayRange);
     this->records.push_back(temp);
     this->idLoc[id] = int(records.size() - 1);
 }
@@ -121,25 +138,51 @@ SymbolTable::SymbolTable(string type)
     this->tableType = type;
 }
 
-void TableRecord::setPara(string id_para, int rowNumber_para, string type_para)
+void TableRecord::setPara(string flag, string id_para, int rowNumber_para, string type_para)
 {
-    flag            = "value parameter";
+    this->flag      = flag;
     this->id        = id_para;
+    this->isPara    = true;
+    this->isRefered = false;
     this->rowNumber = rowNumber_para;
     this->type      = type_para;
 }
 
-void TableRecord::setVarPara(string id_para, int rowNumber_para, string type_para)
+void TableRecord::setArrayPara(string flag, string id_para, int rowNumber_para, string type_para, vector< pair<int, int> > arrayRange)
 {
-    flag            = "var parameter";
+    this->flag       = flag;
+    this->id         = id_para;
+    this->isPara     = true;
+    this->isRefered  = false;
+    this->rowNumber  = rowNumber_para;
+    this->type       = type_para;
+    this->arrayRange = arrayRange;
+}
+
+void TableRecord::setVarPara(string flag, string id_para, int rowNumber_para, string type_para)
+{
+    this->flag      = flag;
     this->id        = id_para;
+    this->isPara    = true;
+    this->isRefered = true;
     this->rowNumber = rowNumber_para;
     this->type      = type_para;
+}
+
+void TableRecord::setArrayVarPara(string flag, string id_para, int rowNumber_para, string type_para, vector< pair<int, int> > arrayRange)
+{
+    this->flag      = flag;
+    this->id        = id_para;
+    this->isPara    = true;
+    this->isRefered = true;
+    this->rowNumber = rowNumber_para;
+    this->type      = type_para;
+    this->arrayRange = arrayRange;
 }
 
 void TableRecord::setVar(string id_para, int rowNumber_para, string type_para)
 {
-    flag            = "variant";
+    this->flag      = "variant";
     this->id        = id_para;
     this->rowNumber = rowNumber_para;
     this->type      = type_para;
@@ -147,7 +190,7 @@ void TableRecord::setVar(string id_para, int rowNumber_para, string type_para)
 
 void TableRecord::setConst(string id_para, int rowNumber_para, string type_para, bool isMinus_para, string value_para)
 {
-    flag            = "constant";
+    this->flag      = "constant";
     this->id        = id_para;
     this->rowNumber = rowNumber_para;
     this->type      = type_para;
@@ -156,7 +199,7 @@ void TableRecord::setConst(string id_para, int rowNumber_para, string type_para,
 
 void TableRecord::setArray(string id_para, int rowNumber_para, string type_para, int amount_para, vector< pair<int, int> > arrayRange_para)
 {
-    flag             = "array";
+    this->flag       = "array";
     this->id         = id_para;
     this->rowNumber  = rowNumber_para;
     this->type       = type_para;
@@ -166,7 +209,7 @@ void TableRecord::setArray(string id_para, int rowNumber_para, string type_para,
 
 void TableRecord::setString(string id_para, int rowNumber_para, string type_para, int amount_para)
 {
-    flag            = "string";
+    this->flag      = "string";
     this->id        = id_para;
     this->rowNumber = rowNumber_para;
     this->type      = type_para;
@@ -175,7 +218,7 @@ void TableRecord::setString(string id_para, int rowNumber_para, string type_para
 
 void TableRecord::setRecord(string id_para, string recordName, int rowNumber_para, SymbolTable *subSymbolTable_para)
 {
-    flag                 = "record";
+    this->flag           = "record";
     this->id             = id_para;
     this->type           = recordName;
     this->rowNumber      = rowNumber_para;
@@ -184,7 +227,7 @@ void TableRecord::setRecord(string id_para, string recordName, int rowNumber_par
 
 void TableRecord::setProcedure(string id_para, int rowNumber_para, int amount_para, SymbolTable *subSymbolTable_para)
 {
-    flag                 = "procedure";
+    this->flag           = "procedure";
     this->id             = id_para;
     this->rowNumber      = rowNumber_para;
     this->amount         = amount_para;
@@ -193,7 +236,7 @@ void TableRecord::setProcedure(string id_para, int rowNumber_para, int amount_pa
 
 void TableRecord::setFunction(string id_para, int rowNumber_para, string type_para, int amount_para, SymbolTable *subSymbolTable_para)
 {
-    flag                 = "function";
+    this->flag           = "function";
     this->id             = id_para;
     this->rowNumber      = rowNumber_para;
     this->type           = type_para;
@@ -203,7 +246,7 @@ void TableRecord::setFunction(string id_para, int rowNumber_para, string type_pa
 
 void TableRecord::setProgramName(string id_para, int rowNumber_para, string programInfo_para, int amount_para, string returnType)
 {
-    flag              = "(sub)program name";
+    this->flag        = "(sub)program name";
     this->id          = id_para;
     this->rowNumber   = rowNumber_para;
     this->programInfo = programInfo_para;
@@ -213,7 +256,7 @@ void TableRecord::setProgramName(string id_para, int rowNumber_para, string prog
 
 void TableRecord::setVoidPara(string id_para, int rowNumber_para)
 {
-    flag            = "parameter of program";
+    this->flag      = "parameter of program";
     this->id        = id_para;
     this->rowNumber = rowNumber_para;
 }
@@ -265,7 +308,7 @@ TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode, string
 {
     if (currentSymbolTable->idLoc.count(id)) {
         size_t loc = static_cast<size_t>(currentSymbolTable->idLoc[id]);
-        if(currentSymbolTable->records[loc]->flag == flag){
+        if (currentSymbolTable->records[loc]->flag == flag) {
             return currentSymbolTable->records[loc];
         }
     }
@@ -274,7 +317,7 @@ TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode, string
     if (MainTable->idLoc.count(id)) {
         size_t loc = static_cast<size_t>(MainTable->idLoc[id]);
         //cout << loc << endl;
-        if(MainTable->records[loc]->flag == flag){
+        if (MainTable->records[loc]->flag == flag) {
             return MainTable->records[loc];
         }
     }

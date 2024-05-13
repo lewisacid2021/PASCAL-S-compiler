@@ -53,7 +53,7 @@ void GenerationVisitor::visit(LeafNode *leafnode)
                 string leaf_id = leafnode->get_value<string>();
                 auto record_info = findID(CurrentTable, leaf_id, 1);
                 if(record_info != NULL){
-                    if(record_info->flag == "var parameter"){
+                    if(record_info->isRefered){
                         leafnode->set_ref(true);
                     }
                 }
@@ -581,7 +581,7 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
                             if(lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE){
                                 auto table_info = findID(MainTable, procedureCall->get_id(), 0);
                                 if(table_info != NULL){                  
-                                    if(table_info->subSymbolTable->records[i+1]->flag == "var parameter"){
+                                    if(table_info->subSymbolTable->records[i+1]->isRefered){
                                         fprintf(fs, "&");
                                     }  
                                 }
@@ -718,33 +718,60 @@ void GenerationVisitor::visit(LoopStatement *loopStatement )
 void GenerationVisitor::visit(Variable *variable )  {
     // 访问第一个子节点
     variable->get(0)-> accept(this);
+    SymbolTable *curTable=CurrentTable;
     string id = variable->get(0)->DynamicCast<LeafNode>()->get_value<string>();
     auto record_info = findID(MainTable, id, 0);
     if(record_info != NULL){
         if(record_info->flag == "function"){
             fprintf(fs, "()");
+            return;
+        }
+    }
+    record_info = findID(CurrentTable,id,0);
+    if(record_info != NULL){
+        if (record_info->flag == "record") {
+            curTable = TheTypeTable->findID(record_info->type)->RecordTable;
+            // for(auto z:curTable->records)
+            // {
+            //     cout << z->flag <<" " << z->id << " " << z->type << endl;
+            // }
         }
     }
     // 访问第二个子节点
     if(variable->getCnodeList().size() == 2){
         std::vector<AstNode *> list = variable->get(1)->DynamicCast<IDVarParts>()->Lists();
-        SymbolTable * curTable=CurrentTable;
         // 遍历子节点列表并逐个访问
         for (auto i : list) {
             IDVarPart *idvarpart = i->DynamicCast<IDVarPart>();
             if (idvarpart->get_type() == IDVarPart::GrammarType::_ID)
             {
-                auto info=findID(curTable,i->get(0)->DynamicCast<LeafNode>()->get_value<string>(),1);
-                if(info!=nullptr){
-                    
+                for(auto y:curTable->records)
+                {
+                    cout << y->flag << " " << y->id << " " << y->type << endl;
                 }
+                auto info = findID(curTable, i->get(0)->DynamicCast<LeafNode>()->get_value<string>(), 1);
+                if(info!=nullptr){
+                    if(info->flag == "record")
+                    {
+                        curTable = TheTypeTable->findID(info->type)->RecordTable;
+                    }
+                }
+                else {
+                    cout << "Error: not a member of "<<id<<" Line:"<<i->get_rownum() <<endl;
+                }
+                id = i->get(0)->DynamicCast<LeafNode>()->get_value<string>();
                 fprintf(fs, ".");
                 idvarpart->get(0)->accept(this);// 访问 id
             }
             else if (idvarpart->get_type() == IDVarPart::GrammarType::EXP_LIST)
             {   
                 auto exp_list = idvarpart->get(0)->DynamicCast<ExpressionList>()->Lists();
-                auto record_info = findID(CurrentTable, id, 0, "array");
+                auto record_info = findID(curTable, id, 0, "array");
+                cout<<id<<endl;
+                for (auto z : curTable->records)
+                {
+                    cout << z->flag << " " << z->id << " " << z->type << endl;
+                }
                 if(record_info == NULL){
                     
                     cout << "notfound" <<endl;
@@ -881,7 +908,7 @@ void GenerationVisitor::visit(VariableList *variableList )   {
                             if(lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE){
                                 auto table_info = findID(MainTable, factor->get(0)->DynamicCast<LeafNode>()->get_value<string>(), 0);
                                 if(table_info != NULL){                  
-                                    if(table_info->subSymbolTable->records[i+1]->flag == "var parameter"){
+                                    if(table_info->subSymbolTable->records[i+1]->isRefered){
                                         fprintf(fs, "&");
                                     }  
                                 }
