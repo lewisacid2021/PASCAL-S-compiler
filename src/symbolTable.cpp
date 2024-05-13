@@ -95,7 +95,7 @@ void SymbolTable::addProgramName(string id, int rowNumber, string programInfo, i
         for (auto i : records) {
             cout << i->flag << i->type << i->id << endl;
         }
-        cout << "[addProgramName Error]:records is not null";
+        cout << "Error: The Table is not null. Line: " << rowNumber << endl;
         return;
     }
     TableRecord *temp = new TableRecord;

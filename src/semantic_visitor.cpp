@@ -19,7 +19,7 @@ extern SymbolTable *CurrentTable;
 extern TypeTable *TheTypeTable;
 extern int math_flag;
 
-//检查是否与主程序名，主程序参数，库函数重名
+//检查是否与库函数重名
 bool checkDuplicateNameError(string id, int lineNumber)
 {
     for (int i = 0; i < 4; i++) {
@@ -60,12 +60,13 @@ void SemanticVisitor::visit(ProgramHead *programhead)
         std::cout << "Error: Same name as library function. Line: " << programhead->get_rownum() << std::endl;
     }
 
+    //添加read过程
     MainTable->addProcedure("read", -1, -1, NULL);
-    //添加write过程，该过程变参
+    //添加write过程
     MainTable->addProcedure("write", -1, -1, NULL);
-    //添加writeln过程，该过程变参
+    //添加writeln过程
     MainTable->addProcedure("writeln", -1, -1, NULL);
-    //添加exit过程，该过程的参数个数需要分情况讨论，程序里会有特判，这里指定为0没有特殊含义
+    //添加exit过程
     MainTable->addProcedure("exit", -1, 0, NULL);
 }
 
