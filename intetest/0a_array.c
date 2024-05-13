@@ -3,7 +3,8 @@
 int test(int a[][11])
 {
 int _test_;
-_test_ = a[0][2];
+printf("",a);
+_test_ = 1;
 return _test_;
 }
 int main() {

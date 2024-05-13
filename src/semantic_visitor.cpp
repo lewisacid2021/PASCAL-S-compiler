@@ -421,14 +421,16 @@ void SemanticVisitor::visit(Variable *variable)
         if(record_info->flag == "array"){
             variable->set_vn(record_info->type);
         }
-        else if (record_info->flag == "record"){
+        else if (record_info->flag == "record"||(TheTypeTable->findID(record_info->type)!=NULL&&TheTypeTable->findID(record_info->type)->RecordTable)){
             if(variable->getCnodeList().size() == 1){
                 variable->set_vn("record");
+                cout<<"A record can't be used singally, line:"<<variable->get_rownum()<<endl;
+                return;
             }
             else{
                 auto namelist = variable->get(1)->DynamicCast<IDVarParts>()->get_pointer();
                 SymbolTable* curtable;
-                curtable = record_info->subSymbolTable;
+                curtable = TheTypeTable->findID(record_info->type)->RecordTable;
                 for(auto p:*namelist){
                     if(p != "none"){
                         if(curtable != NULL){
@@ -457,20 +459,23 @@ void SemanticVisitor::visit(Variable *variable)
 
 void SemanticVisitor::visit(AssignopStatement *assignstatement)
 {
-    LeafNode *leaf_node = assignstatement->get(0)->get(0)->DynamicCast<LeafNode>();
-    auto record_info    = findID(CurrentTable, leaf_node->get_value<string>(), 0);
-    if(record_info == NULL){
-        //错误处理，未找到定义
-        std::cout << "Error: Definition not found. Line: " << assignstatement->get_rownum() << std::endl;
-        return;
+    string id=assignstatement->get(0)->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+    auto record_info=findID(CurrentTable,id,0);
+    if(record_info==NULL)
+    {
+        cout<<"Error: Undefined. Line: "<<assignstatement->get_rownum()<<endl;
+        return ;
     }
-    string left_type = record_info->type;
+
+    assignstatement->get(0)->accept(this);
+    string left_type = assignstatement->get(0)->DynamicCast<Variable>()->get_vn();
     string right_type;
     auto expression = assignstatement->get(1)->DynamicCast<Expression>();
     if(expression->GetExpType() == "unknown"){
         expression->accept(this);
     }
     right_type = expression->GetExpType();
+   // cout<<left_type<<" "<<right_type<<endl;
 
     if (record_info->flag == "constant") {
         //错误处理，左值不能为常量
