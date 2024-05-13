@@ -1,6 +1,6 @@
 #include "ast.h"
-#include "type.h"
 #include "symbolTable.h"
+#include "type.h"
 #include <cstddef>
 #include <cstdio>
 #include <iostream>
@@ -11,16 +11,16 @@ extern FILE *fs;
 using std::string;
 using std::vector;
 
-extern SymbolTable* MainTable;
-extern SymbolTable* CurrentTable;
-extern TypeTable* TheTypeTable;
+extern SymbolTable *MainTable;
+extern SymbolTable *CurrentTable;
+extern TypeTable *TheTypeTable;
 
 namespace ast {
 
 void GenerationVisitor::visit(AST *AST)
 {
-    fprintf(fs,"#include<stdio.h>\n");    //for test
-    fprintf(fs,"#include<stdbool.h>\n");
+    fprintf(fs, "#include<stdio.h>\n");  //for test
+    fprintf(fs, "#include<stdbool.h>\n");
     AST->getRoot()->accept(this);
 }
 
@@ -49,11 +49,11 @@ void GenerationVisitor::visit(LeafNode *leafnode)
         {
             if (leafnode->getLeafType() == LeafNode::LeafType::VALUE)
                 fprintf(fs, "\"%s\"", leafnode->get_value<string>().c_str());
-            else{
-                string leaf_id = leafnode->get_value<string>();
+            else {
+                string leaf_id   = leafnode->get_value<string>();
                 auto record_info = findID(CurrentTable, leaf_id, 1);
-                if(record_info != NULL){
-                    if(record_info->isRefered){
+                if (record_info != NULL) {
+                    if (record_info->isRefered) {
                         leafnode->set_ref(true);
                     }
                 }
@@ -88,7 +88,7 @@ void ConstDeclaration::print_type()
         case ConstValue::ConstvalueType::CHAR:
         case ConstValue::ConstvalueType::STRING:
             fprintf(fs, "char ");
-            if(type == ConstValue::ConstvalueType::STRING)
+            if (type == ConstValue::ConstvalueType::STRING)
                 fprintf(fs, "*");
             break;
         default:
@@ -97,7 +97,7 @@ void ConstDeclaration::print_type()
 }
 
 void GenerationVisitor::visit(ConstDeclaration *constdeclaration)
-{   
+{
     if (constdeclaration->GetGrammarType() == ConstDeclaration::GrammarType::MULTIPLE_ID)
     {
         constdeclaration->get(0)->accept(this);
@@ -125,29 +125,32 @@ void GenerationVisitor::visit(TypeNode *typenode)
         case TypeNode::VarType::RECORD_TYPE:
             fprintf(fs, "struct ");
             break;
-        case TypeNode::VarType::ARRAY_TYPE:{
+        case TypeNode::VarType::ARRAY_TYPE:
+        {
             string type = typenode->get(0)->DynamicCast<ArrayTypeNode>()->type();
-            if(type=="integer"&&true)   //todo 查符号表 预定义标识符是否没被覆盖
+            if (type == "integer" && true)  //todo 查符号表 预定义标识符是否没被覆盖
                 fprintf(fs, "int");
-            else if(type=="boolean"&&true) 
+            else if (type == "boolean" && true)
                 fprintf(fs, "bool");
-            else if(type=="real"&&true) 
+            else if (type == "real" && true)
                 fprintf(fs, "float");
-            else  fprintf(fs, "%s", type.c_str());
+            else
+                fprintf(fs, "%s", type.c_str());
             break;
         }
         case TypeNode::VarType::ID_TYPE:
         {
-            if(typenode->get_type_name()=="integer"&&TheTypeTable->findID("integer")->RecordTable==nullptr)   //todo 查类型表 预定义标识符是否没被覆盖
+            if (typenode->get_type_name() == "integer" && TheTypeTable->findID("integer")->RecordTable == nullptr)  //todo 查类型表 预定义标识符是否没被覆盖
                 fprintf(fs, "int");
-            else if(typenode->get_type_name()=="boolean"&&TheTypeTable->findID("boolean")->RecordTable==nullptr) 
+            else if (typenode->get_type_name() == "boolean" && TheTypeTable->findID("boolean")->RecordTable == nullptr)
                 fprintf(fs, "bool");
-            else if(typenode->get_type_name()=="real"&&TheTypeTable->findID("real")->RecordTable==nullptr) 
+            else if (typenode->get_type_name() == "real" && TheTypeTable->findID("real")->RecordTable == nullptr)
                 fprintf(fs, "float");
-            else 
+            else
             {
                 //todo 查询类型表判断是否为record
-                if(TheTypeTable->findID(typenode->get_type_name())->RecordTable!=nullptr) fprintf(fs,"struct ");
+                if (TheTypeTable->findID(typenode->get_type_name())->RecordTable != nullptr)
+                    fprintf(fs, "struct ");
                 fprintf(fs, "%s", typenode->get_type_name().c_str());
             }
             break;
@@ -201,7 +204,7 @@ void GenerationVisitor::visit(VarDeclaration *vardeclaration)
             else
                 fprintf(fs, ";\n");
         }
-    }else {
+    } else {
         //idlist
         vardeclaration->get(-2)->accept(this);
         fprintf(fs, ";\n");
@@ -218,15 +221,15 @@ void GenerationVisitor::visit(PeriodsNode *periodsnode)
 
 void GenerationVisitor::visit(SubprogramDeclaration *subprogramdeclaration)
 {
-    auto headnode = subprogramdeclaration->get(0)->DynamicCast<SubprogramHead>();
-    string id = headnode->get_id();
-    bool isFunc   = (headnode->get_type() == SubprogramHead::SubprogramType::FUNC);
-   
-    auto record_info = findID(MainTable, id, 0);
-    CurrentTable = record_info->subSymbolTable;
+    auto headnode    = subprogramdeclaration->get(0)->DynamicCast<SubprogramHead>();
+    string id        = headnode->get_id();
+    bool isFunc      = (headnode->get_type() == SubprogramHead::SubprogramType::FUNC);
 
-    if (isFunc)  //判断是函数还是过程 过程类型为void 无返回值
-        id   = "_" + id + "_";
+    auto record_info = findID(MainTable, id, 0);
+    CurrentTable     = record_info->subSymbolTable;
+
+    if (isFunc)              //判断是函数还是过程 过程类型为void 无返回值
+        id = "_" + id + "_";
 
     headnode->accept(this);  //subprogramhead
 
@@ -250,7 +253,7 @@ void GenerationVisitor::visit(SubprogramDeclaration *subprogramdeclaration)
 }
 
 void GenerationVisitor::visit(SubprogramHead *subprogramhead)
-{   
+{
     if (subprogramhead->get_type() == SubprogramHead::SubprogramType::PROC)
         fprintf(fs, "void ");
     else
@@ -264,7 +267,6 @@ void GenerationVisitor::visit(SubprogramHead *subprogramhead)
     fprintf(fs, "(");
     subprogramhead->get(1)->accept(this);  //formal_param
     fprintf(fs, ")\n");
-
 }
 
 void GenerationVisitor::visit(ParamLists *paramlists)
@@ -281,26 +283,27 @@ void GenerationVisitor::visit(ParamLists *paramlists)
 
 void GenerationVisitor::visit(ValueParam *valueparam)
 {
-    auto id_list = valueparam->get(0)->DynamicCast<IdList>();
-    auto type    = valueparam->get(1)->DynamicCast<TypeNode>();
+    auto id_list            = valueparam->get(0)->DynamicCast<IdList>();
+    auto type               = valueparam->get(1)->DynamicCast<TypeNode>();
 
     vector<LeafNode *> list = id_list->Lists();
-    size_t n=list.size();
-    for(size_t i=0;i<n;i++)
+    size_t n                = list.size();
+    for (size_t i = 0; i < n; i++)
     {
         type->accept(this);
-        fprintf(fs, " %s",list[i]->id_ref().c_str());
-        if(type->GetVarType() == TypeNode::VarType::ARRAY_TYPE)
+        fprintf(fs, " %s", list[i]->id_ref().c_str());
+        if (type->GetVarType() == TypeNode::VarType::ARRAY_TYPE)
         {
-            auto dim_info=type->get(0)->DynamicCast<ArrayTypeNode>()->info();
-            auto dim_size = dim_info->GetDimsum();  //获取数组维数
-            for(size_t i=0;i<dim_size;i++)
-                if(i!=dim_size-1)
-                    fprintf(fs,"[]");     //除了最后一维，打印[]
-                else fprintf(fs,"[%d]",dim_info->GetDimension(i).upbound-dim_info->GetDimension(i).lowbound+1); //最后一维打印长度
+            auto dim_info = type->get(0)->DynamicCast<ArrayTypeNode>()->info();
+            auto dim_size = dim_info->GetDimsum();                                                                    //获取数组维数
+            for (size_t i = 0; i < dim_size; i++)
+                if (i != dim_size - 1)
+                    fprintf(fs, "[]");                                                                                //除了最后一维，打印[]
+                else
+                    fprintf(fs, "[%d]", dim_info->GetDimension(i).upbound - dim_info->GetDimension(i).lowbound + 1);  //最后一维打印长度
         }
 
-        if(i<n-1)
+        if (i < n - 1)
             fprintf(fs, ",");
     }
 }
@@ -313,17 +316,17 @@ void GenerationVisitor::visit(ProgramBody *programbody)
     programbody->get(2)->accept(this);  //var declaration
     programbody->get(3)->accept(this);  //subprogram declarations
 
-    fprintf(fs,"int main() {\n");
+    fprintf(fs, "int main() {\n");
     programbody->get(4)->accept(this);  //comp_stmt
-    fprintf(fs,"return 0;\n");
-    fprintf(fs,"}\n");
+    fprintf(fs, "return 0;\n");
+    fprintf(fs, "}\n");
 }
 
 void GenerationVisitor::visit(RecordDeclaration *recorddeclaration)
 {
-    if(recorddeclaration->GetGrammarType()==RecordDeclaration::GrammarType::MULTI_DECLARATION)
+    if (recorddeclaration->GetGrammarType() == RecordDeclaration::GrammarType::MULTI_DECLARATION)
         recorddeclaration->get(0)->accept(this);
-    
+
     fprintf(fs, "struct ");
     recorddeclaration->get(-2)->accept(this);  //id
     fprintf(fs, "{\n");
@@ -337,11 +340,11 @@ std::vector<LeafNode *> IdList::Lists()
     auto *cur_node    = this;
     GrammarType gtype = grammar_type_;
 
-    while (gtype == GrammarType::MULTIPLE_ID) //如果多层 进入循环
+    while (gtype == GrammarType::MULTIPLE_ID)  //如果多层 进入循环
     {
         LeafNode *ln = cur_node->cnode_list[1]->DynamicCast<LeafNode>();
         lists.insert(lists.begin(), ln);
-        
+
         cur_node = cur_node->cnode_list[0]->DynamicCast<IdList>();
         gtype    = cur_node->grammar_type_;
     }
@@ -352,12 +355,12 @@ std::vector<LeafNode *> IdList::Lists()
     return lists;
 }
 
-void GenerationVisitor::visit(StatementList *statementList)  
-    {
-         // 获取表达式节点列表
+void GenerationVisitor::visit(StatementList *statementList)
+{
+    // 获取表达式节点列表
     std::vector<AstNode *> &statements = statementList->getCnodeList();
-    
-    size_t numChildren = statements.size(); 
+
+    size_t numChildren                 = statements.size();
 
     // 递归访问子节点
     for (size_t i = 0; i < numChildren; ++i)
@@ -371,36 +374,38 @@ void GenerationVisitor::visit(StatementList *statementList)
         //     fprintf(fs, "; ");
         // }
     }
-    }
-    
-void GenerationVisitor::visit(IfStatement *ifStatement )  {
+}
+
+void GenerationVisitor::visit(IfStatement *ifStatement)
+{
     fprintf(fs, "if (");
-    ifStatement->get(0)->accept(this); // 访问 expression
+    ifStatement->get(0)->accept(this);  // 访问 expression
     fprintf(fs, ")\n{\n");
-    ifStatement->get(1)->accept(this); // 访问 then statement
+    ifStatement->get(1)->accept(this);  // 访问 then statement
     fprintf(fs, "}\n");
 
-    ifStatement->get(2)->accept(this); // 访问 else_part
+    ifStatement->get(2)->accept(this);  // 访问 else_part
 }
- 
-void GenerationVisitor::visit(ElsePart *elseNode )  
+
+void GenerationVisitor::visit(ElsePart *elseNode)
+{
+    switch (elseNode->get_type())
     {
-        switch (elseNode->get_type())
-        {
         case ElsePart::ELSEType::EPSILON:
             return;
         case ElsePart::ELSEType::ELSE_STATEMENT:
             fprintf(fs, "else {\n");
-            elseNode->get(0)->accept(this); // 访问 expression
+            elseNode->get(0)->accept(this);  // 访问 expression
             fprintf(fs, "}\n");
-        }
-    } 
+    }
+}
 
- std::string generateFormatString(ExpressionList* expressionList) {
-    std::string formatString = "\"";
-    std::vector<std::string>* types = expressionList->get_types();
+std::string generateFormatString(ExpressionList *expressionList)
+{
+    std::string formatString        = "\"";
+    std::vector<std::string> *types = expressionList->get_types();
 
-    for(const auto& type : *types) {
+    for (const auto &type : *types) {
         if (type == "string") {
             formatString += "%s";
         } else if (type == "char") {
@@ -411,22 +416,23 @@ void GenerationVisitor::visit(ElsePart *elseNode )
             formatString += "%f";
         } else if (type == "boolean") {
             formatString += "%d";
-        } else if (type == "unknown"){
+        } else if (type == "unknown") {
             formatString += "%i";
-        } 
+        }
         // 添加逗号和空格
         //formatString += ", ";
     }
     formatString += "\",";
-    
+
     return formatString;
 }
 
-std::string generateFormatString2(ExpressionList* expressionList) {
-    std::string formatString = "\"";
-    std::vector<std::string>* types = expressionList->get_types();
+std::string generateFormatString2(ExpressionList *expressionList)
+{
+    std::string formatString        = "\"";
+    std::vector<std::string> *types = expressionList->get_types();
 
-    for(const auto& type : *types) {
+    for (const auto &type : *types) {
         if (type == "string") {
             formatString += "%s";
         } else if (type == "char") {
@@ -437,63 +443,63 @@ std::string generateFormatString2(ExpressionList* expressionList) {
             formatString += "%f";
         } else if (type == "boolean") {
             formatString += "%d";
-        } else if (type == "unknown"){
+        } else if (type == "unknown") {
             formatString += "%i";
-        } 
+        }
         // 添加逗号和空格
         //formatString += " ";
     }
     formatString += "\\n\",";
-    
+
     return formatString;
 }
 
-void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
-    if(procedureCall->get_id()=="break"){
+void GenerationVisitor::visit(ProcedureCall *procedureCall)
+{
+    if (procedureCall->get_id() == "break") {
         fprintf(fs, "break;\n");
         return;
     }
-    if(procedureCall->get_id()=="writeln"){
+    if (procedureCall->get_id() == "writeln") {
         fprintf(fs, "printf(");
-        if(procedureCall->get_type() == ProcedureCall::ProcedureType::NO_LIST){
+        if (procedureCall->get_type() == ProcedureCall::ProcedureType::NO_LIST) {
             fprintf(fs, "\"\\n\");\n");
             return;
         }
-        auto expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
+        auto expressionList      = procedureCall->get(0)->DynamicCast<ExpressionList>();  // 假设 procedureCall 是指向 ProcedureCall 对象的指针
         std::string formatString = generateFormatString2(expressionList);
 
         // 使用 fprintf 打印生成的格式化字符串
         fprintf(fs, "%s", formatString.c_str());
-        procedureCall->get(0)->accept(this); // expressionlist
-        fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
+        procedureCall->get(0)->accept(this);  // expressionlist
+        fprintf(fs, ");\n");                  // 输出包含表达式列表的参数列表
         return;
     }
-    if(procedureCall->get_id()=="readln"){
+    if (procedureCall->get_id() == "readln") {
         fprintf(fs, "char input[100000];\n  fgets(input, sizeof(input), stdin);sscanf(input, ");
-        ExpressionList* expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
-        std::string formatString = generateFormatString(expressionList);
+        ExpressionList *expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>();  // 假设 procedureCall 是指向 ProcedureCall 对象的指针
+        std::string formatString       = generateFormatString(expressionList);
 
         // 使用 fprintf 打印生成的格式化字符串
         fprintf(fs, "%s", formatString.c_str());
-        vector<AstNode*> lists= procedureCall->get(0)->DynamicCast<ExpressionList>()->Lists();
-        for(int i = 0; i < lists.size(); i++){
-            if(lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE){
-                if(lists[i]->get(0)->DynamicCast<SimpleExpression>()->getCnodeList().size() == 1){
-                    if(lists[i]->get(0)->get(0)->DynamicCast<Term>()->GetSymType() == Term::SymbolType::SINGLE){
-                        if(lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE){
-                        // 找到相应变量的表项
-                            auto var = lists[i]->get(0)->get(0)->get(0)->get(0)->DynamicCast<Variable>();
-                            string id = var->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+        vector<AstNode *> lists = procedureCall->get(0)->DynamicCast<ExpressionList>()->Lists();
+        for (int i = 0; i < lists.size(); i++) {
+            if (lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE) {
+                if (lists[i]->get(0)->DynamicCast<SimpleExpression>()->getCnodeList().size() == 1) {
+                    if (lists[i]->get(0)->get(0)->DynamicCast<Term>()->GetSymType() == Term::SymbolType::SINGLE) {
+                        if (lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE) {
+                            // 找到相应变量的表项
+                            auto var        = lists[i]->get(0)->get(0)->get(0)->get(0)->DynamicCast<Variable>();
+                            string id       = var->get(0)->DynamicCast<LeafNode>()->get_value<string>();
                             auto table_info = findID(MainTable, procedureCall->get_id(), 0);
-                            if(table_info != NULL){                  
+                            if (table_info != NULL) {
                                 auto record_info = findID(CurrentTable, id, 0);
-                                if(record_info != NULL){
-                                    if(record_info->flag == "variant" || record_info->flag == "array"){
+                                if (record_info != NULL) {
+                                    if (record_info->flag == "variant" || record_info->flag == "array") {
                                         fprintf(fs, "&");
-                                    }
-                                    else if( record_info->flag == "(sub)program name" ){
+                                    } else if (record_info->flag == "(sub)program name") {
                                         string func_id = record_info->id;
-                                        func_id   = "&_" + id + "_";
+                                        func_id        = "&_" + id + "_";
                                         fprintf(fs, "%s", func_id.c_str());
                                         continue;
                                     }
@@ -504,49 +510,47 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
                 }
             }
             lists[i]->accept(this);
-            if(i != lists.size() - 1){
+            if (i != lists.size() - 1) {
                 fprintf(fs, ", ");
             }
         }
-        fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
-        return ;
+        fprintf(fs, ");\n");  // 输出包含表达式列表的参数列表
+        return;
     }
-    if(procedureCall->get_id()=="write"){
+    if (procedureCall->get_id() == "write") {
         fprintf(fs, "printf(");
-        auto expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
+        auto expressionList      = procedureCall->get(0)->DynamicCast<ExpressionList>();  // 假设 procedureCall 是指向 ProcedureCall 对象的指针
         std::string formatString = generateFormatString(expressionList);
 
         // 使用 fprintf 打印生成的格式化字符串
         fprintf(fs, "%s", formatString.c_str());
-        procedureCall->get(0)->accept(this); // expressionlist
-        fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
-    }
-    else if(procedureCall->get_id()=="read"){
+        procedureCall->get(0)->accept(this);                                                    // expressionlist
+        fprintf(fs, ");\n");                                                                    // 输出包含表达式列表的参数列表
+    } else if (procedureCall->get_id() == "read") {
         fprintf(fs, "scanf(");
-        ExpressionList* expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
-        std::string formatString = generateFormatString(expressionList);
+        ExpressionList *expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>();  // 假设 procedureCall 是指向 ProcedureCall 对象的指针
+        std::string formatString       = generateFormatString(expressionList);
 
         // 使用 fprintf 打印生成的格式化字符串
         fprintf(fs, "%s", formatString.c_str());
-        vector<AstNode*> lists= procedureCall->get(0)->DynamicCast<ExpressionList>()->Lists();
-        for(int i = 0; i < lists.size(); i++){
-            if(lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE){
-                if(lists[i]->get(0)->DynamicCast<SimpleExpression>()->getCnodeList().size() == 1){
-                    if(lists[i]->get(0)->get(0)->DynamicCast<Term>()->GetSymType() == Term::SymbolType::SINGLE){
-                        if(lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE){
-                        // 找到相应变量的表项
-                            auto var = lists[i]->get(0)->get(0)->get(0)->get(0)->DynamicCast<Variable>();
-                            string id = var->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+        vector<AstNode *> lists = procedureCall->get(0)->DynamicCast<ExpressionList>()->Lists();
+        for (int i = 0; i < lists.size(); i++) {
+            if (lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE) {
+                if (lists[i]->get(0)->DynamicCast<SimpleExpression>()->getCnodeList().size() == 1) {
+                    if (lists[i]->get(0)->get(0)->DynamicCast<Term>()->GetSymType() == Term::SymbolType::SINGLE) {
+                        if (lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE) {
+                            // 找到相应变量的表项
+                            auto var        = lists[i]->get(0)->get(0)->get(0)->get(0)->DynamicCast<Variable>();
+                            string id       = var->get(0)->DynamicCast<LeafNode>()->get_value<string>();
                             auto table_info = findID(MainTable, procedureCall->get_id(), 0);
-                            if(table_info != NULL){                  
+                            if (table_info != NULL) {
                                 auto record_info = findID(CurrentTable, id, 0);
-                                if(record_info != NULL){
-                                    if(record_info->flag == "variant" || record_info->flag == "array"){
+                                if (record_info != NULL) {
+                                    if (record_info->flag == "variant" || record_info->flag == "array") {
                                         fprintf(fs, "&");
-                                    }
-                                    else if( record_info->flag == "(sub)program name" ){
+                                    } else if (record_info->flag == "(sub)program name") {
                                         string func_id = record_info->id;
-                                        func_id   = "&_" + id + "_";
+                                        func_id        = "&_" + id + "_";
                                         fprintf(fs, "%s", func_id.c_str());
                                         continue;
                                     }
@@ -557,65 +561,62 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
                 }
             }
             lists[i]->accept(this);
-            if(i != lists.size() - 1){
+            if (i != lists.size() - 1) {
                 fprintf(fs, ", ");
             }
         }
-        fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
-    }
-    else{
+        fprintf(fs, ");\n");  // 输出包含表达式列表的参数列表
+    } else {
         fprintf(fs, "%s", procedureCall->get_id().c_str());
         // 根据调用类型决定是否输出参数列表
         if (procedureCall->get_type() == ProcedureCall::ProcedureType::NO_LIST)
         {
-            fprintf(fs, "();\n"); // 输出空参数列表
-        }
-        else if (procedureCall->get_type() == ProcedureCall::ProcedureType::EXP_LIST)
+            fprintf(fs, "();\n");  // 输出空参数列表
+        } else if (procedureCall->get_type() == ProcedureCall::ProcedureType::EXP_LIST)
         {
             fprintf(fs, "(");
             //procedureCall->get(0)->accept(this);//expressionlist
-            vector<AstNode*> lists= procedureCall->get(0)->DynamicCast<ExpressionList>()->Lists();
-            for(int i = 0; i < lists.size(); i++){
-                if(lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE){
-                    if(lists[i]->get(0)->DynamicCast<SimpleExpression>()->getCnodeList().size() == 1){
-                        if(lists[i]->get(0)->get(0)->DynamicCast<Term>()->GetSymType() == Term::SymbolType::SINGLE){
-                            if(lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE){
+            vector<AstNode *> lists = procedureCall->get(0)->DynamicCast<ExpressionList>()->Lists();
+            for (int i = 0; i < lists.size(); i++) {
+                if (lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE) {
+                    if (lists[i]->get(0)->DynamicCast<SimpleExpression>()->getCnodeList().size() == 1) {
+                        if (lists[i]->get(0)->get(0)->DynamicCast<Term>()->GetSymType() == Term::SymbolType::SINGLE) {
+                            if (lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE) {
                                 auto table_info = findID(MainTable, procedureCall->get_id(), 0);
-                                if(table_info != NULL){                  
-                                    if(table_info->subSymbolTable->records[i+1]->isRefered){
+                                if (table_info != NULL) {
+                                    if (table_info->subSymbolTable->records[i + 1]->isRefered) {
                                         fprintf(fs, "&");
-                                    }  
+                                    }
                                 }
                             }
                         }
                     }
                 }
                 lists[i]->accept(this);
-                if(i != lists.size() - 1){
+                if (i != lists.size() - 1) {
                     fprintf(fs, ", ");
                 }
             }
-            
-            fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
-        }
-        else if (procedureCall->get_type() == ProcedureCall::ProcedureType::VAR_LIST)
+
+            fprintf(fs, ");\n");  // 输出包含表达式列表的参数列表
+        } else if (procedureCall->get_type() == ProcedureCall::ProcedureType::VAR_LIST)
         {
             fprintf(fs, "(");
-            procedureCall->get(0)->accept(this);//variablelist
-            fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
+            procedureCall->get(0)->accept(this);  //variablelist
+            fprintf(fs, ");\n");                  // 输出包含表达式列表的参数列表
         }
     }
 }
 
-void GenerationVisitor::visit(AssignopStatement *assignopStatement )  
+void GenerationVisitor::visit(AssignopStatement *assignopStatement)
 {
-        auto assignment_node = dynamic_cast<AssignopStatement *>(assignopStatement->get(0));
- 
-        // 根据左侧类型决定生成的代码逻辑
-        switch (assignopStatement->get_type())
-        {
+    auto assignment_node = dynamic_cast<AssignopStatement *>(assignopStatement->get(0));
+
+    // 根据左侧类型决定生成的代码逻辑
+    switch (assignopStatement->get_type())
+    {
         case AssignopStatement::LeftType::VARIABLE:
-        
+
             // 生成函数调用的代码
             assignopStatement->get(0)->accept(this);
 
@@ -623,20 +624,20 @@ void GenerationVisitor::visit(AssignopStatement *assignopStatement )
             fprintf(fs, " = ");
 
             // 生成右侧表达式的代码
-            assignopStatement->get(1)-> accept(this);
+            assignopStatement->get(1)->accept(this);
 
             // 输出分号以结束语句
             fprintf(fs, ";\n");
             break;
         case AssignopStatement::LeftType::FUNCID:
-             // 生成函数调用的代码
+            // 生成函数调用的代码
             fprintf(fs, "_");
             assignopStatement->get(0)->get(0)->accept(this);
             fprintf(fs, "_");
             // 输出赋值操作符
             fprintf(fs, " = ");
             // 生成右侧表达式的代码
-            assignopStatement->get(1)-> accept(this);
+            assignopStatement->get(1)->accept(this);
 
             // 输出分号以结束语句
             fprintf(fs, ";\n");
@@ -644,32 +645,32 @@ void GenerationVisitor::visit(AssignopStatement *assignopStatement )
         default:
             // 其他情况下，什么也不做
             break;
-        }
     }
+}
 
-void GenerationVisitor::visit(LoopStatement *loopStatement )  
+void GenerationVisitor::visit(LoopStatement *loopStatement)
+{
+    switch (loopStatement->get_type())
     {
-          switch (loopStatement->get_type())
-        {
         case LoopStatement::LoopType::FORUP:
         {
             fprintf(fs, "for (");
             auto id = loopStatement->get(0)->DynamicCast<LeafNode>();
             if (id)
             {
-                id-> accept(this);
+                id->accept(this);
             }
             fprintf(fs, " = ");
-            loopStatement->get(1)-> accept(this);//expression
+            loopStatement->get(1)->accept(this);  //expression
             fprintf(fs, "; ");
-            id-> accept(this);
+            id->accept(this);
             fprintf(fs, " <= ");
-            loopStatement->get(2)-> accept(this);//中间的expression
+            loopStatement->get(2)->accept(this);  //中间的expression
             fprintf(fs, "; ");
-            
-            id-> accept(this);
+
+            id->accept(this);
             fprintf(fs, "++) {\n");
-            loopStatement->get(3)-> accept(this);//statement
+            loopStatement->get(3)->accept(this);  //statement
             fprintf(fs, "}\n");
             break;
         }
@@ -679,57 +680,58 @@ void GenerationVisitor::visit(LoopStatement *loopStatement )
             auto id = loopStatement->get(0)->DynamicCast<LeafNode>();
             if (id)
             {
-                id-> accept(this);
+                id->accept(this);
             }
             fprintf(fs, " = ");
-            loopStatement->get(1)-> accept(this);
+            loopStatement->get(1)->accept(this);
             fprintf(fs, "; ");
-            id-> accept(this);
+            id->accept(this);
             fprintf(fs, " >= ");
-            loopStatement->get(2)-> accept(this);
+            loopStatement->get(2)->accept(this);
             fprintf(fs, "; ");
-            id-> accept(this);
+            id->accept(this);
             fprintf(fs, "--) {\n");
-            loopStatement->get(3)-> accept(this);
+            loopStatement->get(3)->accept(this);
             fprintf(fs, "}\n");
             break;
         }
         case LoopStatement::LoopType::WHILE_:
         {
             fprintf(fs, "while (");
-            loopStatement->get(0)-> accept(this);
+            loopStatement->get(0)->accept(this);
             fprintf(fs, ") {\n");
-            loopStatement->get(1)-> accept(this);
+            loopStatement->get(1)->accept(this);
             fprintf(fs, "}\n");
             break;
         }
         case LoopStatement::LoopType::REPEAT_:
         {
             fprintf(fs, "do {\n");
-            loopStatement->get(0)-> accept(this);
+            loopStatement->get(0)->accept(this);
             fprintf(fs, "} while (!(");
-            loopStatement->get(1)-> accept(this);
+            loopStatement->get(1)->accept(this);
             fprintf(fs, "));\n");
             break;
         }
-        }
     }
+}
 
 
-void GenerationVisitor::visit(Variable *variable )  {
+void GenerationVisitor::visit(Variable *variable)
+{
     // 访问第一个子节点
-    variable->get(0)-> accept(this);
-    SymbolTable *curTable=CurrentTable;
-    string id = variable->get(0)->DynamicCast<LeafNode>()->get_value<string>();
-    auto record_info = findID(MainTable, id, 0);
-    if(record_info != NULL){
-        if(record_info->flag == "function"){
+    variable->get(0)->accept(this);
+    SymbolTable *curTable = CurrentTable;
+    string id             = variable->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+    auto record_info      = findID(MainTable, id, 0);
+    if (record_info != NULL) {
+        if (record_info->flag == "function") {
             fprintf(fs, "()");
             return;
         }
     }
-    record_info = findID(CurrentTable,id,0);
-    if(record_info != NULL){
+    record_info = findID(CurrentTable, id, 0);
+    if (record_info != NULL) {
         if (record_info->flag == "record") {
             curTable = TheTypeTable->findID(record_info->type)->RecordTable;
             // for(auto z:curTable->records)
@@ -739,53 +741,50 @@ void GenerationVisitor::visit(Variable *variable )  {
         }
     }
     // 访问第二个子节点
-    if(variable->getCnodeList().size() == 2){
+    if (variable->getCnodeList().size() == 2) {
         std::vector<AstNode *> list = variable->get(1)->DynamicCast<IDVarParts>()->Lists();
         // 遍历子节点列表并逐个访问
         for (auto i : list) {
             IDVarPart *idvarpart = i->DynamicCast<IDVarPart>();
             if (idvarpart->get_type() == IDVarPart::GrammarType::_ID)
             {
-                for(auto y:curTable->records)
+                for (auto y : curTable->records)
                 {
                     cout << y->flag << " " << y->id << " " << y->type << endl;
                 }
                 auto info = findID(curTable, i->get(0)->DynamicCast<LeafNode>()->get_value<string>(), 1);
-                if(info!=nullptr){
-                    if(info->flag == "record")
+                if (info != nullptr) {
+                    if (info->flag == "record")
                     {
                         curTable = TheTypeTable->findID(info->type)->RecordTable;
                     }
-                }
-                else {
-                    cout << "Error: not a member of "<<id<<" Line:"<<i->get_rownum() <<endl;
+                } else {
+                    cout << "Error: not a member of " << id << " Line:" << i->get_rownum() << endl;
                 }
                 id = i->get(0)->DynamicCast<LeafNode>()->get_value<string>();
                 fprintf(fs, ".");
-                idvarpart->get(0)->accept(this);// 访问 id
-            }
-            else if (idvarpart->get_type() == IDVarPart::GrammarType::EXP_LIST)
-            {   
-                auto exp_list = idvarpart->get(0)->DynamicCast<ExpressionList>()->Lists();
+                idvarpart->get(0)->accept(this);  // 访问 id
+            } else if (idvarpart->get_type() == IDVarPart::GrammarType::EXP_LIST)
+            {
+                auto exp_list    = idvarpart->get(0)->DynamicCast<ExpressionList>()->Lists();
                 auto record_info = findID(curTable, id, 0, "array");
-                cout<<id<<endl;
+                cout << id << endl;
                 for (auto z : curTable->records)
                 {
                     cout << z->flag << " " << z->id << " " << z->type << endl;
                 }
-                if(record_info == NULL){
-                    
-                    cout << "notfound" <<endl;
+                if (record_info == NULL) {
+                    cout << "notfound" << endl;
                     return;
                 }
                 vector< pair<int, int> > bound = record_info->arrayRange;
-                int i = 0;
-                for(auto exp : exp_list){
+                int i                          = 0;
+                for (auto exp : exp_list) {
                     fprintf(fs, "[");
                     exp->accept(this);
-                    if(bound[i].first!=0){
+                    if (bound[i].first != 0) {
                         fprintf(fs, " - ");
-                        fprintf(fs,"%d",bound[i].first);
+                        fprintf(fs, "%d", bound[i].first);
                     }
                     fprintf(fs, "]");
                     i++;
@@ -795,31 +794,31 @@ void GenerationVisitor::visit(Variable *variable )  {
     }
 }
 
-void GenerationVisitor::visit(VariableList *variableList )   {
-    
+void GenerationVisitor::visit(VariableList *variableList)
+{
     std::vector<AstNode *> &children = variableList->getCnodeList();
-    
+
     // 处理单个表达式节点
-    if (variableList->get_type() ==  VariableList::GrammarType::VAR_)
+    if (variableList->get_type() == VariableList::GrammarType::VAR_)
     {
-        variableList->get(0)-> accept(this);
+        variableList->get(0)->accept(this);
     }
     // 处理多个表达式节点
     else if (variableList->get_type() == VariableList::GrammarType::VAR_LIST_VAR)
     {
-        size_t numChildren=children.size();
+        size_t numChildren = children.size();
         // 遍历子节点列表并逐个访问
         for (size_t i = 0; i < numChildren; ++i) {
-            children[i]-> accept(this);
+            children[i]->accept(this);
 
             // 如果不是最后一个节点，则输出逗号
-            if (variableList->get_type() == VariableList::GrammarType:: VAR_LIST_VAR && i != numChildren - 1) {
+            if (variableList->get_type() == VariableList::GrammarType::VAR_LIST_VAR && i != numChildren - 1) {
                 fprintf(fs, ", ");
             }
         }
     }
 }
-// void GenerationVisitor::visit(IDVarPart *idVarPart )  
+// void GenerationVisitor::visit(IDVarPart *idVarPart )
 // {
 //     if (idVarPart->get_type() == IDVarPart::GrammarType::_ID)
 //     {
@@ -827,7 +826,7 @@ void GenerationVisitor::visit(VariableList *variableList )   {
 //         idVarPart->get(0)->accept(this);// 访问 id
 //     }
 //     else if (idVarPart->get_type() == IDVarPart::GrammarType::EXP_LIST)
-//     {   
+//     {
 //         auto exp_list = idVarPart->get(0)->DynamicCast<ExpressionList>()->Lists();
 //         for(auto exp : exp_list){
 //             fprintf(fs, "[");
@@ -846,79 +845,78 @@ void GenerationVisitor::visit(VariableList *variableList )   {
 //         children[i]-> accept(this);
 
 //         // 如果不是最后一个节点，则输出空格
-        
+
 //     }
 // }
 
- void GenerationVisitor::visit(Term *term )  
+void GenerationVisitor::visit(Term *term)
 {
     if (term->GetSymType() == Term::SymbolType::SINGLE)
     {
         // term -> factor 的情况
-        term->get(0)-> accept(this); // 访问 factor 节点
-    }
-    else
+        term->get(0)->accept(this);  // 访问 factor 节点
+    } else
     {
         // term -> term MULOP factor 的情况
-        term->get(0)-> accept(this); // 访问左侧 term 节点
-      
+        term->get(0)->accept(this);  // 访问左侧 term 节点
+
         // 根据乘法操作符类型输出相应的符号
         switch (term->GetSymType())
         {
-        case Term::SymbolType::MULTIPLY:
-            fprintf(fs, " * ");
-            break;
-        case Term::SymbolType::DEVIDE:
-            fprintf(fs, " / ");
-            break;
-        case Term::SymbolType::MOD:
-            fprintf(fs, " %% ");
-            break;
-        case Term::SymbolType::AND:
-            fprintf(fs, " && ");
-            break;
-        case Term::SymbolType::SINGLE:
-            break;
+            case Term::SymbolType::MULTIPLY:
+                fprintf(fs, " * ");
+                break;
+            case Term::SymbolType::DEVIDE:
+                fprintf(fs, " / ");
+                break;
+            case Term::SymbolType::MOD:
+                fprintf(fs, " %% ");
+                break;
+            case Term::SymbolType::AND:
+                fprintf(fs, " && ");
+                break;
+            case Term::SymbolType::SINGLE:
+                break;
         }
-        term->get(1)-> accept(this); // 访问右侧 factor 节点
+        term->get(1)->accept(this);  // 访问右侧 factor 节点
     }
 }
 
-    void GenerationVisitor::visit(Factor *factor )  
+void GenerationVisitor::visit(Factor *factor)
+{
+    switch (factor->get_type())
     {
-        switch (factor->get_type())
-        {
         case Factor::GrammerType::NUM:
         case Factor::GrammerType::VARIABLE:
-            factor->get(0)-> accept(this);
+            factor->get(0)->accept(this);
             break;
         case Factor::GrammerType::EXP:
             fprintf(fs, "(");
-            factor->get(0)-> accept(this);
+            factor->get(0)->accept(this);
             fprintf(fs, ")");
             break;
         case Factor::GrammerType::ID_EXP_LIST:
-        {   
-            factor->get(0)-> accept(this);
+        {
+            factor->get(0)->accept(this);
             fprintf(fs, "(");
-            vector<AstNode*> lists= factor->get(1)->DynamicCast<ExpressionList>()->Lists();
-            for(int i = 0; i < lists.size(); i++){
-                if(lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE){
-                    if(lists[i]->get(0)->DynamicCast<SimpleExpression>()->getCnodeList().size() == 1){
-                        if(lists[i]->get(0)->get(0)->DynamicCast<Term>()->GetSymType() == Term::SymbolType::SINGLE){
-                            if(lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE){
+            vector<AstNode *> lists = factor->get(1)->DynamicCast<ExpressionList>()->Lists();
+            for (int i = 0; i < lists.size(); i++) {
+                if (lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE) {
+                    if (lists[i]->get(0)->DynamicCast<SimpleExpression>()->getCnodeList().size() == 1) {
+                        if (lists[i]->get(0)->get(0)->DynamicCast<Term>()->GetSymType() == Term::SymbolType::SINGLE) {
+                            if (lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE) {
                                 auto table_info = findID(MainTable, factor->get(0)->DynamicCast<LeafNode>()->get_value<string>(), 0);
-                                if(table_info != NULL){                  
-                                    if(table_info->subSymbolTable->records[i+1]->isRefered){
+                                if (table_info != NULL) {
+                                    if (table_info->subSymbolTable->records[i + 1]->isRefered) {
                                         fprintf(fs, "&");
-                                    }  
+                                    }
                                 }
                             }
                         }
                     }
                 }
                 lists[i]->accept(this);
-                if(i != lists.size() - 1){
+                if (i != lists.size() - 1) {
                     fprintf(fs, ", ");
                 }
             }
@@ -928,117 +926,112 @@ void GenerationVisitor::visit(VariableList *variableList )   {
         }
         case Factor::GrammerType::NOT_:
             fprintf(fs, "~");
-            factor->get(0)-> accept(this);
+            factor->get(0)->accept(this);
             break;
-        case Factor::GrammerType::UPLUS:  
+        case Factor::GrammerType::UPLUS:
             fprintf(fs, "(+");
-            factor->get(0)-> accept(this); // 访问因子节点
+            factor->get(0)->accept(this);  // 访问因子节点
             fprintf(fs, ")");
             break;
         case Factor::GrammerType::UMINUS_:
             fprintf(fs, "(-");
-            factor->get(0)-> accept(this); // 访问因子节点
+            factor->get(0)->accept(this);  // 访问因子节点
             fprintf(fs, ")");
             break;
         case Factor::GrammerType::CHAR_:
-            factor->get(0)-> accept(this); // 'letter'
+            factor->get(0)->accept(this);  // 'letter'
             break;
         case Factor::GrammerType::STR:
         case Factor::GrammerType::BOOL:
-            factor->get(0)-> accept(this);
+            factor->get(0)->accept(this);
             break;
         default:
             break;
-        }
     }
+}
 
-void GenerationVisitor::visit(Expression *expression )  {
+void GenerationVisitor::visit(Expression *expression)
+{
     if (expression->GetGraType() == Expression::GrammarType::SINGLE)
     {
         // expression -> simple_expression 的情况
-        expression->get(0)-> accept(this); // 访问 term 节点
+        expression->get(0)->accept(this);  // 访问 term 节点
     }
     if (expression->GetGraType() == Expression::GrammarType::DOUBLE)
     {
         // expression -> expression relop simple_expression 的情况
-        expression->get(0)-> accept(this); // 访问左侧 expression 节点
-        if(expression->GetSymType() == "<>"){
+        expression->get(0)->accept(this);  // 访问左侧 expression 节点
+        if (expression->GetSymType() == "<>") {
             fprintf(fs, " != ");
-        }
-        else if(expression->GetSymType() == "="){
+        } else if (expression->GetSymType() == "=") {
             fprintf(fs, " == ");
-        }
-        else{
+        } else {
             string symbol = " " + expression->GetSymType() + " ";
             fprintf(fs, "%s", symbol.c_str());
         }
-        expression->get(1)-> accept(this); // 访问右侧 simple_expression 节点
-    
+        expression->get(1)->accept(this);  // 访问右侧 simple_expression 节点
     }
 }
 
-void GenerationVisitor::visit(SimpleExpression *simpleExpression )  {
+void GenerationVisitor::visit(SimpleExpression *simpleExpression)
+{
     if (simpleExpression->GetSymType() == SimpleExpression::SymbolType::SINGLE)
     {
         // simple_expression -> term 的情况
-        simpleExpression->get(0)-> accept(this); // 访问 term 节点
-    }
-    else if (simpleExpression->GetSymType() == SimpleExpression::SymbolType::PLUS_)
+        simpleExpression->get(0)->accept(this);  // 访问 term 节点
+    } else if (simpleExpression->GetSymType() == SimpleExpression::SymbolType::PLUS_)
     {
         // simple_expression -> + term / simple_exp + term 的情况
-        if(simpleExpression->getCnodeList().size() == 2){
-            simpleExpression->get(0)-> accept(this); 
+        if (simpleExpression->getCnodeList().size() == 2) {
+            simpleExpression->get(0)->accept(this);
             fprintf(fs, " + ");
-            simpleExpression->get(1)-> accept(this); // 访问 term 节点
-        }
-        else{
+            simpleExpression->get(1)->accept(this);  // 访问 term 节点
+        } else {
             fprintf(fs, "+");
-            simpleExpression->get(0)-> accept(this); // 访问 term 节点
+            simpleExpression->get(0)->accept(this);  // 访问 term 节点
         }
-    }
-    else if (simpleExpression->GetSymType() == SimpleExpression::SymbolType::MINUS_)
+    } else if (simpleExpression->GetSymType() == SimpleExpression::SymbolType::MINUS_)
     {
         // simple_expression -> - term / simple_exp - term 的情况
-        if(simpleExpression->getCnodeList().size() == 2){
-            simpleExpression->get(0)-> accept(this); 
+        if (simpleExpression->getCnodeList().size() == 2) {
+            simpleExpression->get(0)->accept(this);
             fprintf(fs, " - ");
-            simpleExpression->get(1)-> accept(this); // 访问 term 节点
-        }
-        else{
+            simpleExpression->get(1)->accept(this);  // 访问 term 节点
+        } else {
             fprintf(fs, "-");
-            simpleExpression->get(0)-> accept(this); // 访问 term 节点
+            simpleExpression->get(0)->accept(this);  // 访问 term 节点
         }
 
-    }
-    else if (simpleExpression->GetSymType() == SimpleExpression::SymbolType::OR_)
+    } else if (simpleExpression->GetSymType() == SimpleExpression::SymbolType::OR_)
     {
         // simple_expression -> simple_expression or term 的情况
-        simpleExpression->get(0)-> accept(this); // 访问左侧 simple_expression 节点
+        simpleExpression->get(0)->accept(this);  // 访问左侧 simple_expression 节点
         fprintf(fs, " || ");
-        simpleExpression->get(1)-> accept(this); // 访问右侧 term 节点
+        simpleExpression->get(1)->accept(this);  // 访问右侧 term 节点
     }
-   }
+}
 
-void GenerationVisitor::visit(ExpressionList *expressionList )  {
+void GenerationVisitor::visit(ExpressionList *expressionList)
+{
     // 获取表达式列表类型
     ExpressionList::ExpressionType type = expressionList->get_type();
 
     // 获取表达式节点列表
     std::vector<AstNode *> &expressions = expressionList->getCnodeList();
-    
+
     // 处理单个表达式节点
     if (type == ExpressionList::ExpressionType::SINGLE)
     {
-        expressions[0]-> accept(this);
+        expressions[0]->accept(this);
     }
     // 处理多个表达式节点
     else if (type == ExpressionList::ExpressionType::MULTIPLE)
     {
-        size_t numExpressions = expressions.size(); // 获取表达式列表的大小
-    
+        size_t numExpressions = expressions.size();  // 获取表达式列表的大小
+
         for (size_t i = 0; i < numExpressions; ++i)
         {
-            expressions[i]-> accept(this);
+            expressions[i]->accept(this);
             // 如果不是最后一个表达式，则输出逗号分隔符
             if (i != numExpressions - 1)
             {
@@ -1048,42 +1041,44 @@ void GenerationVisitor::visit(ExpressionList *expressionList )  {
     }
 }
 
-void GenerationVisitor::visit(Statement *statement )  
+void GenerationVisitor::visit(Statement *statement)
 {
     switch (statement->get_type())
     {
-    case Statement::StatementType::EPSILON:
-        return;
-    case Statement::StatementType::ASSIGN_OP_STATEMENT:
-    case Statement::StatementType::PROCEDURE_CALL:
-    case Statement::StatementType::COMPOUND_STATEMENT:
-    case Statement::StatementType::IF_STATEMENT:
-    case Statement::StatementType::LOOP_STATEMENT:
-        statement->get(0)->accept(this);
-        break;
+        case Statement::StatementType::EPSILON:
+            return;
+        case Statement::StatementType::ASSIGN_OP_STATEMENT:
+        case Statement::StatementType::PROCEDURE_CALL:
+        case Statement::StatementType::COMPOUND_STATEMENT:
+        case Statement::StatementType::IF_STATEMENT:
+        case Statement::StatementType::LOOP_STATEMENT:
+            statement->get(0)->accept(this);
+            break;
 
-    // case Statement::StatementType::READ_STATEMENT:
-    // case Statement::StatementType::READLN_STATEMENT:
-    //     break;
-    // case Statement::StatementType::WRITE_STATEMENT:
-    // case Statement::StatementType::WRITELN_STATEMENT:
-    //     break;
+            // case Statement::StatementType::READ_STATEMENT:
+            // case Statement::StatementType::READLN_STATEMENT:
+            //     break;
+            // case Statement::StatementType::WRITE_STATEMENT:
+            // case Statement::StatementType::WRITELN_STATEMENT:
+            //     break;
     }
 }
 
-void GenerationVisitor::visit(CompoundStatement *compoundStatement )  {
-    compoundStatement->get(0)->accept(this); // 访问  StatementList
+void GenerationVisitor::visit(CompoundStatement *compoundStatement)
+{
+    compoundStatement->get(0)->accept(this);  // 访问  StatementList
 }
 
-vector<AstNode*> IDVarParts::Lists(){
+vector<AstNode *> IDVarParts::Lists()
+{
     std::vector<AstNode *> lists;
-    auto *cur_node    = this;
-   
-    while (cur_node->getCnodeList().size() == 2) //如果多层 进入循环
+    auto *cur_node = this;
+
+    while (cur_node->getCnodeList().size() == 2)  //如果多层 进入循环
     {
-        AstNode * ln = cur_node->cnode_list[1];
+        AstNode *ln = cur_node->cnode_list[1];
         lists.insert(lists.begin(), ln);
-        
+
         cur_node = cur_node->cnode_list[0]->DynamicCast<IDVarParts>();
     }
     return lists;
