@@ -410,7 +410,6 @@ void SemanticVisitor::visit(Variable *variable)
             variable->set_vn(record_info->type);
         }
         else if (record_info->flag == "record"){
-        else if (record_info->flag == "record"){
             if(variable->getCnodeList().size() == 1){
                 variable->set_vn("record");
             }
