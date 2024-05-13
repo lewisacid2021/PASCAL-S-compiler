@@ -548,6 +548,7 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
     if(record_info == NULL){
         //错误处理，未定义
         std::cout << "Error: Undefined. Line: " << procedurecall->get_rownum() << std::endl;
+        return;
     }
 
     if(procedurecall->get_type() == ProcedureCall::ProcedureType::NO_LIST){
