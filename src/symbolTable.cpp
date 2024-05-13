@@ -7,19 +7,19 @@ using namespace std;
 extern SymbolTable * MainTable;;  //主符号表
 
 //添加传值参数
-void SymbolTable::addPara(string id, int rowNumber, string type)
+void SymbolTable::addPara(string flag, string id, int rowNumber, string type)
 {
     TableRecord *temp = new TableRecord;
-    temp->setPara(id, rowNumber, type);
+    temp->setPara(flag,id, rowNumber, type);
     this->records.push_back(temp);
     this->idLoc[id] = int(records.size() - 1);
 }
 
 //添加引用参数
-void SymbolTable::addVarPara(string id, int rowNumber, string type)
+void SymbolTable::addVarPara(string flag, string id, int rowNumber, string type)
 {
     TableRecord *temp = new TableRecord;
-    temp->setVarPara(id, rowNumber, type);
+    temp->setVarPara(flag,id, rowNumber, type);
     this->records.push_back(temp);
     this->idLoc[id] = int(records.size() - 1);
 }
@@ -121,18 +121,22 @@ SymbolTable::SymbolTable(string type)
     this->tableType = type;
 }
 
-void TableRecord::setPara(string id_para, int rowNumber_para, string type_para)
+void TableRecord::setPara(string flag, string id_para, int rowNumber_para, string type_para)
 {
-    flag            = "value parameter";
+    flag            = flag;
     this->id        = id_para;
+    this->isPara =true;
+    this->isRefered = false;
     this->rowNumber = rowNumber_para;
     this->type      = type_para;
 }
 
-void TableRecord::setVarPara(string id_para, int rowNumber_para, string type_para)
+void TableRecord::setVarPara(string flag, string id_para, int rowNumber_para, string type_para)
 {
-    flag            = "var parameter";
+    flag            = flag;
     this->id        = id_para;
+    this->isPara    = true;
+    this->isRefered = true;
     this->rowNumber = rowNumber_para;
     this->type      = type_para;
 }

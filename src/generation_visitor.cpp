@@ -53,7 +53,7 @@ void GenerationVisitor::visit(LeafNode *leafnode)
                 string leaf_id = leafnode->get_value<string>();
                 auto record_info = findID(CurrentTable, leaf_id, 1);
                 if(record_info != NULL){
-                    if(record_info->flag == "var parameter"){
+                    if(record_info->isRefered){
                         leafnode->set_ref(true);
                     }
                 }
@@ -583,7 +583,7 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
                             if(lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE){
                                 auto table_info = findID(MainTable, procedureCall->get_id(), 0);
                                 if(table_info != NULL){                  
-                                    if(table_info->subSymbolTable->records[i+1]->flag == "var parameter"){
+                                    if(table_info->subSymbolTable->records[i+1]->isRefered){
                                         fprintf(fs, "&");
                                     }  
                                 }
@@ -879,7 +879,7 @@ void GenerationVisitor::visit(VariableList *variableList )   {
                             if(lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE){
                                 auto table_info = findID(MainTable, factor->get(0)->DynamicCast<LeafNode>()->get_value<string>(), 0);
                                 if(table_info != NULL){                  
-                                    if(table_info->subSymbolTable->records[i+1]->flag == "var parameter"){
+                                    if(table_info->subSymbolTable->records[i+1]->isRefered){
                                         fprintf(fs, "&");
                                     }  
                                 }

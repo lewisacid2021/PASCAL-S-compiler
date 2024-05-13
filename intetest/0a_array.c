@@ -3,7 +3,7 @@
 int test(int a[][11])
 {
 int _test_;
-_test_ = a[0][2];
+_test_ = a;
 return _test_;
 }
 int main() {

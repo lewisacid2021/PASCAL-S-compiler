@@ -269,7 +269,7 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
     } else if (typenode->GetVarType() == TypeNode::VarType::RECORD_TYPE)
     {
         SymbolTable *subTable = new SymbolTable();
-        string recordname = std::to_string(TheTypeTable->records.size());
+        string recordname = "record" + std::to_string(TheTypeTable->records.size());
         while(findID(CurrentTable, recordname, 1) != NULL)
         {
             recordname.append("_");
@@ -360,7 +360,13 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
                         std::cout << "Error: Redefine. Line: " << subprogramhead->get_rownum() << std::endl;
                         return;
                     }
-                    CurrentTable->addVarPara(id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
+                    if (idtype->get_type_name() == "array") {
+                        CurrentTable->addPara("array", id->get_value<string>(), id->get_rownum(), idtype->get(0)->DynamicCast<ArrayTypeNode>()->type());
+                    } else if (idtype->get_type_name() == "integer" || idtype->get_type_name() == "real" || idtype->get_type_name() == "char" || idtype->get_type_name() == "boolean") {
+                        CurrentTable->addPara("variant", id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
+                    } else {
+                        CurrentTable->addPara("record", id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
+                    }
                     id->set_ref(true);
                     amount++;
                 }
@@ -377,7 +383,15 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
                         std::cout << "Error: Redefine. Line: " << subprogramhead->get_rownum() << std::endl;
                         return;
                     }
-                    CurrentTable->addPara(id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
+                    if (idtype->get_type_name() == "array"){
+                        CurrentTable->addPara("array", id->get_value<string>(), id->get_rownum(), idtype->get(0)->DynamicCast<ArrayTypeNode>()->type());
+                    } 
+                    else if (idtype->get_type_name() == "integer" || idtype->get_type_name() == "real" || idtype->get_type_name() == "char" || idtype->get_type_name() == "boolean"){
+                        CurrentTable->addPara("variant",id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
+                    }
+                    else{
+                        CurrentTable->addPara("record", id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
+                    }
                     amount++;
                 }
             }
@@ -424,7 +438,8 @@ void SemanticVisitor::visit(Variable *variable)
         }
         else if (record_info->flag == "record"){
             if(variable->getCnodeList().size() == 1){
-                variable->set_vn("record");
+                cout << "Error: Not support record direct operation. Line: " << variable->get_rownum() << std::endl;
+                return;
             }
             else{
                 auto namelist = variable->get(1)->DynamicCast<IDVarParts>()->get_pointer();
@@ -579,7 +594,7 @@ void SemanticVisitor::visit(LoopStatement *loopstatement)
                 std::cout << "Error: Loop variable undefined. Line: " << loopstatement->get_rownum() << std::endl;
                 return;
             }
-            if (!(record_info->flag == "value parameter" || record_info->flag == "var parameter" || record_info->flag == "variant"))
+            if (!(record_info->flag == "variant"))
             {
                 //错误处理，不能作为循环变量
                 std::cout << "Error: Cannot be used as a loop variable. Line: " << loopstatement->get_rownum() << std::endl;
