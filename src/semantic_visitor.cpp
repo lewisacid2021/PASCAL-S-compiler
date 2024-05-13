@@ -865,6 +865,7 @@ void SemanticVisitor::visit(Factor *factor)
                     if(tr == NULL)
                     {
                         //错误处理
+                        std::cout << "Error: Undefined. Line: " << factor->get_rownum() << std::endl;
                     }
                     else{
                         factor->SetFacType(tr->type);
@@ -904,6 +905,7 @@ void SemanticVisitor::visit(Factor *factor)
                 if (fac_type == "real" || fac_type == "char" || fac_type == "integer") {
                     factor->SetFacType(fac->GetFacType());
                 } else {
+                    std::cout << "Error: Type error. Line: " << factor->get_rownum() << std::endl;
                 }
                 break;
             }
@@ -918,7 +920,7 @@ void SemanticVisitor::visit(Factor *factor)
                 if (fac_type == "boolean" || fac_type == "integer" || fac_type == "char" || fac_type == "real") {
                     factor->SetFacType("boolean");
                 } else {
-
+                    std::cout << "Error: Type error. Line: " << factor->get_rownum() << std::endl;
                 }
                 break;
             }
