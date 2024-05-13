@@ -5,6 +5,7 @@ include(CTest)
 enable_testing()
 
 message(STATUS "PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(FLEX REQUIRED)
 find_package(BISON REQUIRED)
