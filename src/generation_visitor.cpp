@@ -126,7 +126,6 @@ void GenerationVisitor::visit(TypeNode *typenode)
             fprintf(fs, "struct ");
             break;
         case TypeNode::VarType::ARRAY_TYPE:{
-            cout << typenode->get(0)->DynamicCast<ArrayTypeNode>()->type() << "a" << endl;
             string type = typenode->get(0)->DynamicCast<ArrayTypeNode>()->type();
             if(type=="integer"&&true)   //todo 查符号表 预定义标识符是否没被覆盖
                 fprintf(fs, "int");
@@ -445,23 +444,74 @@ std::string generateFormatString2(ExpressionList* expressionList) {
         // 添加逗号和空格
         //formatString += " ";
     }
-    formatString += "\",";
+    formatString += "\\n\",";
     
     return formatString;
 }
 
 void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
-    //fprintf(fs, "here");
     if(procedureCall->get_id()=="break"){
         fprintf(fs, "break;\n");
         return;
     }
     if(procedureCall->get_id()=="writeln"){
-            fprintf(fs, "printf(\"\\n\");\n");
-            return;}
+        fprintf(fs, "printf(");
+        if(procedureCall->get_type() == ProcedureCall::ProcedureType::NO_LIST){
+            fprintf(fs, "\"\\n\");\n");
+            return;
+        }
+        auto expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
+        std::string formatString = generateFormatString2(expressionList);
+
+        // 使用 fprintf 打印生成的格式化字符串
+        fprintf(fs, "%s", formatString.c_str());
+        procedureCall->get(0)->accept(this); // expressionlist
+        fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
+        return;
+    }
     if(procedureCall->get_id()=="readln"){
-            fprintf(fs, "while(1){\nchar c = getchar(); if(c == '\\n' || c== EOF) break;\n};\n");
-            return;}
+        fprintf(fs, "char input[100000];\n  fgets(input, sizeof(input), stdin);sscanf(input, ");
+        ExpressionList* expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
+        std::string formatString = generateFormatString(expressionList);
+
+        // 使用 fprintf 打印生成的格式化字符串
+        fprintf(fs, "%s", formatString.c_str());
+        vector<AstNode*> lists= procedureCall->get(0)->DynamicCast<ExpressionList>()->Lists();
+        for(int i = 0; i < lists.size(); i++){
+            if(lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE){
+                if(lists[i]->get(0)->DynamicCast<SimpleExpression>()->getCnodeList().size() == 1){
+                    if(lists[i]->get(0)->get(0)->DynamicCast<Term>()->GetSymType() == Term::SymbolType::SINGLE){
+                        if(lists[i]->get(0)->get(0)->get(0)->DynamicCast<Factor>()->get_type() == Factor::GrammerType::VARIABLE){
+                        // 找到相应变量的表项
+                            auto var = lists[i]->get(0)->get(0)->get(0)->get(0)->DynamicCast<Variable>();
+                            string id = var->get(0)->DynamicCast<LeafNode>()->get_value<string>();
+                            auto table_info = findID(MainTable, procedureCall->get_id(), 0);
+                            if(table_info != NULL){                  
+                                auto record_info = findID(CurrentTable, id, 0);
+                                if(record_info != NULL){
+                                    if(record_info->flag == "variant" || record_info->flag == "array"){
+                                        fprintf(fs, "&");
+                                    }
+                                    else if( record_info->flag == "(sub)program name" ){
+                                        string func_id = record_info->id;
+                                        func_id   = "&_" + id + "_";
+                                        fprintf(fs, "%s", func_id.c_str());
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            lists[i]->accept(this);
+            if(i != lists.size() - 1){
+                fprintf(fs, ", ");
+            }
+        }
+        fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
+        return ;
+    }
     if(procedureCall->get_id()=="write"){
         fprintf(fs, "printf(");
         auto expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
@@ -475,7 +525,7 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
     else if(procedureCall->get_id()=="read"){
         fprintf(fs, "scanf(");
         ExpressionList* expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
-        std::string formatString = generateFormatString2(expressionList);
+        std::string formatString = generateFormatString(expressionList);
 
         // 使用 fprintf 打印生成的格式化字符串
         fprintf(fs, "%s", formatString.c_str());
@@ -692,12 +742,23 @@ void GenerationVisitor::visit(Variable *variable )  {
             else if (idvarpart->get_type() == IDVarPart::GrammarType::EXP_LIST)
             {   
                 auto exp_list = idvarpart->get(0)->DynamicCast<ExpressionList>()->Lists();
+                auto record_info = findID(CurrentTable, id, 0, "array");
+                if(record_info == NULL){
+                    // 错误处理
+                    cout << "notfound" <<endl;
+                    return;
+                }
+                vector< pair<int, int> > bound = record_info->arrayRange;
+                int i = 0;
                 for(auto exp : exp_list){
                     fprintf(fs, "[");
                     exp->accept(this);
-                    auto record_info = findID(CurrentTable, id, 0);
-
+                    if(bound[i].first!=0){
+                        fprintf(fs, " - ");
+                        fprintf(fs,"%d",bound[i].first);
+                    }
                     fprintf(fs, "]");
+                    i++;
                 }
             }
         }

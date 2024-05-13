@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 #include<stdio.h>
 #include<stdbool.h>
 int n, m, l, i, x;
@@ -12,12 +14,14 @@ int c1[3];
 int c2[3];
 int sub()
 {
+int _sub_;
 for (i = 0; i <= 2; i++) {
 c0[i] = a0[i] - b0[i];
 c1[i] = a1[i] - b1[i];
 c2[i] = a2[i] - b2[i];
 }
-return 0;
+_sub_ = 0;
+return _sub_;
 }
 int main() {
 n = 3;
@@ -46,3 +50,4 @@ printf("%d",x);
 }
 return 0;
 }
+>>>>>>> 5bea792d4ed6bfc927f4f574c0454c458df5f7bf

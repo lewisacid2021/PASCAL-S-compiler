@@ -36,10 +36,6 @@ class TableRecord
     void setProgramName(string id_para, int rowNumber_para, string programInfo_para, int amount_para, string returnType_para);
     void setVoidPara(string id_para, int rowNumber_para);
 
-    string findXthFormalParaType(int X);             //找到第X个形式参数的类型
-    bool isXthFormalParaRefered(int X);              //检查第X个形式参数是否是引用调用
-    bool checkArrayXthIndexRange(int X, int index);  //检查第X维下标是否越界，true表示越界，false表示未越界
-
     TableRecord()
     {
         arrayRange.clear();
@@ -64,7 +60,6 @@ class SymbolTable
     void addRecord(string id,string recordName, int rowNumber,SymbolTable *subSymbolTable);
     void addProcedure(string id, int rowNumber, int amount, SymbolTable *subSymbolTable);
     void addFunction(string id, int rowNumber, string type, int amount, SymbolTable *subSymbolTable);
-    void addSubSymbolTable(string id, SymbolTable *subSymbolTable);
     void addProgramName(string id, int rowNumber, string programInfo, int amount, string returnType);
     void addVoidPara(string id, int rowNumber);
 
@@ -103,5 +98,5 @@ class TypeTable
 };
 
 extern TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode);
-
+extern TableRecord *findID(SymbolTable *currentSymbolTable, string id, int mode, string type);
 #endif

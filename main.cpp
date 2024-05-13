@@ -3,14 +3,17 @@
 #include "parser.tab.h"
 #include "symbolTable.h"
 #include "type.h"
+#include <cstddef>
 #include <cstdio>
 #include <iostream>
 
 extern FILE *yyin; 
+extern int error_flag;
 FILE * fs;
 SymbolTable * MainTable;
 SymbolTable* CurrentTable;
 TypeTable* TheTypeTable;
+int math_flag=0;
 
 int main(int argc, char *argv[]){
     ast::AST *ast = new ast::AST();
@@ -60,6 +63,10 @@ int main(int argc, char *argv[]){
                     else fs = stdout;
                     //lexical and grammar analysis
                     yyparse(ast);
+                    if(error_flag == 1 || ast == NULL){
+                        std::cout << "unrecoverable errors occurred"  << endl;
+                        return 0;
+                    }
                     //std::cout<<"Parsing finished"<<std::endl;
                     Semantic_Visitor->visit(ast);
                    // std::cout<<"Semantic analysis finished"<<std::endl;
