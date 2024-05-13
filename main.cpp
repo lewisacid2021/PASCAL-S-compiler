@@ -88,7 +88,5 @@ int main(int argc, char *argv[]){
         std::cout << "Invalid option format, Use: \'-\'" << std::endl;
     }
 
-    system("cls");
-
     return 0;
 }
