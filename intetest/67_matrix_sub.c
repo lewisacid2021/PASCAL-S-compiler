@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 #include<stdio.h>
 #include<stdbool.h>
 int n, m, l, i, x;
@@ -48,3 +50,4 @@ printf("%d",x);
 }
 return 0;
 }
+>>>>>>> 5bea792d4ed6bfc927f4f574c0454c458df5f7bf

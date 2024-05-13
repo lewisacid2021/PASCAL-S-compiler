@@ -17,6 +17,7 @@ using std::vector;
 extern SymbolTable *MainTable;
 extern SymbolTable *CurrentTable;
 extern TypeTable *TheTypeTable;
+extern int math_flag;
 
 //检查是否与主程序名，主程序参数，库函数重名
 bool checkDuplicateNameError(string id, int lineNumber)
@@ -55,7 +56,7 @@ void SemanticVisitor::visit(ProgramHead *programhead)
     //检查主程序是否与库函数重名
     if (lib.count(id))
     {
-        
+        //错误处理
     }
 
     MainTable->addProcedure("read", -1, -1, NULL);
@@ -511,8 +512,14 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
 
         if (record_info->id == "write") {
             if (exp_types->size() == 0) {
-                //错误处理,read、write的参数个数不能为0
+                //错误处理,write的参数个数不能为0
                 std::cout << "Error: The number of read() and write() arguments cannot be 0. Line: " << procedurecall->get_rownum() << std::endl;
+            }
+            return;
+        }
+        if (record_info->id == "writeln") {
+            if (exp_types->size() == 0) {
+                //错误处理,writeln的参数个数不能为0
             }
             return;
         }
@@ -847,8 +854,23 @@ void SemanticVisitor::visit(Factor *factor)
             {
                 // 对于函数直接获取其返回值类型
                 auto id         = factor->get(0)->DynamicCast<LeafNode>()->get_value<string>();
-                TableRecord *tr = findID(MainTable, id, 0);
-                factor->SetFacType(tr->type);
+
+                if(id == "cos" || id == "sin")
+                {
+                    math_flag = 1;
+                    factor->SetFacType("real");
+                }
+                else {
+                    TableRecord *tr = findID(MainTable, id, 0);
+                    if(tr == NULL)
+                    {
+                        //错误处理
+                    }
+                    else{
+                        factor->SetFacType(tr->type);
+                    }
+                    
+                }                  
                 break;
             }
             case Factor::GrammerType::VARIABLE:

@@ -4,7 +4,7 @@ const char split = ',';
 int n, t, i;
 void move(int x,int y)
 {
-printf("%d%d%c",x, y, split);
+printf("%c",x, y, split);
 }
 void hanoi(int n,int one,int two,int three)
 {

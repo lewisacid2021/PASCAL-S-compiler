@@ -13,6 +13,7 @@ FILE * fs;
 SymbolTable * MainTable;
 SymbolTable* CurrentTable;
 TypeTable* TheTypeTable;
+int math_flag=0;
 
 int main(int argc, char *argv[]){
     ast::AST *ast = new ast::AST();
