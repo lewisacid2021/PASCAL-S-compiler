@@ -61,33 +61,6 @@ void SemanticVisitor::visit(ProgramHead *programhead)
         addDuplicateNameError();
     }
 
-    /* if (programhead->getCnodeList().size() == 1)
-    {
-        int amount = 0;
-        MainTable->addProgramName(id, rn, "program", amount, "");
-    } else
-    {
-        auto idlist = programhead->get(1)->DynamicCast<IdList>()->Lists();
-        int amount  = idlist.size();
-        CurrentTable->addProgramName(id, rn, "program", amount, "");
-        for (auto p : idlist)
-        {
-            string para_id = p->get_value<string>();
-            int para_rn    = p->get_rownum();
-
-            //检查参数是否与主程序。库函数同名
-            if (para_id == id)
-            {
-                addDuplicateNameError();
-            } else if (lib.count(para_id))
-            {
-                addDuplicateNameError();
-            }
-
-            MainTable->addVoidPara(para_id, para_rn);
-        }
-    } */
-
     MainTable->addProcedure("read", -1, -1, NULL);
     //添加write过程，该过程变参
     MainTable->addProcedure("write", -1, -1, NULL);
