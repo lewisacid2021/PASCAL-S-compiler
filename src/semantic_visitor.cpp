@@ -361,11 +361,20 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
                         return;
                     }
                     if (idtype->get_type_name() == "array") {
-                        CurrentTable->addPara("array", id->get_value<string>(), id->get_rownum(), idtype->get(0)->DynamicCast<ArrayTypeNode>()->type());
-                    } else if (idtype->get_type_name() == "integer" || idtype->get_type_name() == "real" || idtype->get_type_name() == "char" || idtype->get_type_name() == "boolean") {
-                        CurrentTable->addPara("variant", id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
-                    } else {
-                        CurrentTable->addPara("record", id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
+                        auto array_type = idtype->get(0)->DynamicCast<ArrayTypeNode>();
+                        auto info       = array_type->info();
+                        vector<pair<int, int>> bound;
+                        for (auto j : info->GetDimensions())
+                        {
+                            bound.push_back(make_pair(j.lowbound, j.upbound));
+                        }
+                        CurrentTable->addArrayVarPara("array", id->get_value<string>(), id->get_rownum(), idtype->get(0)->DynamicCast<ArrayTypeNode>()->type(),bound);
+                    } 
+                    else if (idtype->get_type_name() == "integer" || idtype->get_type_name() == "real" || idtype->get_type_name() == "char" || idtype->get_type_name() == "boolean") {
+                        CurrentTable->addVarPara("variant", id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
+                    } 
+                    else {
+                        CurrentTable->addVarPara("record", id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
                     }
                     id->set_ref(true);
                     amount++;
@@ -384,7 +393,14 @@ void SemanticVisitor::visit(SubprogramHead *subprogramhead)
                         return;
                     }
                     if (idtype->get_type_name() == "array"){
-                        CurrentTable->addPara("array", id->get_value<string>(), id->get_rownum(), idtype->get(0)->DynamicCast<ArrayTypeNode>()->type());
+                        auto array_type = idtype->get(0)->DynamicCast<ArrayTypeNode>();
+                        auto info       = array_type->info();
+                        vector<pair<int, int>> bound;
+                        for (auto j : info->GetDimensions())
+                        {
+                            bound.push_back(make_pair(j.lowbound, j.upbound));
+                        }
+                        CurrentTable->addArrayPara("array", id->get_value<string>(), id->get_rownum(), idtype->get(0)->DynamicCast<ArrayTypeNode>()->type(), bound);
                     } 
                     else if (idtype->get_type_name() == "integer" || idtype->get_type_name() == "real" || idtype->get_type_name() == "char" || idtype->get_type_name() == "boolean"){
                         CurrentTable->addPara("variant",id->get_value<string>(), id->get_rownum(), idtype->get_type_name());
