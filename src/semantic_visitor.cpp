@@ -198,7 +198,11 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
             }
 
             string type = typenode->get_type_name();
-            CurrentTable->addVar(id, rn, type);
+            if(TheTypeTable->findID(type) != NULL && TheTypeTable->findID(type)->RecordTable){
+                CurrentTable->addRecord(id, type, rn, TheTypeTable->findID(type)->RecordTable);
+            }
+            else
+                CurrentTable->addVar(id, rn, type);
         }
     } else if (typenode->GetVarType() == TypeNode::VarType::ARRAY_TYPE)
     {
@@ -444,8 +448,15 @@ void SemanticVisitor::visit(Variable *variable)
         //暂未考虑记录型
         if (record_info->flag == "array") {
             variable->set_vn(record_info->type);
-        } else if (record_info->flag == "record" || (TheTypeTable->findID(record_info->type) != NULL && TheTypeTable->findID(record_info->type)->RecordTable)) {
-            if (variable->getCnodeList().size() == 1) {
+            std::vector<AstNode *> list = variable->get(1)->DynamicCast<IDVarParts>()->Lists();
+            if(list.size()!=record_info->amount){
+                //错误处理，数组下标个数不匹配
+                std::cout << "Error: The number of array subscripts does not match. Line: " << variable->get_rownum() << std::endl;
+                return;
+            }
+        }
+        else if (record_info->flag == "record"||(TheTypeTable->findID(record_info->type)!=NULL&&TheTypeTable->findID(record_info->type)->RecordTable)){
+            if(variable->getCnodeList().size() == 1){
                 cout << "Error: Not support record direct operation. Line: " << variable->get_rownum() << std::endl;
                 return;
             } else {
@@ -527,6 +538,7 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
     if (record_info == NULL) {
         //错误处理，未定义
         std::cout << "Error: Undefined. Line: " << procedurecall->get_rownum() << std::endl;
+        return;
     }
 
     if (procedurecall->get_type() == ProcedureCall::ProcedureType::NO_LIST) {
