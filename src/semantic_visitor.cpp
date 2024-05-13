@@ -57,6 +57,7 @@ void SemanticVisitor::visit(ProgramHead *programhead)
     if (lib.count(id))
     {
         //错误处理
+        std::cout << "Error: Same name as library function. Line: " << programhead->get_rownum() << std::endl;
     }
 
     MainTable->addProcedure("read", -1, -1, NULL);
@@ -528,11 +529,6 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
                 //错误处理,read、write的参数个数不能为0
                 std::cout << "Error: The number of read() and write() arguments cannot be 0. Line: " << procedurecall->get_rownum() << std::endl;
                 return;
-            }
-            for (int i = 0; i < exp_types->size(); i++) {
-                if (!((*exp_types)[i] == "variant" || (*exp_types)[i] == "array" || (*exp_types)[i] == "(sub)program name")) {
-                    //错误处理
-                }
             }
             return;
         }
