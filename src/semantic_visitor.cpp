@@ -222,6 +222,7 @@ void SemanticVisitor::visit(VarDeclaration *vardeclaration)
         {
             if (p.first > p.second)
             {
+                cout << "Array low bound higher than up bound at" << vardeclaration->get_rownum() <<endl;
                 //数组下界大于上界
             }
         }
@@ -606,7 +607,7 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
         }
         for (int i = 0; i < exp_types->size(); i++) {
             string para_type = record_info->subSymbolTable->records[i + 1]->type;
-            if (para_type != (*exp_types)[i]) {
+            if (para_type != (*exp_types)[i] && !(para_type == "real" &&(*exp_types)[i] == "integer")) {
                 //错误处理，参数类型错误  影响OJ
                 std::cout << "Error: Param Type error. Line: " << procedurecall->get_rownum() << std::endl;   
             }
@@ -946,7 +947,7 @@ void SemanticVisitor::visit(Factor *factor)
                         }
                         for (int i = 0; i < exp_types->size(); i++) {
                             string para_type = record_info->subSymbolTable->records[i + 1]->type;
-                            if (para_type != (*exp_types)[i]) {
+                            if (para_type != (*exp_types)[i] && !(para_type == "real" &&(*exp_types)[i] == "integer")) {
                                 //错误处理，参数类型错误  影响OJ
                                 std::cout << "Error: Type mismatch. Line: " << factor->get_rownum() << std::endl;   
                             }
