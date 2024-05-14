@@ -2,6 +2,7 @@
 #include<stdbool.h>
 int ififelse()
 {
+int _ififelse_;
 int a;
 int b;
 a = 5;
@@ -16,9 +17,10 @@ else {
 a = a + 15;
 }
 }
-return a;
+_ififelse_ = a;
+return _ififelse_;
 }
 int main() {
-printf("%d",ififelse( ));
+printf("%d",ififelse());
 return 0;
 }
