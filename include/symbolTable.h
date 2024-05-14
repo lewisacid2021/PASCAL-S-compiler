@@ -100,6 +100,7 @@ class TypeTable
         addType("integer", false, NULL);
         addType("real", false, NULL);
         addType("boolean", false, NULL);
+    addType("char",false,NULL);
     }
     ~TypeTable() {}
 };
