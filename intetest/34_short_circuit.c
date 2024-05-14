@@ -3,9 +3,11 @@
 int g, i;
 int func(int n)
 {
+int _func_;
 g = g + n;
-printf("%d",g);
-return g;
+printf("",g);
+_func_ = g;
+return _func_;
 }
 int main() {
 i = 11;
@@ -27,7 +29,7 @@ i = 0;
 }
 printf("%d",i);
 i = 100;
-if ((i <= 99) or (func(i) != 0))
+if ((i <= 99) || (func(i) != 0))
 {
 i = 1;
 }
@@ -36,7 +38,7 @@ i = 0;
 }
 printf("%d",i);
 i = 99;
-if ((i <= 100) or (func(i) != 0))
+if ((i <= 100) || (func(i) != 0))
 {
 i = 1;
 }

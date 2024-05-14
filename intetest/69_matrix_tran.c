@@ -5,6 +5,7 @@ int a0[3],a1[3],a2[3],b0[3],b1[3],b2[3],c0[3],c1[3],c2[3];
 int i, x;
 int tran()
 {
+int _tran_;
 int i;
 for (i = 0; i <= m - 1; i++) {
 c1[2] = a2[1];
@@ -17,7 +18,8 @@ c1[1] = a1[1];
 c2[2] = a2[2];
 c0[0] = a0[0];
 }
-return 0;
+_tran_ = 0;
+return _tran_;
 }
 int main() {
 n = 3;

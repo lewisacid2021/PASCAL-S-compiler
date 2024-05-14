@@ -5,9 +5,6 @@ class C_0001606454869580324163 {
 +TableRecord() : void
 +~TableRecord() : void
 ..
-+checkArrayXthIndexRange(int X, int index) : bool
-+findXthFormalParaType(int X) : std::string
-+isXthFormalParaRefered(int X) : bool
 +setArray(std::string id_para, int rowNumber_para, std::string type_para, int amount_para, std::vector<pair<int,int>> arrayRange_para) : void
 +setConst(std::string id_para, int rowNumber_para, std::string type_para, bool isMinus_para, std::string value_para) : void
 +setFunction(std::string id_para, int rowNumber_para, std::string type_para, int amount_para, SymbolTable * subSymbolTable_para) : void
@@ -44,7 +41,6 @@ class C_0000522733582439809359 {
 +addProgramName(std::string id, int rowNumber, std::string programInfo, int amount, std::string returnType) : void
 +addRecord(std::string id, std::string recordName, int rowNumber, SymbolTable * subSymbolTable) : void
 +addString(std::string id, int rowNumber, std::string type, int amount) : void
-+addSubSymbolTable(std::string id, SymbolTable * subSymbolTable) : void
 +addVar(std::string id, int rowNumber, std::string type) : void
 +addVarPara(std::string id, int rowNumber, std::string type) : void
 +addVoidPara(std::string id, int rowNumber) : void
@@ -184,7 +180,7 @@ class C_0000277815500992219614 {
 +set_uminus() : void
 +type() : ConstValue::ConstvalueType
 __
-- : ConstValue::(anonymous_1696975)
+- : ConstValue::(anonymous_1696859)
 -C_STRING : std::string
 -Is_Uminus : bool
 -value_type : ConstValue::ConstvalueType
@@ -890,8 +886,8 @@ class C_0001774401635359720999 {
 +visit(ast::AstNode * astnode) : void
 __
 }
-class "ConstValue::(anonymous_1696975)" as C_0002006237398030961165
-class C_0002006237398030961165 {
+class "ConstValue::(anonymous_1696859)" as C_0002004939550403483136
+class C_0002004939550403483136 {
 __
 +C_BOOLEAN : bool
 +C_CHAR : char

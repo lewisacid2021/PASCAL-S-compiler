@@ -8,6 +8,7 @@ diagrams:
     glob:
       - include/*.h
       - src/*.cpp
+
     exclude:
       namespaces:
         - std
