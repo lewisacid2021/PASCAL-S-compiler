@@ -5,10 +5,11 @@ int a[61][67];
 int b[53][59];
 int func(int aa,int c,int e,int f,int h,int i)
 {
+int _func_;
 int index;
 index = 0;
 while ((index < 10)) {
-printf("%d",b[aa][index]);
+printf("%i",b[aa][index]);
 index = index + 1;
 }
 printf("%d",a[17][c]);
@@ -17,7 +18,8 @@ b[6][i] = h * 128875 % 3724;
 i = i + 1;
 h = h + 7;
 }
-func = e + f;
+_func_ = e + f;
+return _func_;
 }
 int main() {
 a[17][1] = 6;

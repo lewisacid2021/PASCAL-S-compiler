@@ -777,7 +777,7 @@ expression_list : expression_list ',' expression
 expression : simple_expression RELOP simple_expression
     {
         // expression -> simple_expression RELOP simple_expression.
-        $$ = new Expression(Expression::GrammarType::DOUBLE, $2.value.get<string>(), "unkown");
+        $$ = new Expression(Expression::GrammarType::DOUBLE, $2.value.get<string>(), "unknown");
         $$->set_rownum(line_count);
         $$->append_child($1);
         $$->append_child($3);
@@ -846,6 +846,7 @@ simple_expression : term
 term : factor
     {   
         // term -> factor.
+        
         $$ = new Term(Term::SymbolType::SINGLE, $1->GetFacType());
         $$->set_rownum(line_count);
         $$->append_child($1);

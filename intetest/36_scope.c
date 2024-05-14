@@ -3,17 +3,19 @@
 int a, sum, i;
 int func()
 {
+int _func_;
 int b, a;
 b = 7;
 a = 1;
 if ((a == b))
 {
 a = a + 1;
-return 1;
+_func_ = 1;
 }
 else {
-return 0;
+_func_ = 0;
 }
+return _func_;
 }
 int main() {
 a = 7;

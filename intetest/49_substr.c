@@ -4,16 +4,19 @@ int a[15];
 int b[13];
 int max(int a,int b)
 {
+int _max_;
 if (a >= b)
 {
-return a;
+_max_ = a;
 }
 else {
-return b;
+_max_ = b;
 }
+return _max_;
 }
 int max_sum_nonadjacent(int n)
 {
+int _max_sum_nonadjacent_;
 int i;
 int temp[16];
 temp[0] = a[0];
@@ -21,10 +24,12 @@ temp[1] = max(a[0], a[1]);
 for (i = 2; i <= n - 1; i++) {
 temp[i] = max(temp[i - 2] + a[i], temp[i - 1]);
 }
-return temp[n - 1];
+_max_sum_nonadjacent_ = temp[n - 1];
+return _max_sum_nonadjacent_;
 }
 int longest_common_subseq(int len1,int len2)
 {
+int _longest_common_subseq_;
 int i, j;
 int p[16][16];
 for (i = 0; i <= 15; i++) {
@@ -44,7 +49,8 @@ p[i][j] = max(p[i - 1][j], p[i][j - 1]);
 }
 }
 }
-return p[len1][len2];
+_longest_common_subseq_ = p[len1][len2];
+return _longest_common_subseq_;
 }
 int main() {
 a[0] = 8;

@@ -4,6 +4,7 @@ int a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x;
 int sum, sum1, sum2, sum3;
 int foo()
 {
+int _foo_;
 int arr[16];
 int a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p;
 int sum1, sum2;
@@ -41,7 +42,8 @@ o = 4;
 p = 6;
 sum1 = a + b + c + d + e + f + g + h;
 sum2 = i + j + k + l + m + n + o + p;
-return sum1 + sum2 + arr[a];
+_foo_ = sum1 + sum2 + arr[a];
+return _foo_;
 }
 int main() {
 a = 3;

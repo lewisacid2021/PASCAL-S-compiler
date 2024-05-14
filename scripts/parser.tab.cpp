@@ -608,14 +608,14 @@ static const yytype_int16 yyrline[] =
      558,   565,   572,   580,   586,   595,   601,   606,   621,   632,
      637,   645,   654,   662,   673,   700,   710,   721,   728,   740,
      747,   757,   767,   777,   785,   793,   801,   808,   815,   822,
-     830,   838,   846,   853,   883,   892,   901,   909,   918,   928,
-     937,   945,   955,   963,   973,   987,   996,  1005,  1014,  1020,
-    1029,  1035,  1041,  1047,  1055,  1062,  1070,  1075,  1080,  1091,
-    1102,  1113,  1121,  1130,  1139,  1146,  1154,  1162,  1173,  1187,
-    1201,  1207,  1213,  1220,  1228,  1242,  1252,  1261,  1272,  1279,
-    1290,  1297,  1304,  1314,  1321,  1329,  1335,  1343,  1352,  1360,
-    1368,  1375,  1382,  1390,  1399,  1409,  1420,  1431,  1442,  1450,
-    1459,  1467,  1477,  1484,  1492,  1503,  1510
+     830,   838,   846,   854,   884,   893,   902,   910,   919,   929,
+     938,   946,   956,   964,   974,   988,   997,  1006,  1015,  1021,
+    1030,  1036,  1042,  1048,  1056,  1063,  1071,  1076,  1081,  1092,
+    1103,  1114,  1122,  1131,  1140,  1147,  1155,  1163,  1174,  1188,
+    1202,  1208,  1214,  1221,  1229,  1243,  1253,  1262,  1273,  1280,
+    1291,  1298,  1305,  1315,  1322,  1330,  1336,  1344,  1353,  1361,
+    1369,  1376,  1383,  1391,  1400,  1410,  1421,  1432,  1443,  1451,
+    1460,  1468,  1478,  1485,  1493,  1504,  1511
 };
 #endif
 
@@ -2378,7 +2378,7 @@ yyreduce:
 #line 778 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // expression -> simple_expression RELOP simple_expression.
-        (yyval.expression_node) = new Expression(Expression::GrammarType::DOUBLE, (yyvsp[-1].token_info).value.get<string>(), "unkown");
+        (yyval.expression_node) = new Expression(Expression::GrammarType::DOUBLE, (yyvsp[-1].token_info).value.get<string>(), "unknown");
         (yyval.expression_node)->set_rownum(line_count);
         (yyval.expression_node)->append_child((yyvsp[-2].simple_expression_node));
         (yyval.expression_node)->append_child((yyvsp[0].simple_expression_node));
@@ -2481,15 +2481,16 @@ yyreduce:
 #line 847 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // term -> factor.
+        
         (yyval.term_node) = new Term(Term::SymbolType::SINGLE, (yyvsp[0].factor_node)->GetFacType());
         (yyval.term_node)->set_rownum(line_count);
         (yyval.term_node)->append_child((yyvsp[0].factor_node));
     }
-#line 2489 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2490 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 93: /* term: term MULOP factor  */
-#line 854 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 855 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {  
         // term -> term mulop factor. 
         (yyval.term_node) = new Term;
@@ -2518,11 +2519,11 @@ yyreduce:
         (yyval.term_node)->append_child((yyvsp[-2].term_node));
         (yyval.term_node)->append_child((yyvsp[0].factor_node));
     }
-#line 2522 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2523 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 94: /* factor: INT_NUM  */
-#line 884 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 885 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // factor -> num
         (yyval.factor_node) = new Factor(Factor::GrammerType::NUM);
@@ -2531,11 +2532,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType("integer");
         (yyval.factor_node)->append_child(leaf_node);
     }
-#line 2535 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2536 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 95: /* factor: REAL_NUM  */
-#line 893 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 894 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // factor -> num
         (yyval.factor_node) = new Factor(Factor::GrammerType::NUM);
@@ -2544,11 +2545,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType("real");
         (yyval.factor_node)->append_child(leaf_node);
     }
-#line 2548 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2549 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 96: /* factor: PLUS factor  */
-#line 902 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 903 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // factor -> num
         (yyval.factor_node) = new Factor(Factor::GrammerType::UPLUS);
@@ -2556,11 +2557,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType((yyvsp[0].factor_node)->GetFacType());
         (yyval.factor_node)->append_child((yyvsp[0].factor_node));
     }
-#line 2560 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2561 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 97: /* factor: BOOL  */
-#line 910 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 911 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // factor -> BOOL
         (yyval.factor_node) = new Factor(Factor::GrammerType::BOOL);
@@ -2569,11 +2570,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType("boolean");
         (yyval.factor_node)->append_child(leaf_node);
     }
-#line 2573 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2574 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 98: /* factor: STRING_  */
-#line 919 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 920 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
     // factor -> STRING
         //字符
@@ -2583,11 +2584,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType("string");
         (yyval.factor_node)->append_child(leaf_node);
     }
-#line 2587 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2588 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 99: /* factor: CHAR  */
-#line 929 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 930 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // factor -> char
         (yyval.factor_node) = new Factor(Factor::GrammerType::CHAR_);
@@ -2596,11 +2597,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType("char");
         (yyval.factor_node)->append_child(leaf_node);
     }
-#line 2600 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2601 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 100: /* factor: variable  */
-#line 938 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 939 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // factor -> variable.
         (yyval.factor_node) = new Factor(Factor::GrammerType::VARIABLE);
@@ -2608,11 +2609,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType("unknown");
         (yyval.factor_node)->append_child((yyvsp[0].variable_node));
     }
-#line 2612 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2613 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 101: /* factor: ID '(' expression_list ')'  */
-#line 946 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 947 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         (yyval.factor_node) = new Factor(Factor::GrammerType::ID_EXP_LIST);
         (yyval.factor_node)->set_rownum(line_count);
@@ -2622,11 +2623,11 @@ yyreduce:
         (yyval.factor_node)->append_child(leaf_node);
         (yyval.factor_node)->append_child((yyvsp[-1].expression_list_node));
     }
-#line 2626 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2627 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 102: /* factor: '(' expression ')'  */
-#line 956 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 957 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {
         // factor -> (expression).
         (yyval.factor_node) = new Factor(Factor::GrammerType::EXP);
@@ -2634,11 +2635,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType((yyvsp[-1].expression_node)->GetExpType());
         (yyval.factor_node)->append_child((yyvsp[-1].expression_node));
     }
-#line 2638 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2639 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 103: /* factor: NOT factor  */
-#line 964 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 965 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // factor -> not factor.
         // 类型检查
@@ -2648,11 +2649,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType((yyvsp[0].factor_node)->GetFacType());
         (yyval.factor_node)->append_child((yyvsp[0].factor_node));
     }
-#line 2652 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2653 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 104: /* factor: UMINUS factor  */
-#line 974 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 975 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {   
         // factor -> not factor.
         // 类型检查
@@ -2662,11 +2663,11 @@ yyreduce:
         (yyval.factor_node)->SetFacType((yyvsp[0].factor_node)->GetFacType());
         (yyval.factor_node)->append_child((yyvsp[0].factor_node));
     }
-#line 2666 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2667 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 105: /* program_head: PROGRAM error '(' id_list ')' ';'  */
-#line 988 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 989 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少主程序名 
         (yyval.program_head_node) = new ProgramHead();
         LeafNode* leaf_node = new LeafNode();
@@ -2675,11 +2676,11 @@ yyreduce:
         (yyval.program_head_node)->set_rownum(line_count);
         yyerror("Grammar Error: missing program name", line_count);
     }
-#line 2679 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2680 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 106: /* program_head: PROGRAM ID '(' id_list ')' error  */
-#line 997 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 998 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少主程序名 
         (yyval.program_head_node) = new ProgramHead();
         LeafNode* leaf_node = new LeafNode();
@@ -2688,11 +2689,11 @@ yyreduce:
         (yyval.program_head_node)->set_rownum(line_count);
         yyerror("Grammar Error: missing semicolon", line_count);
     }
-#line 2692 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2693 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 107: /* program_head: PROGRAM ID error id_list ')' ';'  */
-#line 1006 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1007 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少左括号 
         (yyval.program_head_node) = new ProgramHead();
         LeafNode* leaf_node = new LeafNode((yyvsp[-4].token_info).value, LeafNode::LeafType::NAME);
@@ -2701,21 +2702,21 @@ yyreduce:
         (yyval.program_head_node)->set_rownum(line_count);
         yyerror("Grammar Error: missing a left bracket", line_count);
     }
-#line 2705 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2706 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 108: /* program_head: PROGRAM ID '(' error ')' ';'  */
-#line 1015 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1016 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR idlist识别失败 
         (yyval.program_head_node) = new ProgramHead();
         error_flag = 1;
         yyerror("Grammar Error: program identifier list missing or imcomplete", line_count);
     }
-#line 2715 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2716 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 109: /* program_head: PROGRAM ID '(' id_list error ';'  */
-#line 1021 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1022 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少右括号 
         (yyval.program_head_node) = new ProgramHead();
         LeafNode* leaf_node = new LeafNode((yyvsp[-4].token_info).value, LeafNode::LeafType::NAME);
@@ -2724,92 +2725,92 @@ yyreduce:
         (yyval.program_head_node)->set_rownum(line_count);
         yyerror("Grammar Error: missing a right bracket", line_count);
     }
-#line 2728 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2729 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 110: /* program_head: PROGRAM error ';'  */
-#line 1030 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1031 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR program head 
         (yyval.program_head_node) = new ProgramHead();
         error_flag = 1;
         yyerror("Grammar Error: program head imcomplete", line_count);
     }
-#line 2738 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2739 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 111: /* program_head: PROGRAM ID error ';'  */
-#line 1036 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1037 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR idlist缺失 
         (yyval.program_head_node) = new ProgramHead();
         error_flag = 1;
         yyerror("Grammar Error: program identifier list missing or imcomplete", line_count);
     }
-#line 2748 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2749 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 112: /* program_head: PROGRAM ID '(' error ';'  */
-#line 1042 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1043 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR idlist缺失 
         (yyval.program_head_node) = new ProgramHead();
         error_flag = 1;
         yyerror("Grammar Error: program identifier list missing or imcomplete", line_count);
     }
-#line 2758 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2759 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 113: /* program_head: PROGRAM ID error  */
-#line 1048 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1049 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR idlist缺失 
         (yyval.program_head_node) = new ProgramHead();
         LeafNode* leaf_node = new LeafNode((yyvsp[-1].token_info).value, LeafNode::LeafType::NAME);
         (yyval.program_head_node)->append_child(leaf_node);
         yyerror("Grammar Error: missing a semicolon", line_count - 1);
     }
-#line 2769 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2770 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 114: /* const_declarations: CONST error ';'  */
-#line 1056 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1057 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 常量定义出现错误 
         (yyval.const_declarations_node) = new ConstDeclarations(ConstDeclarations::GrammarType::EPSILON);
         (yyval.const_declarations_node)->set_rownum(line_count);
         error_flag = 1;
         yyerror("Grammar Error: fatal error in const declarations", line_count);
     }
-#line 2780 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2781 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 115: /* const_declarations: CONST const_declaration error  */
-#line 1063 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1064 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少分号 
         (yyval.const_declarations_node) = new ConstDeclarations(ConstDeclarations::GrammarType::DECLARATION); 
         (yyval.const_declarations_node)->set_rownum(line_count);
         (yyval.const_declarations_node)->append_child((yyvsp[-1].const_declaration_node));
         yyerror("Grammar Error: missing a semicolon", line_count);
     }
-#line 2791 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2792 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 116: /* const_declaration: const_declaration ';' ID CONSTASSIGNOP error  */
-#line 1071 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1072 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //常数初始化右值缺失 
         error_flag = 1;
         yyerror("Grammar Error: constant definition missing initial r-value", line_count);
     }
-#line 2800 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2801 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 117: /* const_declaration: ID CONSTASSIGNOP error  */
-#line 1076 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1077 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //常数初始化右值缺失 
         error_flag = 1;
         yyerror("Grammar Error: constant definition missing initial r-value", line_count);
     }
-#line 2809 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2810 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 118: /* const_declaration: const_declaration error ID '=' const_value  */
-#line 1081 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1082 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少分号 
         (yyval.const_declaration_node) = new ConstDeclaration(ConstDeclaration::GrammarType::MULTIPLE_ID, (yyvsp[0].const_value_node)->type());
         (yyval.const_declaration_node)->set_rownum(line_count);
@@ -2820,11 +2821,11 @@ yyreduce:
         (yyval.const_declaration_node)->append_child(leaf_node);
         yyerror("Grammar Error: missing a semicolon", line_count);
     }
-#line 2824 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2825 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 119: /* const_declaration: const_declaration ';' ID error const_value  */
-#line 1092 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1093 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少等号（常量的初始化用的是等号，而不是赋值号） 
         (yyval.const_declaration_node) = new ConstDeclaration(ConstDeclaration::GrammarType::MULTIPLE_ID, (yyvsp[0].const_value_node)->type());
         (yyval.const_declaration_node)->set_rownum(line_count);
@@ -2835,11 +2836,11 @@ yyreduce:
         (yyval.const_declaration_node)->append_child(leaf_node);
         yyerror("Grammar Error: missing a equal sign",line_count);
     }
-#line 2839 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2840 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 120: /* const_declaration: ID error const_value  */
-#line 1103 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1104 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少等号（常量的初始化用的是等号，而不是赋值号） 
         (yyval.const_declaration_node) = new ConstDeclaration(ConstDeclaration::GrammarType::SINGLE_ID, (yyvsp[0].const_value_node)->type());
         (yyval.const_declaration_node)->set_rownum(line_count);
@@ -2849,22 +2850,22 @@ yyreduce:
         (yyval.const_declaration_node)->append_child(leaf_node);
         yyerror("Grammar Error: missing a equal sign", line_count);
     }
-#line 2853 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2854 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 121: /* var_declarations: VAR error  */
-#line 1114 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1115 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 变量定义出现错误 
         (yyval.var_declarations_node) = new VarDeclarations(VarDeclarations::GrammarType::DECLARATION);
         (yyval.var_declarations_node)->set_rownum(line_count);
         error_flag = 1;
         yyerror("Grammar Error: fatal error in variant declarations", line_count);
     }
-#line 2864 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2865 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 122: /* var_declaration: var_declaration id_list ':' type error  */
-#line 1122 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1123 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少分号 
         (yyval.var_declaration_node) = new VarDeclaration(VarDeclaration::GrammarType::MULTIPLE_DECL);
         (yyval.var_declaration_node)->set_rownum(line_count);
@@ -2873,11 +2874,11 @@ yyreduce:
         (yyval.var_declaration_node)->append_child((yyvsp[-1].type_node));
         yyerror("Grammar Error: missing a semicolon", line_count);
     }
-#line 2877 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2878 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 123: /* var_declaration: var_declaration id_list error type ';'  */
-#line 1131 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1132 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少冒号 
         (yyval.var_declaration_node) = new VarDeclaration(VarDeclaration::GrammarType::MULTIPLE_DECL);
         (yyval.var_declaration_node)->set_rownum(line_count);
@@ -2886,22 +2887,22 @@ yyreduce:
         (yyval.var_declaration_node)->append_child((yyvsp[-1].type_node));
         yyerror("Grammar Error: missing a colon", line_count);
     }
-#line 2890 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2891 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 124: /* var_declaration: var_declaration id_list ':' error  */
-#line 1140 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1141 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR type识别失败 
         (yyval.var_declaration_node) = new VarDeclaration(VarDeclaration::GrammarType::MULTIPLE_DECL);
         (yyval.var_declaration_node)->set_rownum(line_count);
         error_flag = 1;
         yyerror("Grammar Error: missing a type", line_count);
     }
-#line 2901 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2902 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 125: /* var_declaration: id_list ':' error ';'  */
-#line 1147 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1148 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR type识别失败 
         (yyval.var_declaration_node) = new VarDeclaration(VarDeclaration::GrammarType::SINGLE_DECL);
         (yyval.var_declaration_node)->set_rownum(line_count);
@@ -2909,11 +2910,11 @@ yyreduce:
         error_flag = 1;
         yyerror("missing a type", line_count);
     }
-#line 2913 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2914 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 126: /* var_declaration: id_list error type ';'  */
-#line 1155 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1156 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少冒号 
         (yyval.var_declaration_node) = new VarDeclaration(VarDeclaration::GrammarType::SINGLE_DECL);
         (yyval.var_declaration_node)->set_rownum(line_count);
@@ -2921,11 +2922,11 @@ yyreduce:
         (yyval.var_declaration_node)->append_child((yyvsp[-1].type_node));
         yyerror("Grammar Error: missing a colon", line_count);
     }
-#line 2925 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2926 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 127: /* var_declaration: id_list ':' type error  */
-#line 1163 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1164 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少分号 
         (yyval.var_declaration_node) = new VarDeclaration(VarDeclaration::GrammarType::SINGLE_DECL);
         (yyval.var_declaration_node)->set_rownum(line_count);
@@ -2933,11 +2934,11 @@ yyreduce:
         (yyval.var_declaration_node)->append_child((yyvsp[-1].type_node));
         yyerror("Grammar Error: missing a semicolon", line_count - 1);
     }
-#line 2937 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2938 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 128: /* array_type: ARRAY error periods ']' OF type  */
-#line 1174 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1175 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少左中括号 
         (yyval.array_node) = new ArrayTypeNode();
         (yyval.array_node)->set_rownum(line_count);
@@ -2951,11 +2952,11 @@ yyreduce:
         (yyval.array_node)->append_child((yyvsp[0].type_node));
         yyerror("Grammar Error: missing a left square bracket", line_count);
     }
-#line 2955 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2956 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 129: /* array_type: ARRAY '[' periods ']' error type  */
-#line 1188 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1189 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少OF关键字 
         (yyval.array_node) = new ArrayTypeNode();
         (yyval.array_node)->set_rownum(line_count);
@@ -2969,53 +2970,53 @@ yyreduce:
         (yyval.array_node)->append_child((yyvsp[0].type_node));
         yyerror("Grammar Error: missing keyword \"OF\" ", line_count);
     }
-#line 2973 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2974 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 130: /* array_type: ARRAY '[' periods ']' OF error  */
-#line 1202 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1203 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 数组元素类型识别失败 
         (yyval.array_node) = new ArrayTypeNode();
         error_flag = 1;
         yyerror("Grammar Error: missing a base type keyword", line_count);
     }
-#line 2983 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2984 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 131: /* array_type: ARRAY error  */
-#line 1208 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1209 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 不完整的数组类型 
         (yyval.array_node) = new ArrayTypeNode();
         error_flag = 1;
         yyerror("Grammar Error: incomplete array type", line_count);
     }
-#line 2993 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 2994 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 132: /* array_type: ARRAY '[' error  */
-#line 1214 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1215 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 不完整的数组类型 
         (yyval.array_node) = new ArrayTypeNode();
         (yyval.array_node)->set_rownum(line_count);
         error_flag = 1;
         yyerror("Grammar Error: incomplete array type", line_count);
     }
-#line 3004 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3005 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 133: /* array_type: ARRAY '[' periods error  */
-#line 1221 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1222 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 不完整的数组类型 
         (yyval.array_node) = new ArrayTypeNode();
         (yyval.array_node)->set_rownum(line_count);
         error_flag = 1;
         yyerror("Grammar Error: incomplete array type",line_count);
     }
-#line 3015 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3016 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 134: /* periods: periods error period  */
-#line 1229 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1230 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少逗号 
         (yyval.periods_node) = new PeriodsNode(PeriodsNode::PeriodType::MULTI);
         (yyval.periods_node)->set_rownum(line_count);
@@ -3028,11 +3029,11 @@ yyreduce:
         (yyval.periods_node)->append_child((yyvsp[0].period_node));
         yyerror("Grammar Error: missing a comma ", line_count);
     }
-#line 3032 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3033 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 135: /* period: INT_NUM error INT_NUM  */
-#line 1243 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1244 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     {     
         // period -> INT_NUM SUBCATALOG INT_NUMe
         (yyval.period_node) = new PeriodNode((yyvsp[-2].token_info).value.get<int>(), (yyvsp[0].token_info).value.get<int>());
@@ -3041,11 +3042,11 @@ yyreduce:
         (yyval.period_node)->append_child(new LeafNode((yyvsp[0].token_info).value.get<int>(), LeafNode::LeafType::VALUE));
         yyerror("Grammar Error: missing range dot .. ", line_count);
     }
-#line 3045 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3046 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 136: /* subprogram_declarations: subprogram_declarations subprogram_declaration error  */
-#line 1253 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1254 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少分号 
         (yyval.subprogram_declarations_node) = new SubprogramDeclarations();
         (yyval.subprogram_declarations_node)->set_rownum(line_count);
@@ -3053,11 +3054,11 @@ yyreduce:
         (yyval.subprogram_declarations_node)->append_child((yyvsp[-1].subprogram_declaration_node));
         yyerror("Grammar Error: missing a semicolon", line_count);
     }
-#line 3057 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3058 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 137: /* subprogram_head: FUNCTION ID formal_parameter ':' type error  */
-#line 1262 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1263 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少分号 
         (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         (yyval.subprogram_head_node)->set_rownum(line_count);
@@ -3068,22 +3069,22 @@ yyreduce:
         (yyval.subprogram_head_node)->append_child((yyvsp[-1].type_node));
          yyerror("Grammar Error: missing semicolon", line_count);
     }
-#line 3072 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3073 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 138: /* subprogram_head: FUNCTION error formal_parameter ':' type ';'  */
-#line 1273 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1274 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 函数名缺失 
         (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         (yyval.subprogram_head_node)->set_rownum(line_count);
         error_flag = 1;
         yyerror("Grammar Error: missing function name", line_count);
     }
-#line 3083 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3084 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 139: /* subprogram_head: FUNCTION ID formal_parameter error type ';'  */
-#line 1280 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1281 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少冒号 
         (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         (yyval.subprogram_head_node)->set_rownum(line_count);
@@ -3094,33 +3095,33 @@ yyreduce:
         (yyval.subprogram_head_node)->append_child((yyvsp[-1].type_node));
         yyerror("Grammar Error: missing a colon", line_count);
     }
-#line 3098 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3099 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 140: /* subprogram_head: FUNCTION ID formal_parameter ':' error ';'  */
-#line 1291 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1292 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少基本类型关键字 
         (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         (yyval.subprogram_head_node)->set_rownum(line_count);
         error_flag = 1;
         yyerror("Grammar Error: missing a base type keyword", line_count);
     }
-#line 3109 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3110 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 141: /* subprogram_head: FUNCTION ID formal_parameter error  */
-#line 1298 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1299 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少基本类型关键字 
         (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         (yyval.subprogram_head_node)->set_rownum(line_count);
         error_flag =1 ;
         yyerror("Grammar Error: missing a base type keyword", line_count);
     }
-#line 3120 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3121 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 142: /* subprogram_head: PROCEDURE ID formal_parameter error  */
-#line 1305 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1306 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少分号 
         (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         (yyval.subprogram_head_node)->set_rownum(line_count);
@@ -3130,54 +3131,54 @@ yyreduce:
         (yyval.subprogram_head_node)->append_child((yyvsp[-1].formal_param_node));
         yyerror("Grammar Error: missing a semicolon", line_count);
     }
-#line 3134 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3135 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 143: /* subprogram_head: FUNCTION error  */
-#line 1315 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1316 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 不完整的函数头 
         (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::FUNC);
         (yyval.subprogram_head_node)->set_rownum(line_count);
         error_flag = 1;
         yyerror("Grammar Error: incomplete function head", line_count);
     }
-#line 3145 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3146 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 144: /* subprogram_head: PROCEDURE error  */
-#line 1322 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1323 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 不完整的过程头 
         (yyval.subprogram_head_node) = new SubprogramHead(SubprogramHead::SubprogramType::PROC);
         (yyval.subprogram_head_node)->set_rownum(line_count);
         error_flag = 1;
         yyerror("Grammar Error: incomplete procedure head", line_count);
     }
-#line 3156 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3157 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 145: /* formal_parameter: '(' error  */
-#line 1330 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1331 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 不完整的形参列表
         (yyval.formal_param_node) = new FormalParam();
         (yyval.formal_param_node)->set_rownum(line_count);
         yyerror("Grammar Error: incomplete formal parameter list", line_count);
     }
-#line 3166 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3167 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 146: /* formal_parameter: '(' parameter_lists error  */
-#line 1336 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1337 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 右括号缺失
         (yyval.formal_param_node) = new FormalParam();
         (yyval.formal_param_node)->set_rownum(line_count);
         (yyval.formal_param_node)->append_child((yyvsp[-1].paramlists_node));
         yyerror("Grammar Error: missing a right bracket", line_count);
     }
-#line 3177 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3178 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 147: /* parameter_lists: parameter_lists error parameter_list  */
-#line 1344 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1345 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少分号 
         (yyval.paramlists_node) = new ParamLists(ParamLists::GrammarType::MULTIPLE_PARAM_LIST);
         (yyval.paramlists_node)->set_rownum(line_count);
@@ -3185,22 +3186,22 @@ yyreduce:
         (yyval.paramlists_node)->append_child((yyvsp[0].paramlist_node));
 		yyerror("Grammar Error: missing a semicolon", line_count);
 	}
-#line 3189 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3190 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 148: /* var_parameter: VAR error  */
-#line 1353 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1354 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 不完整的引用参数列表 
         (yyval.var_param_node) = new VarParam();
         (yyval.var_param_node)->set_rownum(line_count);
         error_flag = 1;
         yyerror("Grammar Error: incomplete refereced parameter list", line_count);
 	}
-#line 3200 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3201 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 149: /* value_parameter: id_list error type  */
-#line 1361 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1362 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少分号 
        (yyval.value_param_node) = new ValueParam();
         (yyval.value_param_node)->set_rownum(line_count);
@@ -3208,44 +3209,44 @@ yyreduce:
         (yyval.value_param_node)->append_child((yyvsp[0].type_node));
         yyerror("Grammar Error: missing a colon", line_count);
     }
-#line 3212 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3213 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 150: /* value_parameter: id_list ':' error  */
-#line 1369 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1370 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少基本类型关键字 
         (yyval.value_param_node) = new ValueParam();
         (yyval.value_param_node)->set_rownum(line_count);
         error_flag = 1;
         yyerror("Grammar Error: missing a base type keyword", line_count);
     }
-#line 3223 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3224 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 151: /* value_parameter: id_list error  */
-#line 1376 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1377 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少基本类型关键字 
         (yyval.value_param_node) = new ValueParam();
         error_flag = 1;
         (yyval.value_param_node)->set_rownum(line_count);
         yyerror("Grammar Error: missing a base type keyword", line_count);
     }
-#line 3234 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3235 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 152: /* compound_statement: BEGIN_ statement_list error  */
-#line 1383 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1384 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少END关键字  
         (yyval.compound_statement_node) = new CompoundStatement();
         (yyval.compound_statement_node)->set_rownum(line_count);
         (yyval.compound_statement_node)->append_child((yyvsp[-1].statement_list_node));
         yyerror("Grammar Error: missing keyword \"end\"", line_count);
 	}
-#line 3245 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3246 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 153: /* statement_list: statement_list error statement  */
-#line 1391 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1392 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺失分号 这里引发了3个规约规约冲突  
         (yyval.statement_list_node) = new StatementList();
         (yyval.statement_list_node)->set_rownum(line_count);
@@ -3253,11 +3254,11 @@ yyreduce:
         (yyval.statement_list_node)->append_child((yyvsp[0].statement_node));
         yyerror("Grammar Error: missing a semicolon  ", line_count);
     }
-#line 3257 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3258 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 154: /* ifstatement: IF expression error statement else_part  */
-#line 1400 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1401 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少then关键字  
         (yyval.ifstatement_node) = new IfStatement();
         (yyval.ifstatement_node)->set_rownum(line_count);
@@ -3266,11 +3267,11 @@ yyreduce:
         (yyval.ifstatement_node)->append_child((yyvsp[0].elsepart_node));
         yyerror("Grammar Error: missing keyword \"then\"", line_count);
 	}
-#line 3270 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3271 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 155: /* loopstatement: FOR ID error expression TO expression DO statement  */
-#line 1410 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1411 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少赋值号  
         (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::FORDOWN);
         (yyval.loopstatement_node)->set_rownum(line_count);
@@ -3281,11 +3282,11 @@ yyreduce:
         (yyval.loopstatement_node)->append_child((yyvsp[0].statement_node));
         yyerror("Grammar Error: missing assignop \":=\"", line_count);
     }
-#line 3285 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3286 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 156: /* loopstatement: FOR ID ASSIGNOP expression error expression DO statement  */
-#line 1421 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1422 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少关键字to  
         (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::FORDOWN);
         (yyval.loopstatement_node)->set_rownum(line_count);
@@ -3296,11 +3297,11 @@ yyreduce:
         (yyval.loopstatement_node)->append_child((yyvsp[0].statement_node));
         yyerror("Grammar Error: missing keywrod \"to\"", line_count);
     }
-#line 3300 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3301 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 157: /* loopstatement: FOR ID ASSIGNOP expression TO expression error statement  */
-#line 1432 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1433 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少关键字do  
         (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::FORDOWN);
         (yyval.loopstatement_node)->set_rownum(line_count);
@@ -3311,11 +3312,11 @@ yyreduce:
         (yyval.loopstatement_node)->append_child((yyvsp[0].statement_node));
         yyerror("Grammar Error: missing keywrod \"do\"", line_count);
     }
-#line 3315 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3316 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 158: /* loopstatement: WHILE expression error statement  */
-#line 1443 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1444 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少关键字do  
         (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::WHILE_);
         (yyval.loopstatement_node)->set_rownum(line_count);
@@ -3323,11 +3324,11 @@ yyreduce:
         (yyval.loopstatement_node)->append_child((yyvsp[0].statement_node));
         yyerror("Grammar Error: missing keywrod \"do\"", line_count);
     }
-#line 3327 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3328 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 159: /* loopstatement: REPEAT statement error expression  */
-#line 1451 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1452 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少关键字until  
         (yyval.loopstatement_node) = new LoopStatement(LoopStatement::LoopType::REPEAT_);
         (yyval.loopstatement_node)->set_rownum(line_count);
@@ -3335,22 +3336,22 @@ yyreduce:
         (yyval.loopstatement_node)->append_child((yyvsp[0].expression_node));
         yyerror("Grammar Error: missing keywrod \"until\"", line_count);
 	}
-#line 3339 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3340 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 160: /* procedure_call: ID '(' expression_list error  */
-#line 1460 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1461 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少右括号  
         (yyval.procedure_call_node) = new ProcedureCall(ProcedureCall::ProcedureType::EXP_LIST, (yyvsp[-3].token_info).value.get<string>());
         (yyval.procedure_call_node)->set_rownum(line_count);
         (yyval.procedure_call_node)->append_child((yyvsp[-1].expression_list_node));
         yyerror("Grammar Error: missing a right bracket", line_count);
     }
-#line 3350 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3351 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 161: /* expression_list: expression_list error expression  */
-#line 1468 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1469 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少逗号 这里引发了一个移进规约冲突 
         std::vector<std::string> *type_list = (yyvsp[-2].expression_list_node)->get_types();
         type_list->emplace_back((yyvsp[0].expression_node)->GetExpType());
@@ -3359,33 +3360,33 @@ yyreduce:
         (yyval.expression_list_node)->append_child((yyvsp[0].expression_node));
         yyerror("Grammar Error: missing a comma", line_count);
     }
-#line 3363 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3364 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 162: /* id_varpart: '[' error  */
-#line 1478 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1479 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 不完整的数组下标列表 
         (yyval.idvarpart_node) = new IDVarPart(IDVarPart::GrammarType::EXP_LIST);
         (yyval.idvarpart_node)->set_rownum(line_count);
         error_flag = 1;
         yyerror("Grammar Error: incomplete expression list of array subindex", line_count);
     }
-#line 3374 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3375 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 163: /* id_varpart: '[' expression_list error  */
-#line 1485 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1486 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺失右中括号 
 		(yyval.idvarpart_node) = new IDVarPart(IDVarPart::GrammarType::EXP_LIST);
         (yyval.idvarpart_node)->set_rownum(line_count);
         (yyval.idvarpart_node)->append_child((yyvsp[-1].expression_list_node));
         yyerror("Grammar Error: missing a right square bracket", line_count);
 	}
-#line 3385 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3386 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 164: /* factor: ID '(' expression_list error  */
-#line 1493 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1494 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少右括号 这里引发了一个移进规约冲突
         (yyval.factor_node) = new Factor(Factor::GrammerType::ID_EXP_LIST);
         (yyval.factor_node)->set_rownum(line_count);
@@ -3396,22 +3397,22 @@ yyreduce:
         (yyval.factor_node)->append_child((yyvsp[-1].expression_list_node));
         yyerror("Grammar Error: missing a right bracket", line_count);
 	}
-#line 3400 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3401 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 165: /* factor: ID '(' error  */
-#line 1504 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1505 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 函数调用的表达式列表缺失
         (yyval.factor_node) = new Factor(Factor::GrammerType::EXP);
         (yyval.factor_node)->set_rownum(line_count);
         error_flag = 1;
         yyerror("Grammar Error: missing actual parameter list of function call", line_count);
 	}
-#line 3411 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3412 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
   case 166: /* factor: '(' expression error  */
-#line 1511 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1512 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
     { //ERROR 缺少右括号
         (yyval.factor_node) = new Factor(Factor::GrammerType::EXP);
         (yyval.factor_node)->set_rownum(line_count);
@@ -3419,11 +3420,11 @@ yyreduce:
         (yyval.factor_node)->append_child((yyvsp[-1].expression_node));
         yyerror("Grammar Error: missing a right bracket", line_count);
     }
-#line 3423 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3424 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
     break;
 
 
-#line 3427 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
+#line 3428 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.tab.cpp"
 
       default: break;
     }
@@ -3616,7 +3617,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 1520 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
+#line 1521 "/home/lm/shared_compiler/PASCAL-S-compiler/build/../scripts/parser.y"
 
  
 

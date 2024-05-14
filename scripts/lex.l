@@ -45,7 +45,7 @@ digits                  {digit}+
 fraction                (\.{digits})
 
 /* 保留字 */
-BOOL                    "true"|"false"
+BOOL                    ("true"|"false")
 ARRAY                   "array"
 BEGIN_                  "begin"
 CASE                    "case"
@@ -148,9 +148,9 @@ SUBCATALOG              ".."
 {ADDOP}                         { write_cache(); to_str(); return ADDOP; }
 {MULOP}                         { write_cache(); to_str(); return MULOP; }
 {ASSIGNOP}                      { write_cache(); to_str(); return ASSIGNOP; }
-        
+
+{BOOL}                          { write_cache(); to_str(); return BOOL; }        
 {ID}                            { write_cache(); to_str(); return ID; }
-{BOOL}                          { write_cache(); to_str(); return BOOL; }
 
 {CONSTASSIGNOP}                 { write_cache(); to_str(); return CONSTASSIGNOP; }
 {SEP}                           { write_cache(); to_str(); return yytext[0]; }

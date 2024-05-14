@@ -14,6 +14,7 @@ SymbolTable *MainTable;
 SymbolTable *CurrentTable;
 TypeTable *TheTypeTable;
 int math_flag = 0;
+int semantic_error = 0;
 
 int main(int argc, char *argv[])
 {
@@ -72,6 +73,10 @@ int main(int argc, char *argv[])
                     //std::cout<<"Parsing finished"<<std::endl;
                     Semantic_Visitor->visit(ast);
                     // std::cout<<"Semantic analysis finished"<<std::endl;
+                    if(semantic_error == 1){
+                        std::cout << "unrecoverable semantic errors occurred" << endl;
+                        return 0;
+                    }
                     Codegen_Visitor->visit(ast);
                     // std::cout<<"Code generation finished"<<std::endl;
 

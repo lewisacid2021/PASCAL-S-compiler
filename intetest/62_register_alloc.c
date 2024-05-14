@@ -7,6 +7,7 @@ int a30, a31, a32;
 int a, b;
 int func(int a,int b)
 {
+int _func_;
 int i;
 int c1, c2, c3, c4;
 int d1, d2, d3, d4;
@@ -90,7 +91,8 @@ d1 = 1 + c1 + a1;
 d2 = 2 + c2 + a2;
 d3 = 3 + c3 + a3;
 d4 = 4 + c4 + a4;
-return i + c1 + c2 + c3 + c4 - d1 - d2 - d3 - d4 + e1 + e2 + e3 + e4 - f1 - f2 - f3 - f4 + g1 + g2 + g3 + g4 - h1 - h2 - h3 - h4 + i1 + i2 + i3 + i4 - j1 - j2 - j3 - j4 + k1 + k2 + k3 + k4 + a1 - a2 + a3 - a4 + a5 - a6 + a7 - a8 + a9 - a10 + a11 - a12 + a13 - a14 + a15 - a16 + a17 - a18 + a19 - a20 + a21 - a22 + a23 - a24 + a25 - a26 + a27 - a28 + a29 - a30 + a31 - a32;
+_func_ = i + c1 + c2 + c3 + c4 - d1 - d2 - d3 - d4 + e1 + e2 + e3 + e4 - f1 - f2 - f3 - f4 + g1 + g2 + g3 + g4 - h1 - h2 - h3 - h4 + i1 + i2 + i3 + i4 - j1 - j2 - j3 - j4 + k1 + k2 + k3 + k4 + a1 - a2 + a3 - a4 + a5 - a6 + a7 - a8 + a9 - a10 + a11 - a12 + a13 - a14 + a15 - a16 + a17 - a18 + a19 - a20 + a21 - a22 + a23 - a24 + a25 - a26 + a27 - a28 + a29 - a30 + a31 - a32;
+return _func_;
 }
 int main() {
 a0 = 0;

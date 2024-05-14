@@ -13,7 +13,7 @@ void printans()
 int i;
 sum = sum + 1;
 for (i = 1; i <= n; i++) {
-printf("%d",ans[i]);
+printf("%d",ans[i - 1]);
 if (i == n)
 {
 printf("%c",newline);
@@ -27,20 +27,20 @@ void f(int step)
 {
 int i;
 for (i = 1; i <= n; i++) {
-if ((row[i] != 1) && (line1[step + i] == 0) && (line2[n + step - i] == 0))
+if ((row[i - 1] != 1) && (line1[step + i - 1] == 0) && (line2[n + step - i - 1] == 0))
 {
-ans[step] = i;
+ans[step - 1] = i;
 if (step == n)
 {
 printans();
 }
-row[i] = 1;
-line1[step + i] = 1;
-line2[n + step - i] = 1;
+row[i - 1] = 1;
+line1[step + i - 1] = 1;
+line2[n + step - i - 1] = 1;
 f(step + 1);
-row[i] = 0;
-line1[step + i] = 0;
-line2[n + step - i] = 0;
+row[i - 1] = 0;
+line1[step + i - 1] = 0;
+line2[n + step - i - 1] = 0;
 }
 }
 }

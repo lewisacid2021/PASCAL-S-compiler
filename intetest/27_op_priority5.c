@@ -9,7 +9,7 @@ c = 1;
 d = 2;
 e = 4;
 flag = false;
-if (((a * b / c == e + d) && (a * (a + b) + c <= d + e) or (a - (b * c) == d - a / c)))
+if (((a * b / c == e + d) && (a * (a + b) + c <= d + e) || (a - (b * c) == d - a / c)))
 {
 flag = true;
 }

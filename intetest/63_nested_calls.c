@@ -4,67 +4,81 @@ int i, i1, i2, i3, i4, a;
 int arr[10];
 int func1(int x,int y,int z)
 {
+int _func1_;
 if (z == 0)
 {
-return x * y;
+_func1_ = x * y;
 }
 else {
-return func1(x, y - z, 0);
+_func1_ = func1(x, y - z, 0);
 }
+return _func1_;
 }
 int func2(int x,int y)
 {
+int _func2_;
 if (y != 0)
 {
-return func2(x % y, 0);
+_func2_ = func2(x % y, 0);
 }
 else {
-return x;
+_func2_ = x;
 }
+return _func2_;
 }
 int func3(int x,int y)
 {
+int _func3_;
 if (y == 0)
 {
-return x + 1;
+_func3_ = x + 1;
 }
 else {
-return func3(x + y, 0);
+_func3_ = func3(x + y, 0);
 }
+return _func3_;
 }
 int func4(int x,int y,int z)
 {
+int _func4_;
 if (x != 0)
 {
-return y;
+_func4_ = y;
 }
 else {
-return z;
+_func4_ = z;
 }
+return _func4_;
 }
 int func5(int x)
 {
-return -x;
+int _func5_;
+_func5_ = -x;
+return _func5_;
 }
 int func6(int x,int y)
 {
+int _func6_;
 if ((x != 0) && (y != 0))
 {
-return 1;
+_func6_ = 1;
 }
 else {
-return 0;
+_func6_ = 0;
 }
+return _func6_;
 }
 int func7(int x)
 {
+int _func7_;
 if (x == 0)
 {
-return 1;
+_func7_ = 1;
 }
 else {
-return 0;
+_func7_ = 0;
 }
+return _func7_;
 }
 int main() {
 i1 = 1;
