@@ -57,7 +57,9 @@ int main() {
                     if (outFile.is_open()) {
                         outFile << output;
                         outFile.close();
+                        std::cout<< "****************************"<<std::endl;
                         std::cout << "Error Occured in Compiling"<< std::endl;
+                        std::cout<< "****************************"<<std::endl;
                     } else {
                         std::cerr << "Unable to Open File: " << outputFilePath << std::endl;
                     }

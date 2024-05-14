@@ -10,7 +10,7 @@ begin
 end;
 
 begin
-  a := 10;
+  a := 'str';
   b := func(a);
 
   write(b);
