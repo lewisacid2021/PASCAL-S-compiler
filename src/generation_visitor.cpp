@@ -21,6 +21,9 @@ void GenerationVisitor::visit(AST *AST)
 {
     fprintf(fs,"#include<stdio.h>\n");    //for test
     fprintf(fs,"#include<stdbool.h>\n");
+    // if(math_flag==1){
+    //     fprintf(fs,"#include<math.h>\n");
+    // }
     AST->getRoot()->accept(this);
 }
 
@@ -457,7 +460,12 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
     }
     if(procedureCall->get_id()=="writeln"){
         fprintf(fs, "printf(");
+        if(procedureCall->get(0)->getCnodeList().size() == 0){
+            fprintf(fs, "\"\\n\");\n");
+            return;
+        }
         auto expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
+
         std::string formatString = generateFormatString2(expressionList);
 
         // 使用 fprintf 打印生成的格式化字符串
@@ -466,7 +474,7 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
         fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
         }
     if(procedureCall->get_id()=="readln"){
-        fprintf(fs, "char input[100000];\n  fgets(input, sizeof(input), stdin);sscanf(input, ");
+        fprintf(fs, "gets(");
         ExpressionList* expressionList = procedureCall->get(0)->DynamicCast<ExpressionList>(); // 假设 procedureCall 是指向 ProcedureCall 对象的指针
         std::string formatString = generateFormatString(expressionList);
 
@@ -559,75 +567,7 @@ void GenerationVisitor::visit(ProcedureCall *procedureCall)  {
         }
         fprintf(fs, ");\n"); // 输出包含表达式列表的参数列表
     }
-        else if(procedureCall->get_id()=="sin"){
-        fprintf(fs, "sin((float)");
-        procedureCall->get(0)->accept(this);
-        fprintf(fs, ")");
-    }
-    else if(procedureCall->get_id()=="cos"){
-        fprintf(fs, "cos((float)");
-        procedureCall->get(0)->accept(this);
-        fprintf(fs, ")");
-    }
-    else if(procedureCall->get_id()=="sin"){
-        fprintf(fs, "sin((float)");
-        procedureCall->get(0)->accept(this);
-        fprintf(fs, ")");
-    }
-    else if(procedureCall->get_id()=="sqr"){
-        fprintf(fs, "(");
-        procedureCall->get(0)->accept(this);
-        fprintf(fs, "*");
-        procedureCall->get(0)->accept(this);
-        fprintf(fs, ")");
-    }
-    else if(procedureCall->get_id()=="odd"){
-        fprintf(fs, "(");
-        procedureCall->get(0)->accept(this);
-        fprintf(fs, "%2==1)");
-    }
-    else if(procedureCall->get_id()=="chr"){
-        fprintf(fs, "(char)");
-        procedureCall->get(0)->accept(this);
-    }
-    else if(procedureCall->get_id()=="ord"){
-        fprintf(fs, "(int)");
-        procedureCall->get(0)->accept(this);
-    }
-    else if(procedureCall->get_id()=="succ"){
-        fprintf(fs, "(");
-        procedureCall->get(0)->accept(this);
-        fprintf(fs, "+1)");
-    }
-    else if(procedureCall->get_id()=="pred"){
-        fprintf(fs, "(");
-        procedureCall->get(0)->accept(this);
-        fprintf(fs, "-1)");
-    }
-    else if(procedureCall->get_id()=="round"){
-        fprintf(fs, "(int)(");
-        procedureCall->get(0)->accept(this);
-        fprintf(fs, "+0.5)");
-    }
-    else if(procedureCall->get_id()=="trunc"){
-        fprintf(fs, "(int)");
-        procedureCall->get(0)->accept(this);
-    }
-    else if(procedureCall->get_id()=="exp"){
-        fprintf(fs, "exp((float)");
-        procedureCall->get(0)->accept(this);
-        fprintf(fs, ")");
-    }
-    else if(procedureCall->get_id()=="ln"){
-        fprintf(fs, "log((float)");
-        procedureCall->get(0)->accept(this);
-        fprintf(fs, ")");
-    }
-    else if(procedureCall->get_id()=="sqrt"){
-        fprintf(fs, "sqrt((float)");
-        procedureCall->get(0)->accept(this);
-        fprintf(fs, ")");
-    } 
+
     else{
         fprintf(fs, "%s", procedureCall->get_id().c_str());
         // 根据调用类型决定是否输出参数列表
@@ -918,7 +858,7 @@ void GenerationVisitor::visit(VariableList *variableList )   {
     }
 }
 
-    void GenerationVisitor::visit(Factor *factor )  
+void GenerationVisitor::visit(Factor *factor )  
     {
         switch (factor->get_type())
         {
@@ -933,8 +873,71 @@ void GenerationVisitor::visit(VariableList *variableList )   {
             break;
         case Factor::GrammerType::ID_EXP_LIST:
         {   
-            factor->get(0)-> accept(this);
-            fprintf(fs, "(");
+            if(factor->get(0)->DynamicCast<LeafNode>()->get_value<string>()=="sin"){
+                
+        fprintf(fs, "sin((float)");
+
+    }
+    else if(factor->get(0)->DynamicCast<LeafNode>()->get_value<string>()=="cos"){
+        fprintf(fs, "cos((float)");
+    }
+    else if(factor->get(0)->DynamicCast<LeafNode>()->get_value<string>()=="trunc"){
+        fprintf(fs, "((int)");
+    }
+    // else if(procedureCall->get_id()=="sqr"){
+    //     fprintf(fs, "(");
+    //     procedureCall->get(0)->accept(this);
+    //     fprintf(fs, "*");
+    //     procedureCall->get(0)->accept(this);
+    //     fprintf(fs, ")");
+    // }
+    // else if(procedureCall->get_id()=="odd"){
+    //     fprintf(fs, "(");
+    //     procedureCall->get(0)->accept(this);
+    //     fprintf(fs, "%2==1)");
+    // }
+    // else if(procedureCall->get_id()=="chr"){
+    //     fprintf(fs, "(char)");
+    //     procedureCall->get(0)->accept(this);
+    // }
+    // else if(procedureCall->get_id()=="ord"){
+    //     fprintf(fs, "(int)");
+    //     procedureCall->get(0)->accept(this);
+    // }
+    // else if(procedureCall->get_id()=="succ"){
+    //     fprintf(fs, "(");
+    //     procedureCall->get(0)->accept(this);
+    //     fprintf(fs, "+1)");
+    // }
+    // else if(procedureCall->get_id()=="pred"){
+    //     fprintf(fs, "(");
+    //     procedureCall->get(0)->accept(this);
+    //     fprintf(fs, "-1)");
+    // }
+    // else if(procedureCall->get_id()=="round"){
+    //     fprintf(fs, "(int)(");
+    //     procedureCall->get(0)->accept(this);
+    //     fprintf(fs, "+0.5)");
+    // }
+
+    // else if(procedureCall->get_id()=="exp"){
+    //     fprintf(fs, "exp((float)");
+    //     procedureCall->get(0)->accept(this);
+    //     fprintf(fs, ")");
+    // }
+    // else if(procedureCall->get_id()=="ln"){
+    //     fprintf(fs, "log((float)");
+    //     procedureCall->get(0)->accept(this);
+    //     fprintf(fs, ")");
+    // }
+    // else if(procedureCall->get_id()=="sqrt"){
+    //     fprintf(fs, "sqrt((float)");
+    //     procedureCall->get(0)->accept(this);
+    //     fprintf(fs, ")");
+    // } 
+            else{factor->get(0)-> accept(this);fprintf(fs, "(");}
+
+            
             vector<AstNode*> lists= factor->get(1)->DynamicCast<ExpressionList>()->Lists();
             for(int i = 0; i < lists.size(); i++){
                 if(lists[i]->DynamicCast<Expression>()->GetGraType() == Expression::GrammarType::SINGLE){

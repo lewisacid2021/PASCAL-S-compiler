@@ -510,6 +510,18 @@ void SemanticVisitor::visit(ProcedureCall *procedurecall)
             }
             return;
         }
+        // if (record_info->id == "sin") { 
+        //     return;
+        // }
+        // if (record_info->id == "cos") {  
+        //     return;
+        // }
+        // if (record_info->id == "writeln") { 
+        //     return;
+        // }
+        // if(record_info->id == "readln"){
+        //     return;
+        // }
         if (exp_types->size() != record_info->amount) {  //checked
             //错误处理，参数数量不匹配
             return;
