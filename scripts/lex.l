@@ -37,7 +37,7 @@ extern "C"
 
 %}
 
-delim                   [ ]
+delim                   (" "|"\r"|"\v"|"\f"|"\t"|"\n")
 white_spaces            {delim}+
 letter                  [a-zA-Z]
 digit                   [0-9]

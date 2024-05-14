@@ -44,8 +44,9 @@ int main() {
 
             try {
                 // 执行命令并获取输出
-                std::string output = executeCommand(command);
+                std::cout<<"InputFile: "<<fileName<<std::endl;
 
+                std::string output = executeCommand(command);
                 // 仅在输出不为空时写入新文件
                 if (!output.empty()) {
                     // 构建输出文件路径
@@ -56,12 +57,12 @@ int main() {
                     if (outFile.is_open()) {
                         outFile << output;
                         outFile.close();
-                        std::cout << "Error Occured in Compiling: " << fileName << std::endl;
+                        std::cout << "Error Occured in Compiling"<< std::endl;
                     } else {
                         std::cerr << "Unable to Open File: " << outputFilePath << std::endl;
                     }
                 } else {
-                    std::cout << "pascc compile " << fileName << " passed" << std::endl;
+                    std::cout << "Compile Passed" << std::endl;
                 }
             } catch (const std::exception& e) {
                 std::cerr << "Error occured in excution: " << e.what() << std::endl;
