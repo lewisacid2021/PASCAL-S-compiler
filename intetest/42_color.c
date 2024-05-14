@@ -9,24 +9,27 @@ int i, j, k, l, m, h;
 int ans;
 int equal(int a,int b)
 {
+int _equal_;
 if (a == b)
 {
-return 1;
+_equal_ = 1;
 }
 else {
-return 0;
+_equal_ = 0;
 }
+return _equal_;
 }
 int dfs(int a,int b,int c,int d,int e,int last)
 {
+int _dfs_;
 int anss;
 if (dp[a][b][c][d][e][last] != -1)
 {
-return dp[a][b][c][d][e][last];
+_dfs_ = dp[a][b][c][d][e][last];
 }
 if (a + b + c + d + e == 0)
 {
-return 1;
+_dfs_ = 1;
 }
 else {
 anss = 0;
@@ -51,8 +54,9 @@ if (e != 0)
 anss = (anss + e * dfs(a, b, c, d + 1, e - 1, 5)) % modn;
 }
 dp[a][b][c][d][e][last] = anss % modn;
-return dp[a][b][c][d][e][last];
+_dfs_ = dp[a][b][c][d][e][last];
 }
+return _dfs_;
 }
 int main() {
 scanf("%d",&n);
@@ -71,9 +75,9 @@ dp[i][j][k][l][m][h] = -1;
 }
 for (i = 0; i <= n - 1; i++) {
 scanf("%d",&list[i]);
-cns[list[i]] = cns[list[i]] + 1;
+cns[list[i] - 1] = cns[list[i] - 1] + 1;
 }
-ans = dfs(cns[1], cns[2], cns[3], cns[4], cns[5], 0);
+ans = dfs(cns[1 - 1], cns[2 - 1], cns[3 - 1], cns[4 - 1], cns[5 - 1], 0);
 printf("%d",ans);
 return 0;
 }

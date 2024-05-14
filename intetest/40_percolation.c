@@ -13,14 +13,16 @@ arr[i] = -1;
 }
 int findfa(int a)
 {
+int _findfa_;
 if (arr[a] == a)
 {
-return a;
+_findfa_ = a;
 }
 else {
 arr[a] = findfa(arr[a]);
-return arr[a];
+_findfa_ = arr[a];
 }
+return _findfa_;
 }
 void mmerge(int a,int b)
 {

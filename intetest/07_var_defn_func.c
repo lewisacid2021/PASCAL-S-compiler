@@ -3,7 +3,9 @@
 int a;
 int defn()
 {
-return 4;
+int _defn_;
+_defn_ = 4;
+return _defn_;
 }
 int main() {
 a = defn();

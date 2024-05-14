@@ -4,6 +4,7 @@ int i, n;
 int arr[10];
 int bubblesort()
 {
+int _bubblesort_;
 int i, j, tmp;
 for (i = 0; i <= n - 2; i++) {
 for (j = 0; j <= (n - 2 - i); j++) {
@@ -15,7 +16,8 @@ arr[j] = tmp;
 }
 }
 }
-return 0;
+_bubblesort_ = 0;
+return _bubblesort_;
 }
 int main() {
 n = 10;

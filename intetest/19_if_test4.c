@@ -1,7 +1,8 @@
 #include<stdio.h>
 #include<stdbool.h>
-int da()
+int if_ifelse_()
 {
+int _if_ifelse__;
 int a, b;
 a = 5;
 b = 10;
@@ -15,9 +16,10 @@ else {
 a = a + 15;
 }
 }
-return a;
+_if_ifelse__ = a;
+return _if_ifelse__;
 }
 int main() {
-printf("%d",da( ));
+printf("%d",if_ifelse_());
 return 0;
 }

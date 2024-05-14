@@ -1,0 +1,1 @@
+add_executable(intetest ${PROJECT_SOURCE_DIR}/intetest/test/intetest.cpp)

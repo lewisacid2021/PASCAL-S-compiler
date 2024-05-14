@@ -21,6 +21,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/scripts)
 add_subdirectory(thirdparty)
 add_subdirectory(unittest)
+add_subdirectory(intetest)
 
 file(GLOB SRC_FILES src/*.cpp)
 message(STATUS "SRC_FILES: ${SRC_FILES}")

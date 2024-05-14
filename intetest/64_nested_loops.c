@@ -43,6 +43,7 @@ arr2[a][b][c][d][e][f][g] = a + b + d + g;
 }
 int loop3(int h,int i,int j,int k,int l,int m,int n)
 {
+int _loop3_;
 int ans, a, b, c, d, e, f, g;
 ans = 0;
 for (a = 0; a <= h - 1; a++) {
@@ -60,7 +61,8 @@ ans = (ans % 817) + arr1[a][b][c][d][e][f][g] + arr2[a][b][c][d][e][f][g];
 }
 }
 }
-return ans;
+_loop3_ = ans;
+return _loop3_;
 }
 int main() {
 ret = 0;

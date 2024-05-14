@@ -5,7 +5,7 @@ int func(int n)
 {
 int _func_;
 g = g + n;
-printf("",g);
+printf("%d",g);
 _func_ = g;
 return _func_;
 }

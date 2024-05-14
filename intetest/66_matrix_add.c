@@ -5,13 +5,15 @@ int a0[3],a1[3],a2[3],b0[3],b1[3],b2[3],c0[3],c1[3],c2[3];
 int i, x;
 int add()
 {
+int _add_;
 int i;
 for (i = 0; i <= m - 1; i++) {
 c0[i] = a0[i] + b0[i];
 c1[i] = a1[i] + b1[i];
 c2[i] = a2[i] + b2[i];
 }
-return 0;
+_add_ = 0;
+return _add_;
 }
 int main() {
 n = 3;
